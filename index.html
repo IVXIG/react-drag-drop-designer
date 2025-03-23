@@ -1,26 +1,1593 @@
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>react-drag-drop-designer</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual Basic 6.0 IDE</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'MS Sans Serif', Arial, sans-serif;
+      user-select: none;
+    }
+    
+    body {
+      overflow: hidden;
+      background-color: #87CEEB;
+      height: 100vh;
+      width: 100vw;
+    }
+    
+    /* Toolbars */
+    .top-toolbar {
+      width: 100%;
+      height: 32px;
+      background-color: #D4D0C8;
+      border-bottom: 2px solid #000080;
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+    }
+    
+    .toolbar-button {
+      background-color: #000080;
+      color: white;
+      border: 1px solid white;
+      border-radius: 3px;
+      padding: 4px 12px;
+      margin-right: 8px;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    .toolbar-button:hover {
+      background-color: #0000A0;
+    }
+    
+    .secondary-toolbar {
+      width: 100%;
+      height: 40px;
+      background-color: #D4D0C8;
+      border-bottom: 2px solid #000080;
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+    }
+    
+    .secondary-button {
+      padding: 4px 8px;
+      background-color: #D4D0C8;
+      border: 1px solid #808080;
+      border-radius: 3px;
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .secondary-button:hover {
+      background-color: #C0C0C0;
+    }
+    
+    .toolbar-divider {
+      border-right: 1px solid #808080;
+      height: 32px;
+      margin: 0 8px;
+    }
+    
+    /* Status Bar */
+    .status-bar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 24px;
+      background-color: #D4D0C8;
+      border-top: 1px solid #808080;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      font-size: 12px;
+    }
+    
+    .status-item {
+      flex: 1;
+    }
+    
+    .status-divider {
+      border-left: 1px solid #808080;
+      padding: 0 8px;
+    }
+    
+    /* Windows */
+    .window {
+      position: absolute;
+      background-color: #F0F0F0;
+      border: 2px solid #000080;
+      border-radius: 3px;
+      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+    
+    .window.minimized {
+      height: 28px !important;
+      overflow: hidden;
+    }
+    
+    .title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 8px;
+      background-color: #000080;
+      color: white;
+      cursor: move;
+    }
+    
+    .title-text {
+      font-weight: bold;
+    }
+    
+    .window-buttons {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .window-button {
+      padding: 2px 8px;
+      background-color: #D4D0C8;
+      color: black;
+      border: 1px solid #808080;
+      cursor: pointer;
+    }
+    
+    .window-button:hover {
+      background-color: #C0C0C0;
+    }
+    
+    .window-content {
+      height: calc(100% - 28px);
+      overflow: hidden;
+    }
+    
+    /* Toolbox */
+    .toolbox {
+      position: absolute;
+      left: 0;
+      top: 72px;
+      width: 200px;
+      height: calc(100vh - 96px);
+      background-color: #F0F0F0;
+      border-right: 2px solid #000080;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+    }
+    
+    .toolbox-header {
+      padding: 4px 8px;
+      background-color: #000080;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+    }
+    
+    .toolbox-content {
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      overflow-y: auto;
+      height: calc(100% - 28px);
+    }
+    
+    .toolbox-category {
+      margin-bottom: 8px;
+    }
+    
+    .category-header {
+      padding: 4px 8px;
+      background-color: #D4D0C8;
+      color: #000080;
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid #808080;
+    }
+    
+    .category-controls {
+      padding: 4px;
+      list-style: none;
+    }
+    
+    .control-item {
+      padding: 4px 8px;
+      background-color: white;
+      border: 1px solid #808080;
+      margin-bottom: 4px;
+      cursor: move;
+    }
+    
+    /* Design Canvas */
+    .canvas {
+      background-color: white;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    
+    .canvas-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(20, 20px);
+      grid-template-rows: repeat(20, 20px);
+    }
+    
+    .grid-cell {
+      border: 1px solid #F0F0F0;
+    }
+    
+    /* Controls */
+    .control {
+      position: absolute;
+      background-color: #F0F0F0;
+      cursor: grab;
+    }
+    
+    .control.selected {
+      border: 2px solid #0000FF;
+    }
+    
+    .resize-handle {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 8px;
+      height: 8px;
+      background-color: #0000FF;
+      opacity: 0.5;
+      cursor: se-resize;
+    }
+    
+    /* Property Grid */
+    .property-grid {
+      height: 100%;
+      overflow-y: auto;
+    }
+    
+    .property-header {
+      margin-bottom: 16px;
+      padding: 4px 8px;
+      background-color: #D4D0C8;
+      color: #000080;
+      font-weight: bold;
+    }
+    
+    .property-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+    }
+    
+    .property-name {
+      padding: 4px 8px;
+      background-color: #D4D0C8;
+      color: #000080;
+      font-weight: bold;
+      border: 1px solid #808080;
+    }
+    
+    .property-value {
+      padding: 4px 8px;
+      border: 1px solid #808080;
+      background-color: white;
+    }
+    
+    .property-input {
+      width: 100%;
+    }
+    
+    /* Project Explorer */
+    .project-explorer {
+      padding: 8px;
+      height: 100%;
+      overflow-y: auto;
+    }
+    
+    .project-header {
+      margin-bottom: 8px;
+      padding: 4px 8px;
+      background-color: #D4D0C8;
+      color: #000080;
+      font-weight: bold;
+    }
+    
+    .file-tree {
+      list-style: none;
+    }
+    
+    .file-item {
+      margin: 4px 0;
+    }
+    
+    .folder-item {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: #00008B;
+      font-weight: 500;
+    }
+    
+    .file-entry {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-left: 20px;
+      color: #006400;
+    }
+    
+    .icon {
+      margin-right: 4px;
+    }
+    
+    /* Dialogs */
+    .dialog-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .dialog {
+      background-color: #D4D0C8;
+      border: 2px solid #808080;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+      width: 400px;
+    }
+    
+    .dialog-header {
+      padding: 4px 8px;
+      background-color: #000080;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .dialog-close {
+      cursor: pointer;
+    }
+    
+    .dialog-content {
+      padding: 16px;
+    }
+    
+    .dialog-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    
+    .dialog-button {
+      padding: 4px 16px;
+      background-color: #D4D0C8;
+      border: 1px solid #808080;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      bottom: 30px;
+      right: 20px;
+      z-index: 1000;
+    }
+    
+    .toast {
+      background-color: white;
+      border: 1px solid #808080;
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-top: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      min-width: 250px;
+      max-width: 350px;
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    
+    .toast.success {
+      border-left: 4px solid #008000;
+    }
+    
+    .toast.error {
+      border-left: 4px solid #FF0000;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    /* Code Editor */
+    .code-editor {
+      position: absolute;
+      z-index: 30;
+      min-width: 500px;
+      min-height: 400px;
+    }
+    
+    .code-area {
+      width: 100%;
+      height: 100%;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      padding: 8px;
+      outline: none;
+      border: 1px solid #808080;
+      resize: none;
+    }
 
-    <meta property="og:title" content="Lovable Generated Project" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    /* Context Menu */
+    .context-menu {
+      position: absolute;
+      background-color: #D4D0C8;
+      border: 1px solid #808080;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+      z-index: 50;
+    }
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+    .context-menu-item {
+      padding: 4px 16px;
+      cursor: pointer;
+    }
 
-  <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    .context-menu-item:hover {
+      background-color: #000080;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Toolbar -->
+  <div class="top-toolbar">
+    <button class="toolbar-button" id="file-menu">File</button>
+    <button class="toolbar-button" id="edit-menu">Edit</button>
+    <button class="toolbar-button" id="view-menu">View</button>
+    <button class="toolbar-button" id="project-menu">Project</button>
+    <button class="toolbar-button" id="format-menu">Format</button>
+    <button class="toolbar-button" id="debug-menu">Debug</button>
+    <button class="toolbar-button" id="run-menu">Run</button>
+    <button class="toolbar-button" id="tools-menu">Tools</button>
+    <button class="toolbar-button" id="addins-menu">Add-Ins</button>
+    <button class="toolbar-button" id="window-menu">Window</button>
+    <button class="toolbar-button" id="help-menu">Help</button>
+  </div>
+  
+  <!-- Secondary Toolbar -->
+  <div class="secondary-toolbar">
+    <button class="secondary-button" id="new-button">
+      <span class="icon">📄</span> New
+    </button>
+    <button class="secondary-button" id="open-button">
+      <span class="icon">📂</span> Open
+    </button>
+    <button class="secondary-button" id="save-button">
+      <span class="icon">💾</span> Save
+    </button>
+    <div class="toolbar-divider"></div>
+    <button class="secondary-button" id="run-button">
+      <span class="icon">▶️</span> Start
+    </button>
+    <div class="toolbar-divider"></div>
+    <button class="secondary-button" id="code-button">
+      <span class="icon">📝</span> View Code
+    </button>
+    <button class="secondary-button" id="form-button">
+      <span class="icon">📄</span> Form
+    </button>
+  </div>
+  
+  <!-- Toolbox -->
+  <div class="toolbox" id="toolbox">
+    <div class="toolbox-header" id="toolbox-header">Toolbox</div>
+    <div class="toolbox-content" id="toolbox-content">
+      <!-- Common Controls Category -->
+      <div class="toolbox-category">
+        <div class="category-header" id="common-controls-header">Common Controls</div>
+        <ul class="category-controls" id="common-controls-list">
+          <li class="control-item" draggable="true" data-control-type="Label">Label</li>
+          <li class="control-item" draggable="true" data-control-type="TextBox">TextBox</li>
+          <li class="control-item" draggable="true" data-control-type="CommandButton">CommandButton</li>
+          <li class="control-item" draggable="true" data-control-type="CheckBox">CheckBox</li>
+          <li class="control-item" draggable="true" data-control-type="OptionButton">OptionButton</li>
+          <li class="control-item" draggable="true" data-control-type="ComboBox">ComboBox</li>
+          <li class="control-item" draggable="true" data-control-type="ListBox">ListBox</li>
+          <li class="control-item" draggable="true" data-control-type="Frame">Frame</li>
+        </ul>
+      </div>
+      
+      <!-- Additional Controls Category -->
+      <div class="toolbox-category">
+        <div class="category-header" id="additional-controls-header">Additional Controls</div>
+        <ul class="category-controls" id="additional-controls-list" style="display: none;">
+          <li class="control-item" draggable="true" data-control-type="Timer">Timer</li>
+          <li class="control-item" draggable="true" data-control-type="PictureBox">PictureBox</li>
+          <li class="control-item" draggable="true" data-control-type="Image">Image</li>
+          <li class="control-item" draggable="true" data-control-type="Shape">Shape</li>
+          <li class="control-item" draggable="true" data-control-type="Line">Line</li>
+          <li class="control-item" draggable="true" data-control-type="Data">Data</li>
+          <li class="control-item" draggable="true" data-control-type="OLE">OLE</li>
+          <li class="control-item" draggable="true" data-control-type="ActiveX">ActiveX</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Main Form Designer Window -->
+  <div class="window" id="main-window" style="left: 220px; top: 80px; width: 600px; height: calc(100vh - 150px); z-index: 10;">
+    <div class="title-bar" id="main-window-title">
+      <div class="title-text">Form1.frm [Design]</div>
+      <div class="window-buttons">
+        <div class="window-button" id="main-window-minimize">_</div>
+        <div class="window-button" id="main-window-close">✕</div>
+      </div>
+    </div>
+    <div class="window-content">
+      <div class="canvas" id="designer-canvas">
+        <div class="canvas-grid" id="canvas-grid">
+          <!-- Grid cells will be generated by JavaScript -->
+        </div>
+        <!-- Controls will be added here -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Properties Window -->
+  <div class="window" id="property-window" style="right: 20px; bottom: 40px; width: 250px; height: calc(50vh - 60px); z-index: 20;">
+    <div class="title-bar" id="property-window-title">
+      <div class="title-text">Properties</div>
+      <div class="window-buttons">
+        <div class="window-button" id="property-window-minimize">_</div>
+        <div class="window-button" id="property-window-close">✕</div>
+      </div>
+    </div>
+    <div class="window-content">
+      <div class="property-grid" id="property-grid">
+        <div class="property-header" id="property-header">Properties</div>
+        <div id="no-selection" style="padding: 16px; color: #808080; font-style: italic;">
+          No control selected. Select a control to view its properties.
+        </div>
+        <div class="property-list" id="property-list" style="display: none;">
+          <!-- Properties will be added here by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Project Explorer Window -->
+  <div class="window" id="project-window" style="right: 20px; top: 80px; width: 250px; height: calc(50vh - 60px); z-index: 20;">
+    <div class="title-bar" id="project-window-title">
+      <div class="title-text">Project Explorer</div>
+      <div class="window-buttons">
+        <div class="window-button" id="project-window-minimize">_</div>
+        <div class="window-button" id="project-window-close">✕</div>
+      </div>
+    </div>
+    <div class="window-content">
+      <div class="project-explorer" id="project-explorer">
+        <div class="project-header">Project - Project1</div>
+        <ul class="file-tree" id="file-tree">
+          <li class="file-item">
+            <div class="folder-item" data-folder="Project1">
+              <span class="icon">📂</span>Project1
+            </div>
+            <ul class="file-tree" style="padding-left: 20px;">
+              <li class="file-item">
+                <div class="file-entry" data-file="Form1.frm">
+                  <span class="icon">📄</span>Form1.frm
+                </div>
+              </li>
+              <li class="file-item">
+                <div class="file-entry" data-file="Module1.bas">
+                  <span class="icon">📝</span>Module1.bas
+                </div>
+              </li>
+              <li class="file-item">
+                <div class="file-entry" data-file="Class1.cls">
+                  <span class="icon">📋</span>Class1.cls
+                </div>
+              </li>
+              <li class="file-item">
+                <div class="folder-item" data-folder="Forms">
+                  <span class="icon">📁</span>Forms
+                </div>
+                <ul class="file-tree" style="padding-left: 20px; display: none;">
+                  <li class="file-item">
+                    <div class="file-entry" data-file="Form2.frm">
+                      <span class="icon">📄</span>Form2.frm
+                    </div>
+                  </li>
+                  <li class="file-item">
+                    <div class="file-entry" data-file="Form3.frm">
+                      <span class="icon">📄</span>Form3.frm
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-item" id="status-mode">Design</div>
+    <div class="status-divider">Project1</div>
+    <div class="status-divider" id="status-state">Saved</div>
+  </div>
+  
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container">
+    <!-- Toasts will be added here by JavaScript -->
+  </div>
+  
+  <!-- Dialogs -->
+  <div class="dialog-overlay" id="about-dialog" style="display: none;">
+    <div class="dialog">
+      <div class="dialog-header">
+        <span>About Visual Basic</span>
+        <span class="dialog-close" id="about-close">✕</span>
+      </div>
+      <div class="dialog-content">
+        <div style="text-align: center;">
+          <h2 style="margin-bottom: 16px; font-size: 18px;">Microsoft Visual Basic 6.0</h2>
+          <p style="margin-bottom: 8px;">This is a web-based recreation of the Visual Basic 6.0 IDE.</p>
+          <p style="margin-bottom: 16px;">Created with HTML, CSS, and JavaScript.</p>
+          <div style="margin-top: 32px; text-align: center;">
+            <button class="dialog-button" id="about-ok">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="dialog-overlay" id="new-project-dialog" style="display: none;">
+    <div class="dialog">
+      <div class="dialog-header">
+        <span>New Project</span>
+        <span class="dialog-close" id="new-project-close">✕</span>
+      </div>
+      <div class="dialog-content">
+        <div>
+          <div style="margin-bottom: 16px;">
+            <div style="font-weight: bold; margin-bottom: 8px;">Project Type:</div>
+            <select style="width: 100%; padding: 4px; border: 1px solid #808080;" id="project-type">
+              <option>Standard EXE</option>
+              <option>ActiveX EXE</option>
+              <option>ActiveX DLL</option>
+              <option>ActiveX Control</option>
+              <option>VB Application Wizard</option>
+              <option>Data Project</option>
+              <option>IIS Application</option>
+              <option>Add-in</option>
+            </select>
+          </div>
+          <div class="dialog-buttons">
+            <button class="dialog-button" id="new-project-ok">OK</button>
+            <button class="dialog-button" id="new-project-cancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="dialog-overlay" id="open-project-dialog" style="display: none;">
+    <div class="dialog">
+      <div class="dialog-header">
+        <span>Open Project</span>
+        <span class="dialog-close" id="open-project-close">✕</span>
+      </div>
+      <div class="dialog-content">
+        <div>
+          <div style="margin-bottom: 16px;">
+            <div style="font-weight: bold; margin-bottom: 8px;">Project Name:</div>
+            <select style="width: 100%; padding: 4px; border: 1px solid #808080;" id="open-project-select">
+              <option>Project1.vbp</option>
+              <option>Project2.vbp</option>
+              <option>Calculator.vbp</option>
+              <option>TextEditor.vbp</option>
+            </select>
+          </div>
+          <div class="dialog-buttons">
+            <button class="dialog-button" id="open-project-ok">Open</button>
+            <button class="dialog-button" id="open-project-cancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Code Editor Window -->
+  <div class="window code-editor" id="code-window" style="display: none; left: 250px; top: 100px; width: 500px; height: 400px;">
+    <div class="title-bar" id="code-window-title">
+      <div class="title-text">Code Window</div>
+      <div class="window-buttons">
+        <div class="window-button" id="code-window-close">✕</div>
+      </div>
+    </div>
+    <div class="window-content">
+      <textarea class="code-area" id="code-area" spellcheck="false"></textarea>
+    </div>
+  </div>
+  
+  <!-- Context Menu -->
+  <div class="context-menu" id="context-menu" style="display: none;">
+    <div class="context-menu-item" id="context-add-form">Add Form</div>
+    <div class="context-menu-item" id="context-add-module">Add Module</div>
+    <div class="context-menu-item" id="context-add-class">Add Class</div>
+    <div class="context-menu-item" id="context-properties">Properties</div>
+  </div>
+  
+  <script>
+    // State
+    let isRunning = false;
+    let projectIsDirty = false;
+    let selectedControlId = null;
+    let currentCodeControlId = null;
+    let controlCounter = 0;
+    let controls = [];
+    
+    // Window state
+    const windows = {
+      main: { minimized: false, visible: true },
+      property: { minimized: false, visible: true },
+      project: { minimized: false, visible: true },
+      code: { minimized: false, visible: false }
+    };
+    
+    // References
+    const mainWindow = document.getElementById('main-window');
+    const propertyWindow = document.getElementById('property-window');
+    const projectWindow = document.getElementById('project-window');
+    const codeWindow = document.getElementById('code-window');
+    const canvas = document.getElementById('designer-canvas');
+    const propertyList = document.getElementById('property-list');
+    const noSelection = document.getElementById('no-selection');
+    
+    // Toolbox categories
+    const expandedCategories = {
+      'common-controls': true,
+      'additional-controls': false
+    };
+    
+    // Initialize the application
+    function init() {
+      // Create canvas grid
+      createGrid();
+      
+      // Setup event listeners
+      setupEventListeners();
+      
+      // Setup window dragging
+      setupWindowDragging();
+      
+      // Setup control dragging from toolbox
+      setupToolboxDragging();
+    }
+    
+    // Create grid on canvas
+    function createGrid() {
+      const grid = document.getElementById('canvas-grid');
+      grid.innerHTML = '';
+      
+      for (let i = 0; i < 20; i++) {
+        for (let j = 0; j < 20; j++) {
+          const cell = document.createElement('div');
+          cell.className = 'grid-cell';
+          grid.appendChild(cell);
+        }
+      }
+    }
+    
+    // Setup event listeners for all buttons and interactive elements
+    function setupEventListeners() {
+      // Menu buttons
+      document.getElementById('file-menu').addEventListener('click', () => showToast('File menu clicked', 'success'));
+      document.getElementById('edit-menu').addEventListener('click', () => showToast('Edit menu clicked', 'success'));
+      document.getElementById('view-menu').addEventListener('click', toggleViewWindow);
+      document.getElementById('project-menu').addEventListener('click', () => createNewFile('form'));
+      document.getElementById('format-menu').addEventListener('click', formatControl);
+      document.getElementById('debug-menu').addEventListener('click', () => showToast('Debug menu clicked', 'success'));
+      document.getElementById('run-menu').addEventListener('click', toggleRunning);
+      document.getElementById('tools-menu').addEventListener('click', () => showToast('Tools menu clicked', 'success'));
+      document.getElementById('addins-menu').addEventListener('click', () => showToast('Add-Ins menu clicked', 'success'));
+      document.getElementById('window-menu').addEventListener('click', toggleWindows);
+      document.getElementById('help-menu').addEventListener('click', () => toggleDialog('about-dialog', true));
+      
+      // Toolbar buttons
+      document.getElementById('new-button').addEventListener('click', () => toggleDialog('new-project-dialog', true));
+      document.getElementById('open-button').addEventListener('click', () => toggleDialog('open-project-dialog', true));
+      document.getElementById('save-button').addEventListener('click', saveProject);
+      document.getElementById('run-button').addEventListener('click', toggleRunning);
+      document.getElementById('code-button').addEventListener('click', viewCode);
+      document.getElementById('form-button').addEventListener('click', viewForm);
+      
+      // Window buttons
+      document.getElementById('main-window-minimize').addEventListener('click', () => toggleMinimize('main'));
+      document.getElementById('main-window-close').addEventListener('click', () => toggleVisibility('main', false));
+      document.getElementById('property-window-minimize').addEventListener('click', () => toggleMinimize('property'));
+      document.getElementById('property-window-close').addEventListener('click', () => toggleVisibility('property', false));
+      document.getElementById('project-window-minimize').addEventListener('click', () => toggleMinimize('project'));
+      document.getElementById('project-window-close').addEventListener('click', () => toggleVisibility('project', false));
+      document.getElementById('code-window-close').addEventListener('click', () => toggleVisibility('code', false));
+      
+      // Toolbox
+      document.getElementById('toolbox-header').addEventListener('click', toggleToolbox);
+      document.getElementById('common-controls-header').addEventListener('click', () => toggleCategory('common-controls'));
+      document.getElementById('additional-controls-header').addEventListener('click', () => toggleCategory('additional-controls'));
+      
+      // Canvas
+      canvas.addEventListener('click', canvasClick);
+      
+      // Dialog buttons
+      document.getElementById('about-close').addEventListener('click', () => toggleDialog('about-dialog', false));
+      document.getElementById('about-ok').addEventListener('click', () => toggleDialog('about-dialog', false));
+      document.getElementById('new-project-close').addEventListener('click', () => toggleDialog('new-project-dialog', false));
+      document.getElementById('new-project-ok').addEventListener('click', createNewProject);
+      document.getElementById('new-project-cancel').addEventListener('click', () => toggleDialog('new-project-dialog', false));
+      document.getElementById('open-project-close').addEventListener('click', () => toggleDialog('open-project-dialog', false));
+      document.getElementById('open-project-ok').addEventListener('click', openProject);
+      document.getElementById('open-project-cancel').addEventListener('click', () => toggleDialog('open-project-dialog', false));
+      
+      // Project Explorer
+      setupProjectExplorerListeners();
+      
+      // Context menu
+      setupContextMenu();
+    }
+    
+    // Setup draggable windows
+    function setupWindowDragging() {
+      setupWindowDrag(mainWindow, document.getElementById('main-window-title'));
+      setupWindowDrag(propertyWindow, document.getElementById('property-window-title'));
+      setupWindowDrag(projectWindow, document.getElementById('project-window-title'));
+      setupWindowDrag(codeWindow, document.getElementById('code-window-title'));
+    }
+    
+    // Setup dragging for a specific window
+    function setupWindowDrag(windowElement, titleBar) {
+      let isDragging = false;
+      let offsetX = 0;
+      let offsetY = 0;
+      
+      titleBar.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        const rect = windowElement.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+      });
+      
+      document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        
+        const newLeft = e.clientX - offsetX;
+        const newTop = e.clientY - offsetY;
+        
+        windowElement.style.left = `${newLeft}px`;
+        windowElement.style.top = `${newTop}px`;
+      });
+      
+      document.addEventListener('mouseup', function() {
+        isDragging = false;
+      });
+    }
+    
+    // Setup dragging from toolbox
+    function setupToolboxDragging() {
+      const controlItems = document.querySelectorAll('.control-item');
+      
+      controlItems.forEach(item => {
+        item.addEventListener('dragstart', function(e) {
+          e.dataTransfer.setData('text/plain', this.getAttribute('data-control-type'));
+        });
+      });
+      
+      canvas.addEventListener('dragover', function(e) {
+        e.preventDefault();
+      });
+      
+      canvas.addEventListener('drop', function(e) {
+        e.preventDefault();
+        const controlType = e.dataTransfer.getData('text/plain');
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        addControl(controlType, x, y);
+      });
+    }
+    
+    // Add control to canvas
+    function addControl(type, left, top) {
+      controlCounter++;
+      const id = `${type}_${Date.now()}`;
+      
+      const properties = {
+        name: `${type}${controlCounter}`,
+        left: left,
+        top: top,
+        width: getDefaultWidth(type),
+        height: getDefaultHeight(type),
+        caption: `${type}${controlCounter}`,
+        text: type === 'Label' ? `Label${controlCounter}` : '',
+        visible: true,
+        enabled: true
+      };
+      
+      const control = { id, type, properties };
+      controls.push(control);
+      
+      renderControl(control);
+      selectControl(id);
+      projectIsDirty = true;
+      updateStatusBar();
+      
+      showToast(`${type} control added to form`, 'success');
+    }
+    
+    // Get default width for control type
+    function getDefaultWidth(type) {
+      switch (type) {
+        case 'CommandButton': return 100;
+        case 'TextBox': return 150;
+        case 'Label': return 80;
+        case 'CheckBox': return 120;
+        case 'OptionButton': return 120;
+        case 'ComboBox': return 150;
+        case 'ListBox': return 150;
+        case 'Frame': return 200;
+        default: return 100;
+      }
+    }
+    
+    // Get default height for control type
+    function getDefaultHeight(type) {
+      switch (type) {
+        case 'CommandButton': return 30;
+        case 'TextBox': return 24;
+        case 'Label': return 24;
+        case 'CheckBox': return 24;
+        case 'OptionButton': return 24;
+        case 'ComboBox': return 24;
+        case 'ListBox': return 100;
+        case 'Frame': return 150;
+        default: return 30;
+      }
+    }
+    
+    // Render control on canvas
+    function renderControl(control) {
+      // Remove if already exists
+      const existingControl = document.getElementById(control.id);
+      if (existingControl) {
+        existingControl.remove();
+      }
+      
+      const { id, type, properties } = control;
+      const { left, top, width, height, caption, text, visible, enabled } = properties;
+      
+      if (!visible) return;
+      
+      const controlElement = document.createElement('div');
+      controlElement.id = id;
+      controlElement.className = `control ${id === selectedControlId ? 'selected' : ''}`;
+      controlElement.style.left = `${left}px`;
+      controlElement.style.top = `${top}px`;
+      controlElement.style.width = `${width}px`;
+      controlElement.style.height = `${height}px`;
+      controlElement.style.opacity = enabled ? '1' : '0.6';
+      
+      if (type === 'Frame') {
+        controlElement.style.backgroundColor = 'transparent';
+        controlElement.style.borderStyle = 'groove';
+      }
+      
+      controlElement.addEventListener('mousedown', function(e) {
+        e.stopPropagation();
+        selectControl(id);
+        setupControlDrag(controlElement, id);
+      });
+      
+      controlElement.addEventListener('dblclick', function() {
+        openCodeWindow(id);
+      });
+      
+      // Control content
+      let content = '';
+      switch (type) {
+        case 'CommandButton':
+          content = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">${caption}</div>`;
+          break;
+        case 'TextBox':
+          content = `<input type="text" value="${text}" readonly style="width:100%; height:100%; border:none; outline:none; background-color:white;">`;
+          break;
+        case 'Label':
+          content = `<div style="width:100%; height:100%; display:flex; align-items:center;">${text}</div>`;
+          break;
+        case 'CheckBox':
+          content = `
+            <div style="display:flex; align-items:center;">
+              <input type="checkbox" ${!enabled ? 'disabled' : ''} style="margin-right:4px;">
+              <span>${caption}</span>
+            </div>
+          `;
+          break;
+        case 'OptionButton':
+          content = `
+            <div style="display:flex; align-items:center;">
+              <input type="radio" ${!enabled ? 'disabled' : ''} style="margin-right:4px;">
+              <span>${caption}</span>
+            </div>
+          `;
+          break;
+        case 'ComboBox':
+          content = `
+            <select style="width:100%; height:100%;" ${!enabled ? 'disabled' : ''}>
+              <option>Item 1</option>
+              <option>Item 2</option>
+              <option>Item 3</option>
+            </select>
+          `;
+          break;
+        case 'ListBox':
+          content = `
+            <select multiple style="width:100%; height:100%;" ${!enabled ? 'disabled' : ''}>
+              <option>Item 1</option>
+              <option>Item 2</option>
+              <option>Item 3</option>
+            </select>
+          `;
+          break;
+        case 'Frame':
+          content = `<div style="width:100%; height:100%; padding:4px; text-align:center; border-top:0;">${caption}</div>`;
+          break;
+        default:
+          content = `<div>${type}</div>`;
+      }
+      
+      controlElement.innerHTML = content;
+      
+      // Add resize handle if selected
+      if (id === selectedControlId) {
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'resize-handle';
+        resizeHandle.addEventListener('mousedown', function(e) {
+          e.stopPropagation();
+          setupControlResize(controlElement, id);
+        });
+        controlElement.appendChild(resizeHandle);
+      }
+      
+      canvas.appendChild(controlElement);
+    }
+    
+    // Setup dragging for control
+    function setupControlDrag(controlElement, id) {
+      let isDragging = false;
+      let startX, startY;
+      let origLeft, origTop;
+      
+      const handleMouseDown = function(e) {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        origLeft = parseInt(controlElement.style.left);
+        origTop = parseInt(controlElement.style.top);
+        
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+      };
+      
+      const handleMouseMove = function(e) {
+        if (!isDragging) return;
+        
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        
+        const newLeft = origLeft + dx;
+        const newTop = origTop + dy;
+        
+        controlElement.style.left = `${newLeft}px`;
+        controlElement.style.top = `${newTop}px`;
+        
+        // Update control properties
+        updateControlProperty(id, 'left', newLeft);
+        updateControlProperty(id, 'top', newTop);
+      };
+      
+      const handleMouseUp = function() {
+        isDragging = false;
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+      
+      controlElement.addEventListener('mousedown', handleMouseDown);
+    }
+    
+    // Setup resizing for control
+    function setupControlResize(controlElement, id) {
+      let isResizing = false;
+      let startX, startY;
+      let origWidth, origHeight;
+      
+      const resizeHandle = controlElement.querySelector('.resize-handle');
+      
+      const handleMouseDown = function(e) {
+        e.stopPropagation();
+        isResizing = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        origWidth = parseInt(controlElement.style.width);
+        origHeight = parseInt(controlElement.style.height);
+        
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+      };
+      
+      const handleMouseMove = function(e) {
+        if (!isResizing) return;
+        
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        
+        const newWidth = Math.max(20, origWidth + dx);
+        const newHeight = Math.max(20, origHeight + dy);
+        
+        controlElement.style.width = `${newWidth}px`;
+        controlElement.style.height = `${newHeight}px`;
+        
+        // Update control properties
+        updateControlProperty(id, 'width', newWidth);
+        updateControlProperty(id, 'height', newHeight);
+      };
+      
+      const handleMouseUp = function() {
+        isResizing = false;
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+      
+      resizeHandle.addEventListener('mousedown', handleMouseDown);
+    }
+    
+    // Update control property
+    function updateControlProperty(id, property, value) {
+      const controlIndex = controls.findIndex(c => c.id === id);
+      if (controlIndex !== -1) {
+        controls[controlIndex].properties[property] = value;
+        projectIsDirty = true;
+        updateStatusBar();
+        
+        // Update property grid if this control is selected
+        if (id === selectedControlId) {
+          renderPropertyGrid();
+        }
+      }
+    }
+    
+    // Select control
+    function selectControl(id) {
+      selectedControlId = id;
+      
+      // Update visual selection state
+      controls.forEach(control => {
+        renderControl(control);
+      });
+      
+      // Update property grid
+      renderPropertyGrid();
+    }
+    
+    // Render property grid
+    function renderPropertyGrid() {
+      const selectedControl = controls.find(c => c.id === selectedControlId);
+      
+      if (!selectedControl) {
+        noSelection.style.display = 'block';
+        propertyList.style.display = 'none';
+        document.getElementById('property-header').innerHTML = 'Properties';
+        return;
+      }
+      
+      noSelection.style.display = 'none';
+      propertyList.style.display = 'grid';
+      document.getElementById('property-header').innerHTML = `${selectedControl.type} Properties`;
+      
+      // Clear property list
+      propertyList.innerHTML = '';
+      
+      // Add properties
+      const properties = selectedControl.properties;
+      Object.entries(properties).forEach(([property, value]) => {
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'property-name';
+        nameDiv.textContent = property;
+        
+        const valueDiv = document.createElement('div');
+        valueDiv.className = 'property-value';
+        
+        if (typeof value === 'boolean') {
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = value;
+          checkbox.addEventListener('change', function() {
+            updateControlProperty(selectedControlId, property, this.checked);
+            renderControl(selectedControl);
+          });
+          valueDiv.appendChild(checkbox);
+        } else if (typeof value === 'number') {
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.value = value;
+          input.className = 'property-input';
+          input.addEventListener('change', function() {
+            updateControlProperty(selectedControlId, property, Number(this.value));
+            renderControl(selectedControl);
+          });
+          valueDiv.appendChild(input);
+        } else {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = String(value);
+          input.className = 'property-input';
+          input.addEventListener('change', function() {
+            updateControlProperty(selectedControlId, property, this.value);
+            renderControl(selectedControl);
+          });
+          valueDiv.appendChild(input);
+        }
+        
+        propertyList.appendChild(nameDiv);
+        propertyList.appendChild(valueDiv);
+      });
+    }
+    
+    // Toggle toolbox
+    function toggleToolbox() {
+      const toolboxContent = document.getElementById('toolbox-content');
+      if (toolboxContent.style.display === 'none') {
+        toolboxContent.style.display = 'flex';
+      } else {
+        toolboxContent.style.display = 'none';
+      }
+    }
+    
+    // Toggle category
+    function toggleCategory(categoryId) {
+      expandedCategories[categoryId] = !expandedCategories[categoryId];
+      const categoryList = document.getElementById(`${categoryId}-list`);
+      categoryList.style.display = expandedCategories[categoryId] ? 'block' : 'none';
+    }
+    
+    // Toggle window minimize
+    function toggleMinimize(windowName) {
+      windows[windowName].minimized = !windows[windowName].minimized;
+      
+      const windowElement = document.getElementById(`${windowName}-window`);
+      if (windows[windowName].minimized) {
+        windowElement.classList.add('minimized');
+      } else {
+        windowElement.classList.remove('minimized');
+      }
+    }
+    
+    // Toggle window visibility
+    function toggleVisibility(windowName, visible) {
+      windows[windowName].visible = visible;
+      const windowElement = document.getElementById(`${windowName}-window`);
+      windowElement.style.display = visible ? 'block' : 'none';
+    }
+    
+    // Toggle dialog visibility
+    function toggleDialog(dialogId, visible) {
+      const dialog = document.getElementById(dialogId);
+      dialog.style.display = visible ? 'flex' : 'none';
+    }
+    
+    // Handle canvas click (deselect controls)
+    function canvasClick(e) {
+      if (e.target === canvas || e.target.classList.contains('canvas-grid') || e.target.classList.contains('grid-cell')) {
+        selectedControlId = null;
+        renderPropertyGrid();
+        
+        // Update visual selection state
+        controls.forEach(control => {
+          renderControl(control);
+        });
+      }
+    }
+    
+    // Toggle running state
+    function toggleRunning() {
+      isRunning = !isRunning;
+      
+      const runButton = document.getElementById('run-button');
+      const runIcon = runButton.querySelector('.icon');
+      const runText = runIcon.nextSibling;
+      
+      if (isRunning) {
+        runIcon.textContent = '⏹️';
+        runText.textContent = ' Stop';
+        showToast('Project running', 'success');
+      } else {
+        runIcon.textContent = '▶️';
+        runText.textContent = ' Start';
+        showToast('Project stopped', 'success');
+      }
+      
+      updateStatusBar();
+    }
+    
+    // Create new project
+    function createNewProject() {
+      const projectType = document.getElementById('project-type').value;
+      showToast(`New ${projectType} project created`, 'success');
+      toggleDialog('new-project-dialog', false);
+      
+      // Reset workspace (in a real app, this would create a new project)
+      controls = [];
+      selectedControlId = null;
+      canvas.querySelectorAll('.control').forEach(el => el.remove());
+      renderPropertyGrid();
+      projectIsDirty = false;
+      updateStatusBar();
+    }
+    
+    // Open project
+    function openProject() {
+      const projectName = document.getElementById('open-project-select').value;
+      showToast(`Project ${projectName} opened`, 'success');
+      toggleDialog('open-project-dialog', false);
+      
+      // Reset workspace (in a real app, this would load the project)
+      controls = [];
+      selectedControlId = null;
+      canvas.querySelectorAll('.control').forEach(el => el.remove());
+      renderPropertyGrid();
+      projectIsDirty = false;
+      updateStatusBar();
+    }
+    
+    // Save project
+    function saveProject() {
+      projectIsDirty = false;
+      updateStatusBar();
+      showToast('Project saved', 'success');
+    }
+    
+    // View code for selected control
+    function viewCode() {
+      if (!selectedControlId) {
+        showToast('No control selected', 'error');
+        return;
+      }
+      
+      openCodeWindow(selectedControlId);
+    }
+    
+    // Open code window
+    function openCodeWindow(controlId) {
+      currentCodeControlId = controlId;
+      const control = controls.find(c => c.id === controlId);
+      
+      if (!control) return;
+      
+      // Set code window title
+      document.getElementById('code-window-title').querySelector('.title-text').textContent = `Code Window - ${controlId}`;
+      
+      // Generate sample code
+      const eventType = control.type === 'CommandButton' ? 'Click' : 'Change';
+      const code = `Private Sub ${controlId}_${eventType}()\n  ' Add your code here\n  MsgBox "Hello from ${controlId}!"\nEnd Sub\n`;
+      document.getElementById('code-area').value = code;
+      
+      // Show window
+      toggleVisibility('code', true);
+    }
+    
+    // View form
+    function viewForm() {
+      if (!windows.main.visible || windows.main.minimized) {
+        toggleVisibility('main', true);
+        if (windows.main.minimized) {
+          toggleMinimize('main');
+        }
+        showToast('Form view active', 'success');
+      }
+    }
+    
+    // Toggle View menu options
+    function toggleViewWindow() {
+      if (!windows.project.visible) {
+        toggleVisibility('project', true);
+        showToast('Project Explorer opened', 'success');
+      } else if (!windows.property.visible) {
+        toggleVisibility('property', true);
+        showToast('Properties window opened', 'success');
+      } else {
+        showToast('View menu clicked', 'success');
+      }
+    }
+    
+    // Toggle Window menu options
+    function toggleWindows() {
+      if (!windows.main.visible) {
+        toggleVisibility('main', true);
+        showToast('Form Designer opened', 'success');
+      } else if (!windows.property.visible) {
+        toggleVisibility('property', true);
+        showToast('Properties window opened', 'success');
+      } else if (!windows.project.visible) {
+        toggleVisibility('project', true);
+        showToast('Project Explorer opened', 'success');
+      } else {
+        showToast('Window menu clicked', 'success');
+      }
+    }
+    
+    // Format selected control
+    function formatControl() {
+      if (selectedControlId) {
+        showToast('Control formatted', 'success');
+      } else {
+        showToast('No control selected', 'error');
+      }
+    }
+    
+    // Create new file
+    function createNewFile(type) {
+      const fileExtension = type === 'form' ? 'frm' : type === 'module' ? 'bas' : 'cls';
+      const fileName = `New${type.charAt(0).toUpperCase() + type.slice(1)}1.${fileExtension}`;
+      showToast(`Created new ${type}: ${fileName}`, 'success');
+    }
+    
+    // Setup project explorer listeners
+    function setupProjectExplorerListeners() {
+      const folderItems = document.querySelectorAll('.folder-item');
+      const fileEntries = document.querySelectorAll('.file-entry');
+      
+      folderItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const folderName = this.getAttribute('data-folder');
+          const sublist = this.nextElementSibling;
+          
+          if (sublist && sublist.classList.contains('file-tree')) {
+            if (sublist.style.display === 'none') {
+              sublist.style.display = 'block';
+              this.querySelector('.icon').textContent = '📂';
+            } else {
+              sublist.style.display = 'none';
+              this.querySelector('.icon').textContent = '📁';
+            }
+          }
+        });
+        
+        // Setup context menu for folders
+        item.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          showContextMenu(e.clientX, e.clientY);
+        });
+      });
+      
+      fileEntries.forEach(item => {
+        item.addEventListener('click', function() {
+          const fileName = this.getAttribute('data-file');
+          showToast(`File opened: ${fileName}`, 'success');
+        });
+        
+        // Setup context menu for files
+        item.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          showContextMenu(e.clientX, e.clientY);
+        });
+      });
+    }
+    
+    // Setup context menu
+    function setupContextMenu() {
+      const contextMenu = document.getElementById('context-menu');
+      
+      document.getElementById('context-add-form').addEventListener('click', function() {
+        createNewFile('form');
+        hideContextMenu();
+      });
+      
+      document.getElementById('context-add-module').addEventListener('click', function() {
+        createNewFile('module');
+        hideContextMenu();
+      });
+      
+      document.getElementById('context-add-class').addEventListener('click', function() {
+        createNewFile('class');
+        hideContextMenu();
+      });
+      
+      document.getElementById('context-properties').addEventListener('click', function() {
+        showToast('Properties clicked', 'success');
+        hideContextMenu();
+      });
+      
+      // Hide context menu on document click
+      document.addEventListener('click', function(e) {
+        if (!contextMenu.contains(e.target)) {
+          hideContextMenu();
+        }
+      });
+    }
+    
+    // Show context menu
+    function showContextMenu(x, y) {
+      const contextMenu = document.getElementById('context-menu');
+      contextMenu.style.left = `${x}px`;
+      contextMenu.style.top = `${y}px`;
+      contextMenu.style.display = 'block';
+    }
+    
+    // Hide context menu
+    function hideContextMenu() {
+      document.getElementById('context-menu').style.display = 'none';
+    }
+    
+    // Show toast notification
+    function showToast(message, type = 'success') {
+      const toastContainer = document.getElementById('toast-container');
+      
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      
+      toastContainer.appendChild(toast);
+      
+      // Auto remove after 3 seconds
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    }
+    
+    // Update status bar
+    function updateStatusBar() {
+      document.getElementById('status-mode').textContent = isRunning ? 'Running...' : 'Design';
+      document.getElementById('status-state').textContent = projectIsDirty ? 'Modified' : 'Saved';
+    }
+    
+    // Initialize the application
+    window.addEventListener('load', init);
+  </script>
+</body>
 </html>
