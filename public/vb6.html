@@ -4,141 +4,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visual Basic 6.0 IDE</title>
+  <title>Visual Basic 6.0 Web IDE</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
   <style>
-    * {
-      box-sizing: border-box;
+    /* Global Styles */
+    body {
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      background-color: #87CEEB;
     }
     
-    body {
-      background-color: #87CEEB;
+    /* Reset */
+    * {
+      box-sizing: border-box;
+    }
+    
+    /* Windows 98/VB6 Style UI Components */
+    .win98-btn {
+      background-color: #D4D0C8;
+      border: 1px solid #808080;
+      border-top: 1px solid #FFFFFF;
+      border-left: 1px solid #FFFFFF;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    .win98-btn:hover {
+      background-color: #C0C0C0;
+    }
+    
+    .win98-btn.menu-btn {
+      background-color: #000080;
+      color: white;
+      border: 1px solid white;
+      font-weight: bold;
+      margin-right: 2px;
+    }
+    
+    .win98-window {
+      background-color: #F0F0F0;
+      border: 2px solid #000080;
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+      position: absolute;
       overflow: hidden;
     }
     
-    .menu-bar {
-      width: 100%;
-      height: 22px;
-      background-color: #D4D0C8;
-      border-bottom: 2px solid #000080;
-      display: flex;
-      align-items: center;
-      padding: 0 2px;
-      position: relative;
-      z-index: 1000;
-    }
-    
-    .menu-button {
-      background-color: #D4D0C8;
-      border: 1px solid #D4D0C8;
-      color: #000;
-      padding: 2px 8px;
-      margin-right: 4px;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    
-    .menu-button.active {
-      background-color: #000080;
-      border: 1px solid white;
-      color: white;
-    }
-    
-    .menu-dropdown {
-      position: absolute;
-      background-color: #D4D0C8;
-      border: 1px solid #808080;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-      z-index: 1001;
-      display: none;
-    }
-    
-    .menu-dropdown.show {
-      display: block;
-    }
-    
-    .menu-item {
-      padding: 4px 20px 4px 10px;
-      cursor: pointer;
-      white-space: nowrap;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-    }
-    
-    .menu-item:hover {
+    .win98-title-bar {
       background-color: #000080;
       color: white;
-    }
-    
-    .menu-separator {
-      height: 1px;
-      background-color: #808080;
-      margin: 4px 0;
-    }
-    
-    .toolbar {
-      width: 100%;
-      height: 36px;
-      background-color: #D4D0C8;
-      border-bottom: 2px solid #000080;
+      padding: 2px 4px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      padding: 0 4px;
+      cursor: move;
     }
     
-    .toolbar-button {
+    .win98-title {
+      font-weight: bold;
+    }
+    
+    .win98-controls {
+      display: flex;
+      gap: 2px;
+    }
+    
+    .win98-control {
       background-color: #D4D0C8;
       border: 1px solid #808080;
-      border-radius: 2px;
-      padding: 3px 6px;
-      margin-right: 5px;
+      color: black;
+      padding: 0px 4px;
       cursor: pointer;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
     }
     
-    .toolbar-button:hover {
-      background-color: #E6E6E6;
+    .win98-control:hover {
+      background-color: #C0C0C0;
     }
     
-    .toolbar-separator {
-      width: 1px;
-      height: 24px;
-      background-color: #808080;
-      margin: 0 8px;
-    }
-    
+    /* Toolbox Styling */
     .toolbox {
-      position: absolute;
-      left: 0;
-      top: 60px;
       width: 200px;
-      height: calc(100vh - 60px - 20px);
+      height: calc(100vh - 32px);
       background-color: #F0F0F0;
       border-right: 2px solid #000080;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      z-index: 20;
-      overflow: hidden;
+      position: absolute;
+      left: 0;
+      top: 52px;
     }
     
-    .toolbox-header {
+    .toolbox-title {
       background-color: #000080;
       color: white;
-      font-weight: bold;
       text-align: center;
       padding: 2px;
+      font-weight: bold;
       cursor: pointer;
-      font-size: 12px;
-    }
-    
-    .toolbox-content {
-      height: calc(100% - 19px);
-      overflow-y: auto;
-      padding: 5px;
     }
     
     .toolbox-category {
@@ -149,2340 +111,2571 @@
       background-color: #D4D0C8;
       color: #000080;
       font-weight: bold;
-      padding: 2px 5px;
-      cursor: pointer;
+      padding: 2px 4px;
       border: 1px solid #808080;
-      font-size: 12px;
+      cursor: pointer;
     }
     
-    .toolbox-category-content {
-      padding: 3px 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.2s ease-out;
-    }
-    
-    .toolbox-category-content.expanded {
-      max-height: 500px;
-    }
-    
-    .toolbox-control {
-      padding: 3px 5px;
+    .toolbox-item {
       background-color: white;
       border: 1px solid #808080;
-      margin-bottom: 3px;
+      margin: 2px 4px;
+      padding: 2px 4px;
       cursor: move;
-      font-size: 12px;
-      position: relative;
-      display: flex;
-      justify-content: space-between;
     }
     
-    .delete-control {
-      color: red;
-      font-weight: bold;
-      cursor: pointer;
-      display: none;
-      font-size: 10px;
-      margin-left: 5px;
-    }
-    
-    .toolbox-control:hover .delete-control {
-      display: block;
-    }
-    
-    .main-window {
-      position: absolute;
-      left: 220px;
-      top: 60px;
-      width: 600px;
-      height: calc(100vh - 60px - 20px);
-      background-color: #F0F0F0;
-      border: 2px solid #000080;
-      border-radius: 2px;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-      z-index: 10;
-      overflow: hidden;
-    }
-    
-    .window-titlebar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 2px 5px;
-      background-color: #000080;
-      color: white;
-      cursor: move;
-      font-size: 12px;
-      user-select: none;
-    }
-    
-    .window-titlebar-buttons {
-      display: flex;
-      gap: 2px;
-    }
-    
-    .window-button {
-      width: 16px;
-      height: 14px;
-      background-color: #D4D0C8;
-      color: black;
-      border: 1px solid #808080;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 10px;
-    }
-    
-    .window-button:hover {
-      background-color: #C0C0C0;
-    }
-    
-    .form-canvas {
-      width: 100%;
-      height: calc(100% - 24px);
+    /* Designer Canvas */
+    .designer-canvas {
       background-color: white;
-      position: relative;
-      overflow: auto;
-    }
-    
-    .grid-background {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
-      display: grid;
-      grid-template-columns: repeat(40, 20px);
-      grid-template-rows: repeat(40, 20px);
-      pointer-events: none;
+      position: relative;
     }
     
     .grid-cell {
       border: 1px solid #F0F0F0;
+      position: absolute;
     }
     
+    /* Controls on canvas */
     .control {
       position: absolute;
       background-color: #D4D0C8;
       border: 1px solid #808080;
-      min-width: 20px;
-      min-height: 20px;
-      cursor: move;
-      z-index: 1;
     }
     
     .control.selected {
-      border: 1px dashed blue;
-      outline: 1px solid blue;
-      z-index: 2;
+      border: 2px solid blue;
     }
     
-    .control-resize {
+    .resize-handle {
+      width: 6px;
+      height: 6px;
+      background-color: blue;
       position: absolute;
-      width: 7px;
-      height: 7px;
-      background-color: white;
-      border: 1px solid blue;
-      z-index: 3;
-    }
-    
-    .control-resize-nw {
-      top: -4px;
-      left: -4px;
-      cursor: nw-resize;
-    }
-    
-    .control-resize-n {
-      top: -4px;
-      left: calc(50% - 3px);
-      cursor: n-resize;
-    }
-    
-    .control-resize-ne {
-      top: -4px;
-      right: -4px;
-      cursor: ne-resize;
-    }
-    
-    .control-resize-e {
-      top: calc(50% - 3px);
-      right: -4px;
-      cursor: e-resize;
-    }
-    
-    .control-resize-se {
-      bottom: -4px;
-      right: -4px;
+      bottom: 0;
+      right: 0;
       cursor: se-resize;
     }
     
-    .control-resize-s {
-      bottom: -4px;
-      left: calc(50% - 3px);
-      cursor: s-resize;
-    }
-    
-    .control-resize-sw {
-      bottom: -4px;
-      left: -4px;
-      cursor: sw-resize;
-    }
-    
-    .control-resize-w {
-      top: calc(50% - 3px);
-      left: -4px;
-      cursor: w-resize;
-    }
-    
-    .control.CommandButton {
-      padding: 2px 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .control.TextBox {
-      background-color: white;
-      border: 1px solid #808080;
-      padding: 2px;
-    }
-    
-    .control.TextBox input {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: transparent;
-      font-size: 12px;
-      outline: none;
-    }
-    
-    .control.Label {
-      background-color: transparent;
-      border: none;
-      display: flex;
-      align-items: center;
-    }
-    
-    .control.CheckBox {
-      background-color: transparent;
-      border: none;
-      display: flex;
-      align-items: center;
-    }
-    
-    .control.OptionButton {
-      background-color: transparent;
-      border: none;
-      display: flex;
-      align-items: center;
-    }
-    
-    .control.ComboBox {
-      background-color: white;
-      border: 1px solid #808080;
-      overflow: visible;
-    }
-    
-    .control.ListBox {
-      background-color: white;
-      border: 1px solid #808080;
-      overflow: auto;
-    }
-    
-    .control.Frame {
-      background-color: transparent;
-      border: 2px groove #D4D0C8;
-      padding-top: 10px;
-    }
-    
-    .control.Frame-header {
-      position: absolute;
-      top: -8px;
-      left: 10px;
-      background-color: #D4D0C8;
-      padding: 0 5px;
-      font-size: 12px;
-    }
-    
-    .property-window {
-      position: absolute;
-      right: 20px;
-      bottom: 20px;
-      width: 250px;
-      height: calc(50vh - 60px);
-      background-color: #F0F0F0;
-      border: 2px solid #000080;
-      border-radius: 2px;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-      z-index: 20;
-      overflow: hidden;
-    }
-    
-    .property-content {
-      height: calc(100% - 24px);
-      overflow-y: auto;
-    }
-    
-    .property-grid {
+    /* Properties Window */
+    .properties-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 1px;
+      overflow-y: auto;
     }
     
     .property-name {
       background-color: #D4D0C8;
       color: #000080;
       font-weight: bold;
-      padding: 2px 5px;
+      padding: 2px 4px;
       border: 1px solid #808080;
-      font-size: 12px;
     }
     
     .property-value {
       background-color: white;
-      padding: 1px;
+      padding: 2px 4px;
       border: 1px solid #808080;
     }
     
-    .property-value input, .property-value select {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: transparent;
-      font-size: 12px;
-      outline: none;
-    }
-    
-    .project-window {
-      position: absolute;
-      right: 20px;
-      top: 60px;
-      width: 250px;
-      height: calc(50vh - 60px);
-      background-color: #F0F0F0;
-      border: 2px solid #000080;
-      border-radius: 2px;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-      z-index: 20;
-      overflow: hidden;
-    }
-    
-    .project-content {
-      height: calc(100% - 24px);
-      overflow-y: auto;
-      padding: 5px;
-    }
-    
-    .project-item {
-      display: flex;
-      align-items: center;
-      padding: 2px 5px;
-      font-size: 12px;
+    /* Project Explorer */
+    .project-explorer-item {
+      margin: 2px 0;
       cursor: pointer;
-    }
-    
-    .project-item:hover {
-      background-color: #D4D0C8;
     }
     
     .project-folder {
       color: blue;
-      font-weight: bold;
-      margin-bottom: 2px;
+      font-weight: 500;
     }
     
     .project-file {
-      padding-left: 20px;
-      color: green;
+      color: darkgreen;
+      margin-left: 20px;
     }
     
-    .project-file.active {
-      font-weight: bold;
-    }
-    
-    .code-window {
+    /* Menu Dropdown */
+    .menu-dropdown {
       position: absolute;
-      left: 250px;
-      top: 100px;
-      width: 500px;
-      height: 400px;
-      background-color: #F0F0F0;
-      border: 2px solid #000080;
-      border-radius: 2px;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-      z-index: 30;
-      overflow: hidden;
-      display: none;
-    }
-    
-    .code-content {
-      height: calc(100% - 24px);
-      overflow: hidden;
-      padding: 2px;
-      background-color: white;
-    }
-    
-    .code-editor {
-      width: 100%;
-      height: 100%;
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      padding: 5px;
-      outline: none;
-      border: 1px solid #808080;
-      resize: none;
-      white-space: pre;
-      tab-size: 4;
-    }
-    
-    .run-window {
-      position: absolute;
-      left: 275px;
-      top: 120px;
-      width: 450px;
-      height: 350px;
-      background-color: #F0F0F0;
-      border: 2px solid #000080;
-      border-radius: 2px;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-      z-index: 50;
-      overflow: hidden;
-      display: none;
-    }
-    
-    .run-content {
-      height: calc(100% - 24px);
       background-color: #D4D0C8;
-      position: relative;
-      overflow: hidden;
+      border: 1px solid #808080;
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      display: none;
     }
     
-    .dialog {
+    .menu-dropdown.show {
+      display: block;
+    }
+    
+    .menu-item {
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+    
+    .menu-item:hover {
+      background-color: #000080;
+      color: white;
+    }
+    
+    /* Dialog Styles */
+    .dialog-overlay {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.3);
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 100;
-      display: none;
+      z-index: 9999;
+    }
+    
+    .dialog {
+      background-color: #D4D0C8;
+      border: 2px solid #808080;
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+      width: 400px;
+    }
+    
+    .dialog-title {
+      background-color: #000080;
+      color: white;
+      font-weight: bold;
+      padding: 4px;
+      display: flex;
+      justify-content: space-between;
     }
     
     .dialog-content {
-      background-color: #D4D0C8;
-      border: 2px solid #000080;
-      border-radius: 2px;
-      width: 350px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      padding: 10px;
     }
     
     .dialog-buttons {
       display: flex;
       justify-content: flex-end;
+      gap: 8px;
       padding: 10px;
-      gap: 5px;
     }
     
-    .dialog-button {
-      background-color: #D4D0C8;
-      border: 1px solid #808080;
-      border-radius: 2px;
-      padding: 3px 12px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    
-    .dialog-button:hover {
-      background-color: #E6E6E6;
-    }
-    
+    /* Status Bar */
     .status-bar {
       position: fixed;
       bottom: 0;
       left: 0;
-      width: 100%;
+      right: 0;
       height: 20px;
       background-color: #D4D0C8;
       border-top: 1px solid #808080;
       display: flex;
-      align-items: center;
+      padding: 0 4px;
       font-size: 12px;
     }
     
     .status-item {
-      flex: 1;
-      padding: 0 5px;
+      padding: 0 8px;
+      border-right: 1px solid #808080;
     }
     
-    .status-divider {
-      width: 1px;
-      height: 14px;
-      background-color: #808080;
-    }
-    
-    .notification {
+    /* Toasts */
+    .toast-container {
       position: fixed;
-      bottom: 25px;
-      right: 20px;
-      padding: 8px 15px;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10000;
+    }
+    
+    .toast {
+      background-color: white;
+      border: 1px solid #808080;
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      margin-top: 8px;
+      padding: 8px 12px;
+      max-width: 300px;
+      animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+      animation-fill-mode: forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-20px); }
+    }
+    
+    /* Code Editor */
+    .code-editor {
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      padding: 4px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .code-tabs {
+      display: flex;
+      background-color: #D4D0C8;
+      border-bottom: 1px solid #808080;
+    }
+    
+    .code-tab {
+      padding: 2px 8px;
       background-color: #D4D0C8;
       border: 1px solid #808080;
-      border-radius: 2px;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-      font-size: 12px;
-      display: none;
-      z-index: 1000;
-    }
-    
-    .notification.success {
-      border-left: 4px solid green;
-    }
-    
-    .notification.error {
-      border-left: 4px solid red;
-    }
-    
-    /* Context Menu Styles */
-    .context-menu {
-      position: absolute;
-      background-color: #D4D0C8;
-      border: 1px solid #808080;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-      z-index: 1000;
-      display: none;
-    }
-    
-    .context-menu-item {
-      padding: 4px 20px 4px 10px;
+      border-bottom: none;
+      margin-right: 2px;
       cursor: pointer;
-      white-space: nowrap;
-      font-size: 12px;
     }
     
-    .context-menu-item:hover {
-      background-color: #000080;
-      color: white;
+    .code-tab.active {
+      background-color: white;
+      position: relative;
+      z-index: 1;
     }
     
-    .context-menu-separator {
-      height: 1px;
+    .code-header {
+      display: flex;
+      padding: 2px;
+      background-color: #D4D0C8;
+      border-bottom: 1px solid #808080;
+    }
+    
+    .code-object-select, .code-event-select {
+      margin-right: 8px;
+      font-size: 14px;
+    }
+    
+    .code-content {
+      flex-grow: 1;
+      overflow: hidden;
+    }
+    
+    .code-textarea {
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      border: none;
+      padding: 4px;
+      resize: none;
+      overflow-y: auto;
+      color: black;
+    }
+    
+    .code-textarea:focus {
+      outline: none;
+    }
+    
+    /* Syntax highlighting */
+    .vb-keyword {
+      color: blue;
+      font-weight: bold;
+    }
+    
+    .vb-comment {
+      color: green;
+    }
+    
+    .vb-string {
+      color: maroon;
+    }
+    
+    /* Procedure Select UI */
+    .procedure-select {
+      display: flex;
+      background-color: #D4D0C8;
+      padding: 2px;
+      border-bottom: 1px solid #808080;
+    }
+    
+    /* Menu Bar extension */
+    .toolbar-separator {
+      width: 1px;
+      height: 20px;
       background-color: #808080;
-      margin: 4px 0;
+      margin: 0 8px;
     }
   </style>
 </head>
 <body>
   <!-- Menu Bar -->
-  <div class="menu-bar" id="menuBar">
-    <button class="menu-button" id="fileMenu">File</button>
-    <button class="menu-button" id="editMenu">Edit</button>
-    <button class="menu-button" id="viewMenu">View</button>
-    <button class="menu-button" id="projectMenu">Project</button>
-    <button class="menu-button" id="formatMenu">Format</button>
-    <button class="menu-button" id="debugMenu">Debug</button>
-    <button class="menu-button" id="runMenu">Run</button>
-    <button class="menu-button" id="toolsMenu">Tools</button>
-    <button class="menu-button" id="addInsMenu">Add-Ins</button>
-    <button class="menu-button" id="windowMenu">Window</button>
-    <button class="menu-button" id="helpMenu">Help</button>
-    
-    <!-- File Menu Dropdown -->
-    <div class="menu-dropdown" id="fileMenuDropdown">
-      <div class="menu-item" onclick="handleNewProject()">New Project...</div>
-      <div class="menu-item" onclick="handleOpenProject()">Open Project...</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item" onclick="handleSaveProject()">Save Project</div>
-      <div class="menu-item">Save Project As...</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Print...</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Exit</div>
-    </div>
-    
-    <!-- Edit Menu Dropdown -->
-    <div class="menu-dropdown" id="editMenuDropdown">
-      <div class="menu-item">Undo</div>
-      <div class="menu-item">Redo</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Cut</div>
-      <div class="menu-item">Copy</div>
-      <div class="menu-item">Paste</div>
-      <div class="menu-item">Delete</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Select All</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Find...</div>
-      <div class="menu-item">Replace...</div>
-    </div>
-    
-    <!-- View Menu Dropdown -->
-    <div class="menu-dropdown" id="viewMenuDropdown">
-      <div class="menu-item" onclick="toggleToolbox()">Toolbox</div>
-      <div class="menu-item" onclick="togglePropertyWindow()">Properties Window</div>
-      <div class="menu-item" onclick="toggleProjectWindow()">Project Explorer</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item" onclick="openCodeWindow()">Code</div>
-      <div class="menu-item" onclick="toggleMainWindow()">Object</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Form Layout Window</div>
-      <div class="menu-item">Immediate Window</div>
-      <div class="menu-item">Locals Window</div>
-      <div class="menu-item">Watch Window</div>
-    </div>
-    
-    <!-- Project Menu Dropdown -->
-    <div class="menu-dropdown" id="projectMenuDropdown">
-      <div class="menu-item">Add Form</div>
-      <div class="menu-item">Add Module</div>
-      <div class="menu-item">Add Class Module</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Remove Form</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Project Properties...</div>
-    </div>
-    
-    <!-- Format Menu Dropdown -->
-    <div class="menu-dropdown" id="formatMenuDropdown">
-      <div class="menu-item">Align</div>
-      <div class="menu-item">Make Same Size</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Horizontal Spacing</div>
-      <div class="menu-item">Vertical Spacing</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Center in Form</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Order</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Lock Controls</div>
-    </div>
-    
-    <!-- Debug Menu Dropdown -->
-    <div class="menu-dropdown" id="debugMenuDropdown">
-      <div class="menu-item">Start</div>
-      <div class="menu-item">Stop</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Step Into</div>
-      <div class="menu-item">Step Over</div>
-      <div class="menu-item">Step Out</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Toggle Breakpoint</div>
-      <div class="menu-item">Clear All Breakpoints</div>
-    </div>
-    
-    <!-- Run Menu Dropdown -->
-    <div class="menu-dropdown" id="runMenuDropdown">
-      <div class="menu-item" onclick="startProject()">Start</div>
-      <div class="menu-item" onclick="stopProject()">End</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Break</div>
-      <div class="menu-item">Step Into</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Run to Cursor</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Add Watch...</div>
-      <div class="menu-item">Edit Watch...</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Compile Project</div>
-      <div class="menu-item">Make EXE File...</div>
-    </div>
-    
-    <!-- Tools Menu Dropdown -->
-    <div class="menu-dropdown" id="toolsMenuDropdown">
-      <div class="menu-item">Menu Editor...</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Options...</div>
-    </div>
-    
-    <!-- Add-Ins Menu Dropdown -->
-    <div class="menu-dropdown" id="addInsMenuDropdown">
-      <div class="menu-item">Add-In Manager...</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">VB 6 API Viewer</div>
-      <div class="menu-item">Visual Data Manager</div>
-    </div>
-    
-    <!-- Window Menu Dropdown -->
-    <div class="menu-dropdown" id="windowMenuDropdown">
-      <div class="menu-item" onclick="toggleMainWindow()">Form Designer</div>
-      <div class="menu-item" onclick="togglePropertyWindow()">Properties Window</div>
-      <div class="menu-item" onclick="toggleProjectWindow()">Project Explorer</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Tile Horizontally</div>
-      <div class="menu-item">Tile Vertically</div>
-      <div class="menu-item">Cascade</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item">Arrange Icons</div>
-    </div>
-    
-    <!-- Help Menu Dropdown -->
-    <div class="menu-dropdown" id="helpMenuDropdown">
-      <div class="menu-item">Microsoft Visual Basic Help</div>
-      <div class="menu-separator"></div>
-      <div class="menu-item" onclick="showAboutDialog()">About Visual Basic...</div>
-    </div>
+  <div id="menu-bar" class="win98-menu-bar" style="background-color: #D4D0C8; height: 24px; display: flex; align-items: center; padding: 0 2px;">
+    <button id="file-menu-btn" class="win98-btn menu-btn" data-menu="file-menu">File</button>
+    <button id="edit-menu-btn" class="win98-btn menu-btn" data-menu="edit-menu">Edit</button>
+    <button id="view-menu-btn" class="win98-btn menu-btn" data-menu="view-menu">View</button>
+    <button id="project-menu-btn" class="win98-btn menu-btn" data-menu="project-menu">Project</button>
+    <button id="format-menu-btn" class="win98-btn menu-btn" data-menu="format-menu">Format</button>
+    <button id="debug-menu-btn" class="win98-btn menu-btn" data-menu="debug-menu">Debug</button>
+    <button id="run-menu-btn" class="win98-btn menu-btn" data-menu="run-menu">Run</button>
+    <button id="tools-menu-btn" class="win98-btn menu-btn" data-menu="tools-menu">Tools</button>
+    <button id="addins-menu-btn" class="win98-btn menu-btn" data-menu="addins-menu">Add-Ins</button>
+    <button id="window-menu-btn" class="win98-btn menu-btn" data-menu="window-menu">Window</button>
+    <button id="help-menu-btn" class="win98-btn menu-btn" data-menu="help-menu">Help</button>
   </div>
   
   <!-- Toolbar -->
-  <div class="toolbar">
-    <button class="toolbar-button" onclick="handleNewProject()">
-      <span style="margin-right: 3px;">📄</span> New
+  <div id="toolbar" style="background-color: #D4D0C8; height: 28px; display: flex; align-items: center; padding: 0 4px; border-bottom: 1px solid #808080;">
+    <button id="new-btn" class="win98-btn" style="display: flex; align-items: center; margin-right: 4px;">
+      <span style="margin-right: 4px;">📄</span> New
     </button>
-    <button class="toolbar-button" onclick="handleOpenProject()">
-      <span style="margin-right: 3px;">📂</span> Open
+    <button id="open-btn" class="win98-btn" style="display: flex; align-items: center; margin-right: 4px;">
+      <span style="margin-right: 4px;">📂</span> Open
     </button>
-    <button class="toolbar-button" onclick="handleSaveProject()">
-      <span style="margin-right: 3px;">💾</span> Save
-    </button>
-    <div class="toolbar-separator"></div>
-    <button class="toolbar-button" id="runButton" onclick="toggleRunProject()">
-      <span style="margin-right: 3px;">▶️</span> Start
+    <button id="save-btn" class="win98-btn" style="display: flex; align-items: center; margin-right: 4px;">
+      <span style="margin-right: 4px;">💾</span> Save
     </button>
     <div class="toolbar-separator"></div>
-    <button class="toolbar-button" onclick="openCodeWindow()">
-      <span style="margin-right: 3px;">📝</span> View Code
+    <button id="cut-btn" class="win98-btn" style="display: flex; align-items: center; margin-right: 4px;">
+      <span style="margin-right: 4px;">✂️</span> Cut
     </button>
-    <button class="toolbar-button" onclick="toggleMainWindow()">
-      <span style="margin-right: 3px;">📄</span> Form
+    <button id="copy-btn" class="win98-btn" style="display: flex; align-items: center; margin-right: 4px;">
+      <span style="margin-right: 4px;">📋</span> Copy
+    </button>
+    <button id="paste-btn" class="win98-btn" style="display: flex; align-items: center; margin-right: 4px;">
+      <span style="margin-right: 4px;">📌</span> Paste
+    </button>
+    <div class="toolbar-separator"></div>
+    <button id="start-btn" class="win98-btn" style="display: flex; align-items: center; margin-right: 4px;">
+      <span style="margin-right: 4px;">▶️</span> Start
+    </button>
+    <div class="toolbar-separator"></div>
+    <button id="view-code-btn" class="win98-btn" style="display: flex; align-items: center; margin-right: 4px;">
+      <span style="margin-right: 4px;">📝</span> View Code
+    </button>
+    <button id="view-form-btn" class="win98-btn" style="display: flex; align-items: center; margin-right: 4px;">
+      <span style="margin-right: 4px;">📄</span> Form
     </button>
   </div>
   
-  <!-- Toolbox -->
-  <div class="toolbox" id="toolbox">
-    <div class="toolbox-header" onclick="toggleToolboxContent()">Toolbox</div>
-    <div class="toolbox-content" id="toolboxContent">
+  <!-- Menu Dropdowns -->
+  <div id="file-menu" class="menu-dropdown">
+    <div class="menu-item" id="file-new">New Project...</div>
+    <div class="menu-item" id="file-open">Open Project...</div>
+    <div class="menu-item" id="file-close">Close Project</div>
+    <hr>
+    <div class="menu-item" id="file-save">Save Project</div>
+    <div class="menu-item" id="file-save-as">Save Project As...</div>
+    <hr>
+    <div class="menu-item" id="file-print">Print...</div>
+    <div class="menu-item" id="file-print-setup">Print Setup...</div>
+    <hr>
+    <div class="menu-item" id="file-make">Make Project1.exe...</div>
+    <div class="menu-item" id="file-make-options">Make Options...</div>
+    <hr>
+    <div class="menu-item" id="file-recent-files">Recent Files</div>
+    <hr>
+    <div class="menu-item" id="file-exit">Exit</div>
+  </div>
+  
+  <div id="edit-menu" class="menu-dropdown">
+    <div class="menu-item" id="edit-undo">Undo</div>
+    <div class="menu-item" id="edit-redo">Redo</div>
+    <hr>
+    <div class="menu-item" id="edit-cut">Cut</div>
+    <div class="menu-item" id="edit-copy">Copy</div>
+    <div class="menu-item" id="edit-paste">Paste</div>
+    <div class="menu-item" id="edit-delete">Delete</div>
+    <hr>
+    <div class="menu-item" id="edit-select-all">Select All</div>
+    <hr>
+    <div class="menu-item" id="edit-find">Find...</div>
+    <div class="menu-item" id="edit-find-next">Find Next</div>
+    <div class="menu-item" id="edit-replace">Replace...</div>
+    <hr>
+    <div class="menu-item" id="edit-indent">Indent</div>
+    <div class="menu-item" id="edit-outdent">Outdent</div>
+  </div>
+  
+  <div id="view-menu" class="menu-dropdown">
+    <div class="menu-item" id="view-code">Code</div>
+    <div class="menu-item" id="view-object">Object</div>
+    <div class="menu-item" id="view-definition">Definition</div>
+    <div class="menu-item" id="view-last-position">Last Position</div>
+    <hr>
+    <div class="menu-item" id="view-object-browser">Object Browser...</div>
+    <div class="menu-item" id="view-immediate-window">Immediate Window</div>
+    <div class="menu-item" id="view-locals-window">Locals Window</div>
+    <div class="menu-item" id="view-watch-window">Watch Window</div>
+    <hr>
+    <div class="menu-item" id="view-project-explorer">Project Explorer</div>
+    <div class="menu-item" id="view-properties-window">Properties Window</div>
+    <div class="menu-item" id="view-form-layout">Form Layout Window</div>
+    <hr>
+    <div class="menu-item" id="view-toolbox">Toolbox</div>
+    <div class="menu-item" id="view-color-palette">Color Palette</div>
+    <hr>
+    <div class="menu-item" id="view-tab-order">Tab Order...</div>
+  </div>
+  
+  <div id="project-menu" class="menu-dropdown">
+    <div class="menu-item" id="project-add-form">Add Form</div>
+    <div class="menu-item" id="project-add-module">Add Module</div>
+    <div class="menu-item" id="project-add-class">Add Class Module</div>
+    <div class="menu-item" id="project-add-usercontrol">Add User Control</div>
+    <div class="menu-item" id="project-add-property-page">Add Property Page</div>
+    <div class="menu-item" id="project-add-user-document">Add User Document</div>
+    <div class="menu-item" id="project-add-resource-file">Add Resource File...</div>
+    <div class="menu-item" id="project-add-file">Add File...</div>
+    <hr>
+    <div class="menu-item" id="project-remove">Remove Form1</div>
+    <hr>
+    <div class="menu-item" id="project-references">References...</div>
+    <div class="menu-item" id="project-components">Components...</div>
+    <hr>
+    <div class="menu-item" id="project-properties">Project1 Properties...</div>
+  </div>
+  
+  <div id="format-menu" class="menu-dropdown">
+    <div class="menu-item" id="format-align">Align</div>
+    <div class="menu-item" id="format-make-same-size">Make Same Size</div>
+    <div class="menu-item" id="format-size-to-grid">Size to Grid</div>
+    <div class="menu-item" id="format-horizontal-spacing">Horizontal Spacing</div>
+    <div class="menu-item" id="format-vertical-spacing">Vertical Spacing</div>
+    <hr>
+    <div class="menu-item" id="format-center-in-form">Center in Form</div>
+    <hr>
+    <div class="menu-item" id="format-lock-controls">Lock Controls</div>
+  </div>
+  
+  <div id="debug-menu" class="menu-dropdown">
+    <div class="menu-item" id="debug-start">Start</div>
+    <div class="menu-item" id="debug-start-with-full-compile">Start with Full Compile</div>
+    <div class="menu-item" id="debug-break">Break</div>
+    <div class="menu-item" id="debug-end">End</div>
+    <hr>
+    <div class="menu-item" id="debug-step-into">Step Into</div>
+    <div class="menu-item" id="debug-step-over">Step Over</div>
+    <div class="menu-item" id="debug-step-out">Step Out</div>
+    <div class="menu-item" id="debug-run-to-cursor">Run To Cursor</div>
+    <hr>
+    <div class="menu-item" id="debug-toggle-breakpoint">Toggle Breakpoint</div>
+    <div class="menu-item" id="debug-clear-all-breakpoints">Clear All Breakpoints</div>
+    <hr>
+    <div class="menu-item" id="debug-set-next-statement">Set Next Statement</div>
+    <div class="menu-item" id="debug-show-next-statement">Show Next Statement</div>
+    <hr>
+    <div class="menu-item" id="debug-quick-watch">Quick Watch...</div>
+    <div class="menu-item" id="debug-add-watch">Add Watch...</div>
+    <hr>
+    <div class="menu-item" id="debug-locals">Locals</div>
+    <div class="menu-item" id="debug-immediate">Immediate</div>
+    <div class="menu-item" id="debug-watch">Watch</div>
+  </div>
+  
+  <div id="run-menu" class="menu-dropdown">
+    <div class="menu-item" id="run-start">Start</div>
+    <div class="menu-item" id="run-start-with-full-compile">Start with Full Compile</div>
+    <div class="menu-item" id="run-break">Break</div>
+    <div class="menu-item" id="run-end">End</div>
+    <div class="menu-item" id="run-restart">Restart</div>
+  </div>
+  
+  <div id="tools-menu" class="menu-dropdown">
+    <div class="menu-item" id="tools-menu-editor">Menu Editor...</div>
+    <div class="menu-item" id="tools-options">Options...</div>
+  </div>
+  
+  <div id="addins-menu" class="menu-dropdown">
+    <div class="menu-item" id="addins-add-in-manager">Add-In Manager...</div>
+  </div>
+  
+  <div id="window-menu" class="menu-dropdown">
+    <div class="menu-item" id="window-new-window">New Window</div>
+    <hr>
+    <div class="menu-item" id="window-cascade">Cascade</div>
+    <div class="menu-item" id="window-tile-horizontally">Tile Horizontally</div>
+    <div class="menu-item" id="window-tile-vertically">Tile Vertically</div>
+    <div class="menu-item" id="window-arrange-icons">Arrange Icons</div>
+  </div>
+  
+  <div id="help-menu" class="menu-dropdown">
+    <div class="menu-item" id="help-contents">Microsoft Visual Basic Help</div>
+    <div class="menu-item" id="help-index">Index</div>
+    <div class="menu-item" id="help-search">Search</div>
+    <hr>
+    <div class="menu-item" id="help-tech-support">Technical Support</div>
+    <hr>
+    <div class="menu-item" id="help-about">About Microsoft Visual Basic...</div>
+  </div>
+  
+  <!-- Toolbox Window -->
+  <div id="toolbox" class="win98-window toolbox">
+    <div class="win98-title-bar" id="toolbox-title-bar">
+      <div class="win98-title">Toolbox</div>
+      <div class="win98-controls">
+        <div class="win98-control" id="toolbox-minimize">_</div>
+        <div class="win98-control" id="toolbox-close">✕</div>
+      </div>
+    </div>
+    <div id="toolbox-container" style="padding: 4px; height: calc(100% - 20px); overflow-y: auto;">
+      <!-- Common Controls -->
       <div class="toolbox-category">
-        <div class="toolbox-category-header" onclick="toggleCategory('commonControls')">
-          Common Controls
-        </div>
-        <div class="toolbox-category-content expanded" id="commonControls">
-          <div class="toolbox-control" draggable="true" data-control-type="Label" ondragstart="handleDragStart(event)">
-            Label
-            <span class="delete-control" onclick="deleteToolControl(event, 'Label')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="TextBox" ondragstart="handleDragStart(event)">
-            TextBox
-            <span class="delete-control" onclick="deleteToolControl(event, 'TextBox')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="CommandButton" ondragstart="handleDragStart(event)">
-            CommandButton
-            <span class="delete-control" onclick="deleteToolControl(event, 'CommandButton')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="CheckBox" ondragstart="handleDragStart(event)">
-            CheckBox
-            <span class="delete-control" onclick="deleteToolControl(event, 'CheckBox')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="OptionButton" ondragstart="handleDragStart(event)">
-            OptionButton
-            <span class="delete-control" onclick="deleteToolControl(event, 'OptionButton')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="ComboBox" ondragstart="handleDragStart(event)">
-            ComboBox
-            <span class="delete-control" onclick="deleteToolControl(event, 'ComboBox')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="ListBox" ondragstart="handleDragStart(event)">
-            ListBox
-            <span class="delete-control" onclick="deleteToolControl(event, 'ListBox')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="Frame" ondragstart="handleDragStart(event)">
-            Frame
-            <span class="delete-control" onclick="deleteToolControl(event, 'Frame')">✕</span>
-          </div>
+        <div class="toolbox-category-header" id="common-controls-header">Standard</div>
+        <div id="common-controls-container">
+          <div class="toolbox-item" draggable="true" data-control-type="Pointer">Pointer</div>
+          <div class="toolbox-item" draggable="true" data-control-type="PictureBox">PictureBox</div>
+          <div class="toolbox-item" draggable="true" data-control-type="Label">Label</div>
+          <div class="toolbox-item" draggable="true" data-control-type="TextBox">TextBox</div>
+          <div class="toolbox-item" draggable="true" data-control-type="Frame">Frame</div>
+          <div class="toolbox-item" draggable="true" data-control-type="CommandButton">CommandButton</div>
+          <div class="toolbox-item" draggable="true" data-control-type="CheckBox">CheckBox</div>
+          <div class="toolbox-item" draggable="true" data-control-type="OptionButton">OptionButton</div>
+          <div class="toolbox-item" draggable="true" data-control-type="ComboBox">ComboBox</div>
+          <div class="toolbox-item" draggable="true" data-control-type="ListBox">ListBox</div>
+          <div class="toolbox-item" draggable="true" data-control-type="HScrollBar">HScrollBar</div>
+          <div class="toolbox-item" draggable="true" data-control-type="VScrollBar">VScrollBar</div>
+          <div class="toolbox-item" draggable="true" data-control-type="Timer">Timer</div>
+          <div class="toolbox-item" draggable="true" data-control-type="DriveListBox">DriveListBox</div>
+          <div class="toolbox-item" draggable="true" data-control-type="DirListBox">DirListBox</div>
+          <div class="toolbox-item" draggable="true" data-control-type="FileListBox">FileListBox</div>
+          <div class="toolbox-item" draggable="true" data-control-type="Shape">Shape</div>
+          <div class="toolbox-item" draggable="true" data-control-type="Line">Line</div>
+          <div class="toolbox-item" draggable="true" data-control-type="Image">Image</div>
+          <div class="toolbox-item" draggable="true" data-control-type="Data">Data</div>
+          <div class="toolbox-item" draggable="true" data-control-type="OLE">OLE</div>
         </div>
       </div>
+      
+      <!-- Additional Controls -->
       <div class="toolbox-category">
-        <div class="toolbox-category-header" onclick="toggleCategory('additionalControls')">
-          Additional Controls
-        </div>
-        <div class="toolbox-category-content" id="additionalControls">
-          <div class="toolbox-control" draggable="true" data-control-type="Timer" ondragstart="handleDragStart(event)">
-            Timer
-            <span class="delete-control" onclick="deleteToolControl(event, 'Timer')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="PictureBox" ondragstart="handleDragStart(event)">
-            PictureBox
-            <span class="delete-control" onclick="deleteToolControl(event, 'PictureBox')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="Image" ondragstart="handleDragStart(event)">
-            Image
-            <span class="delete-control" onclick="deleteToolControl(event, 'Image')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="Shape" ondragstart="handleDragStart(event)">
-            Shape
-            <span class="delete-control" onclick="deleteToolControl(event, 'Shape')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="Line" ondragstart="handleDragStart(event)">
-            Line
-            <span class="delete-control" onclick="deleteToolControl(event, 'Line')">✕</span>
-          </div>
-          <div class="toolbox-control" draggable="true" data-control-type="Data" ondragstart="handleDragStart(event)">
-            Data
-            <span class="delete-control" onclick="deleteToolControl(event, 'Data')">✕</span>
-          </div>
-        </div>
-      </div>
-      <div class="toolbox-category">
-        <div class="toolbox-category-header" onclick="toggleCategory('userControls')">
-          Custom Controls
-        </div>
-        <div class="toolbox-category-content" id="userControls">
-          <div id="customControlsContainer">
-            <!-- Custom controls will be added here -->
-          </div>
-          <div style="margin-top: 10px;">
-            <input type="text" id="newControlName" placeholder="New Control Name" style="width: 70%; font-size: 12px; padding: 2px;">
-            <button onclick="addCustomControl()" style="width: 25%; font-size: 12px; margin-left: 5px;">Add</button>
-          </div>
+        <div class="toolbox-category-header" id="additional-controls-header">Additional Controls</div>
+        <div id="additional-controls-container" style="display: none;">
+          <div class="toolbox-item" draggable="true" data-control-type="WebBrowser">WebBrowser</div>
+          <div class="toolbox-item" draggable="true" data-control-type="CommonDialog">CommonDialog</div>
+          <div class="toolbox-item" draggable="true" data-control-type="RichTextBox">RichTextBox</div>
+          <div class="toolbox-item" draggable="true" data-control-type="ProgressBar">ProgressBar</div>
+          <div class="toolbox-item" draggable="true" data-control-type="Slider">Slider</div>
+          <div class="toolbox-item" draggable="true" data-control-type="ImageList">ImageList</div>
+          <div class="toolbox-item" draggable="true" data-control-type="TreeView">TreeView</div>
+          <div class="toolbox-item" draggable="true" data-control-type="ListView">ListView</div>
+          <div class="toolbox-item" draggable="true" data-control-type="TabStrip">TabStrip</div>
+          <div class="toolbox-item" draggable="true" data-control-type="StatusBar">StatusBar</div>
+          <div class="toolbox-item" draggable="true" data-control-type="ToolBar">ToolBar</div>
         </div>
       </div>
     </div>
   </div>
   
   <!-- Main Form Designer Window -->
-  <div class="main-window" id="mainWindow">
-    <div class="window-titlebar" id="mainWindowTitlebar">
-      <div>Form1.frm [Design]</div>
-      <div class="window-titlebar-buttons">
-        <div class="window-button" onclick="minimizeWindow('mainWindow')">_</div>
-        <div class="window-button" onclick="maximizeWindow('mainWindow')">□</div>
-        <div class="window-button" onclick="closeWindow('mainWindow')">✕</div>
+  <div id="form-designer" class="win98-window" style="left: 220px; top: 70px; width: 600px; height: calc(100vh - 120px); z-index: 10;">
+    <div class="win98-title-bar" id="form-designer-title-bar">
+      <div class="win98-title">Form1.frm [Design]</div>
+      <div class="win98-controls">
+        <div class="win98-control" id="form-designer-minimize">_</div>
+        <div class="win98-control" id="form-designer-maximize">□</div>
+        <div class="win98-control" id="form-designer-close">✕</div>
       </div>
     </div>
-    <div class="form-canvas" id="formCanvas">
-      <div class="grid-background" id="gridBackground"></div>
-      <!-- Form controls will be added here dynamically -->
+    <div id="designer-canvas" class="designer-canvas"></div>
+  </div>
+  
+  <!-- Project Explorer Window -->
+  <div id="project-explorer" class="win98-window" style="right: 20px; top: 70px; width: 250px; height: calc(50vh - 100px); z-index: 20;">
+    <div class="win98-title-bar" id="project-explorer-title-bar">
+      <div class="win98-title">Project Explorer</div>
+      <div class="win98-controls">
+        <div class="win98-control" id="project-explorer-minimize">_</div>
+        <div class="win98-control" id="project-explorer-close">✕</div>
+      </div>
+    </div>
+    <div style="padding: 4px; height: calc(100% - 20px); overflow-y: auto;">
+      <div style="margin-bottom: 4px; padding: 2px 4px; background-color: #D4D0C8; color: #000080; font-weight: bold;">
+        Project - Project1
+      </div>
+      <div class="project-explorer-item project-folder" data-folder="project1">
+        <span>📂 Project1</span>
+        <div style="margin-left: 16px;">
+          <div class="project-explorer-item project-file" data-file="form1.frm">📄 Form1 (Form1)</div>
+          <div class="project-explorer-item project-file" data-file="module1.bas">📝 Module1 (Module1)</div>
+          <div class="project-explorer-item project-file" data-file="class1.cls">📋 Class1 (Class1)</div>
+        </div>
+      </div>
     </div>
   </div>
   
   <!-- Properties Window -->
-  <div class="property-window" id="propertyWindow">
-    <div class="window-titlebar" id="propertyWindowTitlebar">
-      <div>Properties</div>
-      <div class="window-titlebar-buttons">
-        <div class="window-button" onclick="minimizeWindow('propertyWindow')">_</div>
-        <div class="window-button" onclick="maximizeWindow('propertyWindow')">□</div>
-        <div class="window-button" onclick="closeWindow('propertyWindow')">✕</div>
+  <div id="properties-window" class="win98-window" style="right: 20px; bottom: 20px; width: 250px; height: calc(50vh - 40px); z-index: 20;">
+    <div class="win98-title-bar" id="properties-title-bar">
+      <div class="win98-title">Properties</div>
+      <div class="win98-controls">
+        <div class="win98-control" id="properties-minimize">_</div>
+        <div class="win98-control" id="properties-close">✕</div>
       </div>
     </div>
-    <div class="property-content">
-      <div class="property-grid" id="propertyGrid">
+    <div style="height: calc(100% - 20px); overflow-hidden;">
+      <div style="background-color: #D4D0C8; display: flex; justify-content: center; padding: 2px;">
+        <button class="win98-btn" style="margin-right: 2px; font-size: 10px; width: 80px;">Alphabetic</button>
+        <button class="win98-btn" style="font-size: 10px; width: 80px;">Categorized</button>
+      </div>
+      <div id="property-object-name" style="background-color: #D4D0C8; padding: 4px; border-bottom: 1px solid #808080;">
+        Form1
+      </div>
+      <div id="no-selection" style="padding: 8px; color: #808080; font-style: italic;">
+        No control selected. Select a control to view its properties.
+      </div>
+      <div id="properties-grid" class="properties-grid" style="display: none; height: calc(100% - 60px); overflow-y: auto;">
         <!-- Properties will be added here dynamically -->
       </div>
     </div>
   </div>
   
-  <!-- Project Explorer Window -->
-  <div class="project-window" id="projectWindow">
-    <div class="window-titlebar" id="projectWindowTitlebar">
-      <div>Project Explorer</div>
-      <div class="window-titlebar-buttons">
-        <div class="window-button" onclick="minimizeWindow('projectWindow')">_</div>
-        <div class="window-button" onclick="maximizeWindow('projectWindow')">□</div>
-        <div class="window-button" onclick="closeWindow('projectWindow')">✕</div>
+  <!-- Code Editor Window (Initially Hidden) -->
+  <div id="code-window" class="win98-window" style="left: 250px; top: 100px; width: 650px; height: 500px; display: none; z-index: 30;">
+    <div class="win98-title-bar" id="code-window-title-bar">
+      <div class="win98-title">Form1 (Code)</div>
+      <div class="win98-controls">
+        <div class="win98-control" id="code-window-minimize">_</div>
+        <div class="win98-control" id="code-window-maximize">□</div>
+        <div class="win98-control" id="code-window-close">✕</div>
       </div>
     </div>
-    <div class="project-content">
-      <div class="project-item project-folder">Project1</div>
-      <div class="project-item project-file active">Form1.frm</div>
-      <div class="project-item project-file">Module1.bas</div>
-      <div class="project-item project-file">Class1.cls</div>
-      <div class="project-item project-folder">Forms</div>
-      <div class="project-item project-file" style="margin-left: 20px;">Form2.frm</div>
-      <div class="project-item project-file" style="margin-left: 20px;">Form3.frm</div>
-    </div>
-  </div>
-  
-  <!-- Code Window -->
-  <div class="code-window" id="codeWindow">
-    <div class="window-titlebar" id="codeWindowTitlebar">
-      <div id="codeWindowTitle">Code Window</div>
-      <div class="window-titlebar-buttons">
-        <div class="window-button" onclick="minimizeWindow('codeWindow')">_</div>
-        <div class="window-button" onclick="maximizeWindow('codeWindow')">□</div>
-        <div class="window-button" onclick="closeCodeWindow()">✕</div>
-      </div>
-    </div>
-    <div class="code-content">
-      <textarea class="code-editor" id="codeEditor" spellcheck="false"></textarea>
-    </div>
-  </div>
-  
-  <!-- Running Application Window -->
-  <div class="run-window" id="runWindow">
-    <div class="window-titlebar" id="runWindowTitlebar">
-      <div>Project1 [Running]</div>
-      <div class="window-titlebar-buttons">
-        <div class="window-button" onclick="stopProject()">✕</div>
-      </div>
-    </div>
-    <div class="run-content" id="runContent">
-      <!-- Running application controls will be added here -->
-    </div>
-  </div>
-  
-  <!-- About Dialog -->
-  <div class="dialog" id="aboutDialog">
-    <div class="dialog-content">
-      <div class="window-titlebar">
-        <div>About Visual Basic</div>
-      </div>
-      <div style="padding: 20px; text-align: center;">
-        <h2 style="font-size: 18px; margin-bottom: 10px;">Microsoft Visual Basic 6.0</h2>
-        <p style="margin-bottom: 5px;">This is a web-based recreation of the Visual Basic 6.0 IDE.</p>
-        <p style="margin-bottom: 15px;">Created with HTML, CSS, and JavaScript.</p>
-      </div>
-      <div class="dialog-buttons">
-        <button class="dialog-button" onclick="closeAboutDialog()">OK</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- New Project Dialog -->
-  <div class="dialog" id="newProjectDialog">
-    <div class="dialog-content">
-      <div class="window-titlebar">
-        <div>New Project</div>
-      </div>
-      <div style="padding: 20px;">
-        <div style="margin-bottom: 10px; font-weight: bold;">Project Type:</div>
-        <select style="width: 100%; padding: 3px; border: 1px solid #808080;">
-          <option>Standard EXE</option>
-          <option>ActiveX EXE</option>
-          <option>ActiveX DLL</option>
-          <option>ActiveX Control</option>
-          <option>VB Application Wizard</option>
-          <option>Data Project</option>
-          <option>IIS Application</option>
-          <option>Add-in</option>
+    <div class="code-editor">
+      <div class="procedure-select">
+        <select id="code-object-select" class="code-object-select">
+          <option>(General)</option>
+          <option>Form</option>
+        </select>
+        <select id="code-event-select" class="code-event-select">
+          <option>(Declarations)</option>
+          <option>Load</option>
+          <option>Unload</option>
+          <option>Click</option>
+          <option>DblClick</option>
+          <option>KeyPress</option>
         </select>
       </div>
-      <div class="dialog-buttons">
-        <button class="dialog-button" onclick="createNewProject()">OK</button>
-        <button class="dialog-button" onclick="closeNewProjectDialog()">Cancel</button>
+      <div class="code-content">
+        <textarea id="code-textarea" class="code-textarea" spellcheck="false"></textarea>
       </div>
     </div>
   </div>
-  
-  <!-- Open Project Dialog -->
-  <div class="dialog" id="openProjectDialog">
-    <div class="dialog-content">
-      <div class="window-titlebar">
-        <div>Open Project</div>
-      </div>
-      <div style="padding: 20px;">
-        <div style="margin-bottom: 10px; font-weight: bold;">Project Name:</div>
-        <select style="width: 100%; padding: 3px; border: 1px solid #808080;">
-          <option>Project1.vbp</option>
-          <option>Project2.vbp</option>
-          <option>Calculator.vbp</option>
-          <option>TextEditor.vbp</option>
-        </select>
-      </div>
-      <div class="dialog-buttons">
-        <button class="dialog-button" onclick="loadProject()">Open</button>
-        <button class="dialog-button" onclick="closeOpenProjectDialog()">Cancel</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Context Menu -->
-  <div class="context-menu" id="formContextMenu">
-    <div class="context-menu-item" onclick="viewCode()">View Code</div>
-    <div class="context-menu-item" onclick="deleteSelectedControl()">Delete</div>
-    <div class="context-menu-separator"></div>
-    <div class="context-menu-item" onclick="togglePropertyWindow()">Properties</div>
-  </div>
-  
-  <!-- Notification -->
-  <div class="notification" id="notification"></div>
   
   <!-- Status Bar -->
   <div class="status-bar">
-    <div class="status-item" id="statusMode">Design</div>
-    <div class="status-divider"></div>
-    <div class="status-item" id="statusSelection">Project1</div>
-    <div class="status-divider"></div>
-    <div class="status-item" id="statusState">Ready</div>
+    <div id="status-mode" class="status-item">Design</div>
+    <div id="status-selection" class="status-item">Project1</div>
+    <div id="status-saved" class="status-item">Saved</div>
+  </div>
+  
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+  
+  <!-- Dialogs (Initially Hidden) -->
+  <div id="about-dialog" class="dialog-overlay" style="display: none;">
+    <div class="dialog">
+      <div class="dialog-title">
+        <span>About Microsoft Visual Basic</span>
+        <span class="win98-control" id="about-dialog-close">✕</span>
+      </div>
+      <div class="dialog-content" style="text-align: center;">
+        <h2 style="font-size: 18px; margin: 8px 0;">Microsoft Visual Basic 6.0</h2>
+        <p style="margin: 8px 0;">Professional Edition</p>
+        <p style="margin: 8px 0;">Copyright &copy; 1987-1998 Microsoft Corp.</p>
+        <p style="margin: 8px 0; font-size: 12px;">This is a web-based recreation of the Visual Basic 6.0 IDE.</p>
+      </div>
+      <div class="dialog-buttons">
+        <button class="win98-btn" id="about-dialog-system-info">System Info...</button>
+        <button class="win98-btn" id="about-dialog-ok">OK</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="new-project-dialog" class="dialog-overlay" style="display: none;">
+    <div class="dialog">
+      <div class="dialog-title">
+        <span>New Project</span>
+        <span class="win98-control" id="new-project-dialog-close">✕</span>
+      </div>
+      <div class="dialog-content">
+        <div style="margin-bottom: 8px;">
+          <div style="font-weight: bold; margin-bottom: 4px;">New</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+            <div style="text-align: center; cursor: pointer;">
+              <div style="background-color: white; border: 1px solid #808080; padding: 8px; margin-bottom: 4px;">
+                <div style="font-size: 24px;">📄</div>
+              </div>
+              <div style="font-size: 12px;">Standard EXE</div>
+            </div>
+            <div style="text-align: center; cursor: pointer;">
+              <div style="background-color: white; border: 1px solid #808080; padding: 8px; margin-bottom: 4px;">
+                <div style="font-size: 24px;">🧩</div>
+              </div>
+              <div style="font-size: 12px;">ActiveX DLL</div>
+            </div>
+            <div style="text-align: center; cursor: pointer;">
+              <div style="background-color: white; border: 1px solid #808080; padding: 8px; margin-bottom: 4px;">
+                <div style="font-size: 24px;">🔌</div>
+              </div>
+              <div style="font-size: 12px;">ActiveX EXE</div>
+            </div>
+            <div style="text-align: center; cursor: pointer;">
+              <div style="background-color: white; border: 1px solid #808080; padding: 8px; margin-bottom: 4px;">
+                <div style="font-size: 24px;">🎮</div>
+              </div>
+              <div style="font-size: 12px;">ActiveX Control</div>
+            </div>
+            <div style="text-align: center; cursor: pointer;">
+              <div style="background-color: white; border: 1px solid #808080; padding: 8px; margin-bottom: 4px;">
+                <div style="font-size: 24px;">🧙‍♂️</div>
+              </div>
+              <div style="font-size: 12px;">VB Application Wizard</div>
+            </div>
+            <div style="text-align: center; cursor: pointer;">
+              <div style="background-color: white; border: 1px solid #808080; padding: 8px; margin-bottom: 4px;">
+                <div style="font-size: 24px;">🗄️</div>
+              </div>
+              <div style="font-size: 12px;">Data Project</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <div style="font-weight: bold; margin-bottom: 4px;">Recent</div>
+          <select style="width: 100%; height: 80px; border: 1px solid #808080; background-color: white;" multiple>
+            <option>Project1.vbp</option>
+            <option>Calc.vbp</option>
+            <option>TextEditor.vbp</option>
+          </select>
+        </div>
+      </div>
+      <div class="dialog-buttons">
+        <button class="win98-btn" id="new-project-dialog-ok">Open</button>
+        <button class="win98-btn" id="new-project-dialog-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="open-project-dialog" class="dialog-overlay" style="display: none;">
+    <div class="dialog">
+      <div class="dialog-title">
+        <span>Open Project</span>
+        <span class="win98-control" id="open-project-dialog-close">✕</span>
+      </div>
+      <div class="dialog-content">
+        <div style="margin-bottom: 8px;">
+          <div style="font-weight: bold; margin-bottom: 4px;">Look in:</div>
+          <div style="display: flex; align-items: center; border: 1px solid #808080; padding: 2px; background-color: white; margin-bottom: 8px;">
+            <select style="flex-grow: 1; border: none;">
+              <option>C:\\VB Projects</option>
+            </select>
+            <div style="display: flex; border-left: 1px solid #808080; padding-left: 4px;">
+              <button class="win98-btn" style="margin-right: 2px; font-size: 10px; padding: 0 4px;">↑</button>
+              <button class="win98-btn" style="font-size: 10px; padding: 0 4px;">📁</button>
+            </div>
+          </div>
+          <select id="open-project-select" style="width: 100%; height: 150px; border: 1px solid #808080; margin-bottom: 8px;">
+            <option>Project1.vbp</option>
+            <option>Calculator.vbp</option>
+            <option>TextEditor.vbp</option>
+            <option>AddressBook.vbp</option>
+          </select>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <div>
+              <div style="font-weight: bold; margin-bottom: 4px;">File name:</div>
+              <input type="text" style="width: 250px; border: 1px solid #808080; padding: 2px;">
+            </div>
+            <div>
+              <div style="font-weight: bold; margin-bottom: 4px;">Files of type:</div>
+              <select style="width: 150px; border: 1px solid #808080; padding: 2px;">
+                <option>Visual Basic Projects (*.vbp)</option>
+                <option>All Files (*.*)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dialog-buttons">
+        <button class="win98-btn" id="open-project-dialog-open">Open</button>
+        <button class="win98-btn" id="open-project-dialog-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="delete-control-dialog" class="dialog-overlay" style="display: none;">
+    <div class="dialog">
+      <div class="dialog-title">
+        <span>Microsoft Visual Basic</span>
+        <span class="win98-control" id="delete-control-dialog-close">✕</span>
+      </div>
+      <div class="dialog-content">
+        <p>Are you sure you want to delete this control?</p>
+      </div>
+      <div class="dialog-buttons">
+        <button class="win98-btn" id="delete-control-dialog-yes">Yes</button>
+        <button class="win98-btn" id="delete-control-dialog-no">No</button>
+      </div>
+    </div>
   </div>
   
   <script>
-    // Global Variables
-    let isDragging = false;
-    let isResizing = false;
-    let isRunning = false;
-    let activeMenuDropdown = null;
-    let projectIsDirty = false;
-    let controls = [];
-    let selectedControlId = null;
-    let dragStartX, dragStartY;
-    let resizeStartX, resizeStartY, resizeStartW, resizeStartH;
-    let resizeDirection = '';
-    let windowPositions = {};
-    let controlCodeMap = {}; // Maps control IDs to their code
-    let draggedControl = null;
-    let formCode = `Private Sub Form_Load()
-  ' Form initialization code here
-  Debug.Print "Form loaded"
-End Sub
-
-Private Sub Form_Unload(Cancel As Integer)
-  ' Form cleanup code here
-  Debug.Print "Form unloaded"
-End Sub
-`;
-    
-    // Window references
-    const mainWindow = document.getElementById('mainWindow');
-    const propertyWindow = document.getElementById('propertyWindow');
-    const projectWindow = document.getElementById('projectWindow');
-    const codeWindow = document.getElementById('codeWindow');
-    const runWindow = document.getElementById('runWindow');
-    const formCanvas = document.getElementById('formCanvas');
-    
-    // Initialize the grid
-    function initializeGrid() {
-      const gridBackground = document.getElementById('gridBackground');
-      gridBackground.innerHTML = '';
-      
-      for (let i = 0; i < 800; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'grid-cell';
-        gridBackground.appendChild(cell);
-      }
-    }
-    
-    // Initialize window positions
-    function initializeWindowPositions() {
-      // Store initial positions for later restoration
-      windowPositions = {
-        mainWindow: { left: '220px', top: '60px', width: '600px', height: 'calc(100vh - 60px - 20px)' },
-        propertyWindow: { right: '20px', bottom: '20px', width: '250px', height: 'calc(50vh - 60px)' },
-        projectWindow: { right: '20px', top: '60px', width: '250px', height: 'calc(50vh - 60px)' },
-        codeWindow: { left: '250px', top: '100px', width: '500px', height: '400px' },
-        runWindow: { left: '275px', top: '120px', width: '450px', height: '350px' }
-      };
-    }
-    
-    // Make windows draggable
-    function makeWindowDraggable(windowElement, titlebarElement) {
-      let offsetX, offsetY;
-      
-      titlebarElement.addEventListener('mousedown', (e) => {
-        if (e.target === titlebarElement) {
-          isDragging = true;
-          offsetX = e.clientX - windowElement.getBoundingClientRect().left;
-          offsetY = e.clientY - windowElement.getBoundingClientRect().top;
-          windowElement.style.zIndex = getHighestZIndex() + 1;
+    // Application State
+    const state = {
+      controls: [],
+      selectedControlId: null,
+      isInDesignMode: true,
+      isRunning: false,
+      projectIsDirty: false,
+      visibleWindows: {
+        mainWindow: true,
+        propertyWindow: true,
+        projectWindow: true,
+        codeWindow: false,
+        toolbox: true
+      },
+      minimizedWindows: {
+        mainWindow: false,
+        propertyWindow: false,
+        projectWindow: false,
+        codeWindow: false,
+        toolbox: false
+      },
+      expandedCategories: {
+        'Standard': true,
+        'Additional Controls': false
+      },
+      currentCodeModule: {
+        controlId: null,
+        objectName: "(General)",
+        eventName: "(Declarations)",
+        code: {
+          // Store code by object and event
+          // e.g. "Form1|Load" => "Private Sub Form_Load()\n  ' Code here\nEnd Sub"
         }
-      });
+      },
+      gridSize: 8, // Grid size in pixels for snap-to-grid
+      snapToGrid: true
+    };
+    
+    // Toast Notification System
+    const toast = {
+      container: document.getElementById('toast-container'),
       
-      document.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-          windowElement.style.left = (e.clientX - offsetX) + 'px';
-          windowElement.style.top = (e.clientY - offsetY) + 'px';
-          // Remove right/bottom positioning if they were set
-          windowElement.style.right = 'auto';
-          windowElement.style.bottom = 'auto';
+      show: function(message, type = 'success') {
+        const toastElement = document.createElement('div');
+        toastElement.className = 'toast';
+        toastElement.textContent = message;
+        
+        if (type === 'error') {
+          toastElement.style.backgroundColor = '#FFCCCC';
+          toastElement.style.borderColor = '#FF0000';
         }
-      });
-      
-      document.addEventListener('mouseup', () => {
-        isDragging = false;
-      });
-    }
-    
-    // Get highest z-index
-    function getHighestZIndex() {
-      const windows = [
-        mainWindow, propertyWindow, projectWindow, codeWindow, runWindow
-      ];
-      
-      let highest = 0;
-      windows.forEach(win => {
-        if (win) {
-          const zIndex = parseInt(window.getComputedStyle(win).zIndex, 10);
-          if (zIndex > highest) highest = zIndex;
-        }
-      });
-      
-      return highest;
-    }
-    
-    // Window operations
-    function closeWindow(windowId) {
-      document.getElementById(windowId).style.display = 'none';
-      showNotification(`${windowId.replace('Window', '')} window closed`, 'success');
-    }
-    
-    function minimizeWindow(windowId) {
-      const win = document.getElementById(windowId);
-      // Store current height
-      win.dataset.prevHeight = win.style.height;
-      win.style.height = '24px';
-      win.querySelector('.window-titlebar').nextElementSibling.style.display = 'none';
-    }
-    
-    function maximizeWindow(windowId) {
-      const win = document.getElementById(windowId);
-      if (win.dataset.prevHeight) {
-        win.style.height = win.dataset.prevHeight;
-        win.querySelector('.window-titlebar').nextElementSibling.style.display = 'block';
-      }
-    }
-    
-    function toggleWindow(windowId) {
-      const win = document.getElementById(windowId);
-      if (win.style.display === 'none') {
-        win.style.display = 'block';
-        win.style.zIndex = getHighestZIndex() + 1;
-      } else {
-        win.style.display = 'none';
-      }
-    }
-    
-    function toggleMainWindow() {
-      toggleWindow('mainWindow');
-    }
-    
-    function togglePropertyWindow() {
-      toggleWindow('propertyWindow');
-    }
-    
-    function toggleProjectWindow() {
-      toggleWindow('projectWindow');
-    }
-    
-    function toggleToolbox() {
-      toggleWindow('toolbox');
-    }
-    
-    // Menu Handlers
-    function setupMenus() {
-      const menus = [
-        'fileMenu', 'editMenu', 'viewMenu', 'projectMenu', 
-        'formatMenu', 'debugMenu', 'runMenu', 'toolsMenu', 
-        'addInsMenu', 'windowMenu', 'helpMenu'
-      ];
-      
-      menus.forEach(menuId => {
-        const menuButton = document.getElementById(menuId);
-        const menuDropdownId = menuId + 'Dropdown';
-        const menuDropdown = document.getElementById(menuDropdownId);
         
-        if (menuButton && menuDropdown) {
-          menuButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleMenu(menuId);
-          });
-        }
-      });
-      
-      // Close menu when clicking elsewhere
-      document.addEventListener('click', () => {
-        closeAllMenus();
-      });
-    }
-    
-    function toggleMenu(menuId) {
-      closeAllMenus();
-      
-      const menuButton = document.getElementById(menuId);
-      const menuDropdownId = menuId + 'Dropdown';
-      const menuDropdown = document.getElementById(menuDropdownId);
-      
-      if (menuDropdown) {
-        menuButton.classList.add('active');
-        menuDropdown.classList.add('show');
+        this.container.appendChild(toastElement);
         
-        // Position the dropdown properly
-        const buttonRect = menuButton.getBoundingClientRect();
-        menuDropdown.style.top = (buttonRect.bottom) + 'px';
-        menuDropdown.style.left = buttonRect.left + 'px';
-        
-        activeMenuDropdown = menuDropdownId;
-      }
-    }
-    
-    function closeAllMenus() {
-      // Remove active class from all menu buttons
-      const menuButtons = document.querySelectorAll('.menu-button');
-      menuButtons.forEach(button => button.classList.remove('active'));
-      
-      // Hide all menu dropdowns
-      const menuDropdowns = document.querySelectorAll('.menu-dropdown');
-      menuDropdowns.forEach(dropdown => dropdown.classList.remove('show'));
-      
-      activeMenuDropdown = null;
-    }
-    
-    // Toolbox operations
-    function toggleToolboxContent() {
-      const toolboxContent = document.getElementById('toolboxContent');
-      if (toolboxContent.style.display === 'none') {
-        toolboxContent.style.display = 'block';
-      } else {
-        toolboxContent.style.display = 'none';
-      }
-    }
-    
-    function toggleCategory(categoryId) {
-      const category = document.getElementById(categoryId);
-      category.classList.toggle('expanded');
-    }
-    
-    function deleteToolControl(event, controlType) {
-      event.stopPropagation();
-      const toolboxControl = event.target.closest('.toolbox-control');
-      if (toolboxControl) {
-        toolboxControl.remove();
-        showNotification(`${controlType} removed from toolbox`, 'success');
-      }
-    }
-    
-    function addCustomControl() {
-      const controlName = document.getElementById('newControlName').value.trim();
-      if (!controlName) {
-        showNotification('Please enter a control name', 'error');
-        return;
-      }
-      
-      const container = document.getElementById('customControlsContainer');
-      const controlDiv = document.createElement('div');
-      controlDiv.className = 'toolbox-control';
-      controlDiv.draggable = true;
-      controlDiv.dataset.controlType = controlName;
-      controlDiv.addEventListener('dragstart', handleDragStart);
-      
-      controlDiv.innerHTML = `
-        ${controlName}
-        <span class="delete-control" onclick="deleteToolControl(event, '${controlName}')">✕</span>
-      `;
-      
-      container.appendChild(controlDiv);
-      document.getElementById('newControlName').value = '';
-      
-      // Expand the custom controls category if it's not already expanded
-      document.getElementById('userControls').classList.add('expanded');
-      
-      showNotification(`Added ${controlName} to toolbox`, 'success');
-    }
-    
-    // Drag and Drop Operations
-    function handleDragStart(event) {
-      const controlType = event.target.getAttribute('data-control-type');
-      event.dataTransfer.setData('text/plain', controlType);
-      draggedControl = {
-        type: controlType,
-        element: event.target
-      };
-    }
-    
-    function setupFormCanvas() {
-      const canvas = document.getElementById('formCanvas');
-      
-      canvas.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        // Show a drop indicator
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        // Update status bar to show coordinates
-        document.getElementById('statusState').textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
-      });
-      
-      canvas.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const controlType = e.dataTransfer.getData('text/plain');
-        
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        createNewControl(controlType, x, y);
-        document.getElementById('statusState').textContent = 'Ready';
-      });
-      
-      canvas.addEventListener('click', (e) => {
-        if (e.target === canvas || e.target.id === 'gridBackground') {
-          selectControl(null);
-        }
-      });
-      
-      // Context menu
-      canvas.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        
-        const contextMenu = document.getElementById('formContextMenu');
-        contextMenu.style.display = 'block';
-        contextMenu.style.left = e.clientX + 'px';
-        contextMenu.style.top = e.clientY + 'px';
-        
-        // Hide context menu when clicking elsewhere
-        const hideMenu = () => {
-          contextMenu.style.display = 'none';
-          document.removeEventListener('click', hideMenu);
-        };
-        
+        // Auto remove after 3 seconds
         setTimeout(() => {
-          document.addEventListener('click', hideMenu);
-        }, 0);
-      });
-    }
-    
-    function createNewControl(controlType, x, y) {
-      const controlId = `${controlType}${controls.length + 1}`;
-      
-      // Default properties based on control type
-      const defaultProperties = {
-        name: controlId,
-        left: x,
-        top: y,
-        width: getDefaultWidth(controlType),
-        height: getDefaultHeight(controlType),
-        caption: controlType === 'Label' ? 'Label1' : controlId,
-        text: controlType === 'TextBox' ? '' : '',
-        visible: true,
-        enabled: true,
-        fontName: 'MS Sans Serif',
-        fontSize: 8,
-        foreColor: '#000000',
-        backColor: controlType === 'Label' ? 'transparent' : '#D4D0C8',
-        alignment: 0, // 0 = Left, 1 = Right, 2 = Center
-        borderStyle: controlType === 'Label' ? 0 : 1 // 0 = None, 1 = Fixed Single
-      };
-      
-      // Create the control and add it to our array
-      const control = {
-        id: controlId,
-        type: controlType,
-        properties: defaultProperties
-      };
-      
-      controls.push(control);
-      renderControl(control);
-      selectControl(controlId);
-      updateStatusSelection(controlId);
-      projectIsDirty = true;
-      
-      // Create default code for the control
-      const defaultCode = generateDefaultCode(control);
-      controlCodeMap[controlId] = defaultCode;
-      
-      showNotification(`Created ${controlType} control`, 'success');
-    }
-    
-    function getDefaultWidth(type) {
-      switch (type) {
-        case 'CommandButton': return 100;
-        case 'TextBox': return 150;
-        case 'Label': return 80;
-        case 'CheckBox': return 120;
-        case 'OptionButton': return 120;
-        case 'ComboBox': return 150;
-        case 'ListBox': return 150;
-        case 'Frame': return 200;
-        default: return 100;
-      }
-    }
-    
-    function getDefaultHeight(type) {
-      switch (type) {
-        case 'CommandButton': return 30;
-        case 'TextBox': return 24;
-        case 'Label': return 24;
-        case 'CheckBox': return 24;
-        case 'OptionButton': return 24;
-        case 'ComboBox': return 24;
-        case 'ListBox': return 100;
-        case 'Frame': return 150;
-        default: return 30;
-      }
-    }
-    
-    function renderControl(control) {
-      // Remove existing element if it exists
-      const existingElement = document.getElementById(control.id);
-      if (existingElement) {
-        existingElement.remove();
-      }
-      
-      const controlElement = document.createElement('div');
-      controlElement.id = control.id;
-      controlElement.className = `control ${control.type}`;
-      controlElement.dataset.type = control.type;
-      
-      // Set position and dimensions
-      controlElement.style.left = `${control.properties.left}px`;
-      controlElement.style.top = `${control.properties.top}px`;
-      controlElement.style.width = `${control.properties.width}px`;
-      controlElement.style.height = `${control.properties.height}px`;
-      
-      // Apply visual properties
-      if (control.properties.backColor !== 'transparent') {
-        controlElement.style.backgroundColor = control.properties.backColor;
-      }
-      controlElement.style.color = control.properties.foreColor;
-      controlElement.style.fontFamily = control.properties.fontName;
-      controlElement.style.fontSize = `${control.properties.fontSize}pt`;
-      
-      if (control.properties.alignment === 1) {
-        controlElement.style.textAlign = 'right';
-      } else if (control.properties.alignment === 2) {
-        controlElement.style.textAlign = 'center';
-      }
-      
-      if (control.properties.borderStyle === 0) {
-        controlElement.style.border = 'none';
-      }
-      
-      if (!control.properties.visible) {
-        controlElement.style.display = 'none';
-      }
-      
-      // Add control-specific content
-      let content = '';
-      switch (control.type) {
-        case 'CommandButton':
-          content = control.properties.caption;
-          break;
-        case 'TextBox':
-          content = `<input type="text" value="${control.properties.text}" ${control.properties.enabled ? '' : 'disabled'}>`;
-          break;
-        case 'Label':
-          content = control.properties.caption;
-          break;
-        case 'CheckBox':
-          content = `
-            <input type="checkbox" ${control.properties.enabled ? '' : 'disabled'}>
-            <span>${control.properties.caption}</span>
-          `;
-          break;
-        case 'OptionButton':
-          content = `
-            <input type="radio" name="optionGroup" ${control.properties.enabled ? '' : 'disabled'}>
-            <span>${control.properties.caption}</span>
-          `;
-          break;
-        case 'ComboBox':
-          content = `
-            <select ${control.properties.enabled ? '' : 'disabled'}>
-              <option>Item 1</option>
-              <option>Item 2</option>
-              <option>Item 3</option>
-            </select>
-          `;
-          break;
-        case 'ListBox':
-          content = `
-            <select multiple ${control.properties.enabled ? '' : 'disabled'}>
-              <option>Item 1</option>
-              <option>Item 2</option>
-              <option>Item 3</option>
-            </select>
-          `;
-          break;
-        case 'Frame':
-          content = `<div class="control-frame-header">${control.properties.caption}</div>`;
-          break;
-        default:
-          content = control.type;
-      }
-      
-      controlElement.innerHTML = content;
-      
-      // Make the control interactive
-      controlElement.addEventListener('mousedown', (e) => {
-        // Prevent default behavior for inputs, selects, etc.
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
-          if (control.type === 'TextBox') {
-            // For TextBox, we want to allow text editing but also make the control movable
-            // We'll handle this by checking if the user is clicking on the border rather than the input
-            const inputRect = e.target.getBoundingClientRect();
-            const controlRect = controlElement.getBoundingClientRect();
-            
-            // Check if the click is on the control border (within 5px of the edge)
-            const isOnBorder = 
-              e.clientX < inputRect.left + 5 || 
-              e.clientX > inputRect.right - 5 || 
-              e.clientY < inputRect.top + 5 || 
-              e.clientY > inputRect.bottom - 5;
-            
-            if (!isOnBorder) {
-              selectControl(control.id);
-              e.stopPropagation();
-              return; // Allow text input
+          toastElement.addEventListener('animationend', () => {
+            if (toastElement.parentNode === this.container) {
+              this.container.removeChild(toastElement);
             }
+          });
+        }, 3000);
+      },
+      
+      success: function(message) {
+        this.show(message, 'success');
+      },
+      
+      error: function(message) {
+        this.show(message, 'error');
+      }
+    };
+    
+    // Window Management System
+    const windows = {
+      makeWindowDraggable: function(windowEl, titleBarEl) {
+        let isDragging = false;
+        let offsetX = 0;
+        let offsetY = 0;
+        
+        titleBarEl.addEventListener('mousedown', (e) => {
+          if (e.target !== titleBarEl) return;
+          
+          isDragging = true;
+          const rect = windowEl.getBoundingClientRect();
+          offsetX = e.clientX - rect.left;
+          offsetY = e.clientY - rect.top;
+          
+          windowEl.style.zIndex = this.getHighestZIndex() + 1;
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          
+          const newLeft = e.clientX - offsetX;
+          const newTop = e.clientY - offsetY;
+          
+          windowEl.style.left = `${newLeft}px`;
+          windowEl.style.top = `${newTop}px`;
+        });
+        
+        document.addEventListener('mouseup', () => {
+          isDragging = false;
+        });
+      },
+      
+      getHighestZIndex: function() {
+        return Math.max(
+          parseInt(document.getElementById('form-designer').style.zIndex || 10),
+          parseInt(document.getElementById('properties-window').style.zIndex || 20),
+          parseInt(document.getElementById('project-explorer').style.zIndex || 20),
+          parseInt(document.getElementById('code-window').style.zIndex || 30),
+          parseInt(document.getElementById('toolbox').style.zIndex || 20)
+        );
+      },
+      
+      toggleMinimize: function(windowName) {
+        state.minimizedWindows[windowName] = !state.minimizedWindows[windowName];
+        
+        let windowElement;
+        let contentElement;
+        
+        switch (windowName) {
+          case 'mainWindow':
+            windowElement = document.getElementById('form-designer');
+            contentElement = document.getElementById('designer-canvas');
+            break;
+          case 'propertyWindow':
+            windowElement = document.getElementById('properties-window');
+            contentElement = windowElement.querySelector('.properties-grid').parentElement;
+            break;
+          case 'projectWindow':
+            windowElement = document.getElementById('project-explorer');
+            contentElement = windowElement.querySelector('div[style*="padding: 4px"]');
+            break;
+          case 'codeWindow':
+            windowElement = document.getElementById('code-window');
+            contentElement = windowElement.querySelector('.code-editor');
+            break;
+          case 'toolbox':
+            windowElement = document.getElementById('toolbox');
+            contentElement = document.getElementById('toolbox-container');
+            break;
+        }
+        
+        if (windowElement && contentElement) {
+          contentElement.style.display = state.minimizedWindows[windowName] ? 'none' : 'block';
+          windowElement.style.height = state.minimizedWindows[windowName] ? '20px' : windowElement.getAttribute('data-original-height') || windowElement.style.height;
+        }
+      },
+      
+      toggleVisibility: function(windowName) {
+        state.visibleWindows[windowName] = !state.visibleWindows[windowName];
+        
+        let windowElement;
+        
+        switch (windowName) {
+          case 'mainWindow':
+            windowElement = document.getElementById('form-designer');
+            break;
+          case 'propertyWindow':
+            windowElement = document.getElementById('properties-window');
+            break;
+          case 'projectWindow':
+            windowElement = document.getElementById('project-explorer');
+            break;
+          case 'codeWindow':
+            windowElement = document.getElementById('code-window');
+            break;
+          case 'toolbox':
+            windowElement = document.getElementById('toolbox');
+            break;
+        }
+        
+        if (windowElement) {
+          windowElement.style.display = state.visibleWindows[windowName] ? 'block' : 'none';
+        }
+      },
+      
+      saveWindowSizes: function() {
+        const windowElements = [
+          { el: document.getElementById('form-designer'), name: 'mainWindow' },
+          { el: document.getElementById('properties-window'), name: 'propertyWindow' },
+          { el: document.getElementById('project-explorer'), name: 'projectWindow' },
+          { el: document.getElementById('code-window'), name: 'codeWindow' },
+          { el: document.getElementById('toolbox'), name: 'toolbox' }
+        ];
+        
+        windowElements.forEach(item => {
+          if (item.el) {
+            item.el.setAttribute('data-original-height', item.el.style.height);
+          }
+        });
+      }
+    };
+    
+    // Menu System
+    const menuSystem = {
+      activeMenu: null,
+      
+      init: function() {
+        const menuButtons = document.querySelectorAll('[data-menu]');
+        
+        menuButtons.forEach(button => {
+          button.addEventListener('click', (e) => {
+            const menuId = button.getAttribute('data-menu');
+            this.toggleMenu(menuId, e);
+          });
+        });
+        
+        // Close menus when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('[data-menu]') && !e.target.closest('.menu-dropdown')) {
+            this.closeAllMenus();
+          }
+        });
+        
+        // Initialize menu item handlers
+        this.initMenuHandlers();
+      },
+      
+      toggleMenu: function(menuId, event) {
+        this.closeAllMenus();
+        
+        const menu = document.getElementById(menuId);
+        if (!menu) return;
+        
+        // Position the menu below the button
+        const buttonRect = event.target.getBoundingClientRect();
+        menu.style.top = `${buttonRect.bottom}px`;
+        menu.style.left = `${buttonRect.left}px`;
+        
+        menu.classList.add('show');
+        this.activeMenu = menu;
+        
+        event.stopPropagation();
+      },
+      
+      closeAllMenus: function() {
+        document.querySelectorAll('.menu-dropdown').forEach(menu => {
+          menu.classList.remove('show');
+        });
+        this.activeMenu = null;
+      },
+      
+      initMenuHandlers: function() {
+        // File menu handlers
+        document.getElementById('file-new').addEventListener('click', () => {
+          document.getElementById('new-project-dialog').style.display = 'flex';
+          this.closeAllMenus();
+        });
+        
+        document.getElementById('file-open').addEventListener('click', () => {
+          document.getElementById('open-project-dialog').style.display = 'flex';
+          this.closeAllMenus();
+        });
+        
+        document.getElementById('file-save').addEventListener('click', () => {
+          toast.success('Project saved');
+          state.projectIsDirty = false;
+          document.getElementById('status-saved').textContent = 'Saved';
+          this.closeAllMenus();
+        });
+        
+        // Edit menu handlers
+        document.getElementById('edit-delete').addEventListener('click', () => {
+          if (state.selectedControlId) {
+            document.getElementById('delete-control-dialog').style.display = 'flex';
           } else {
-            // For other controls with inputs, just select them
-            e.stopPropagation();
-            selectControl(control.id);
-            return;
+            toast.error('No control selected');
+          }
+          this.closeAllMenus();
+        });
+        
+        // View menu handlers
+        document.getElementById('view-project-explorer').addEventListener('click', () => {
+          windows.toggleVisibility('projectWindow');
+          this.closeAllMenus();
+        });
+        
+        document.getElementById('view-properties-window').addEventListener('click', () => {
+          windows.toggleVisibility('propertyWindow');
+          this.closeAllMenus();
+        });
+        
+        document.getElementById('view-toolbox').addEventListener('click', () => {
+          windows.toggleVisibility('toolbox');
+          this.closeAllMenus();
+        });
+        
+        document.getElementById('view-code').addEventListener('click', () => {
+          if (state.selectedControlId) {
+            codeEditorManager.openCodeWindow(state.selectedControlId);
+          } else {
+            codeEditorManager.openCodeWindow('Form1');
+          }
+          this.closeAllMenus();
+        });
+        
+        // Run menu handlers
+        document.getElementById('run-start').addEventListener('click', () => {
+          controlsManager.runProject();
+          this.closeAllMenus();
+        });
+        
+        document.getElementById('run-end').addEventListener('click', () => {
+          if (state.isRunning) {
+            controlsManager.stopProject();
+          }
+          this.closeAllMenus();
+        });
+        
+        // Help menu handlers
+        document.getElementById('help-about').addEventListener('click', () => {
+          document.getElementById('about-dialog').style.display = 'flex';
+          this.closeAllMenus();
+        });
+      }
+    };
+    
+    // Code Editor Manager
+    const codeEditorManager = {
+      codeWindow: document.getElementById('code-window'),
+      codeTextarea: document.getElementById('code-textarea'),
+      objectSelect: document.getElementById('code-object-select'),
+      eventSelect: document.getElementById('code-event-select'),
+      
+      init: function() {
+        // Set up event handlers for object/event selectors
+        this.objectSelect.addEventListener('change', () => {
+          this.updateEventOptions();
+          this.loadCodeForCurrentSelection();
+        });
+        
+        this.eventSelect.addEventListener('change', () => {
+          this.loadCodeForCurrentSelection();
+        });
+        
+        // Set up code save on text change
+        this.codeTextarea.addEventListener('input', () => {
+          this.saveCurrentCode();
+        });
+        
+        // Close button handler
+        document.getElementById('code-window-close').addEventListener('click', () => {
+          this.saveCurrentCode();
+          windows.toggleVisibility('codeWindow');
+        });
+        
+        // Basic syntax highlighting (simplified)
+        this.codeTextarea.addEventListener('keyup', () => {
+          // In a real implementation, we'd use a proper syntax highlighting library
+          // This is just a placeholder for the concept
+        });
+      },
+      
+      openCodeWindow: function(controlId) {
+        state.currentCodeModule.controlId = controlId;
+        
+        // Update title
+        let controlName = controlId;
+        const control = state.controls.find(c => c.id === controlId);
+        if (control) {
+          controlName = control.properties.name || controlId;
+        }
+        
+        document.getElementById('code-window-title-bar').querySelector('.win98-title').textContent = 
+          `${controlName} (Code)`;
+        
+        // Reset object/event selectors
+        this.updateObjectOptions(controlId);
+        this.updateEventOptions();
+        
+        // Load code
+        this.loadCodeForCurrentSelection();
+        
+        // Show code window
+        state.visibleWindows.codeWindow = true;
+        this.codeWindow.style.display = 'block';
+        this.codeWindow.style.zIndex = windows.getHighestZIndex() + 1;
+      },
+      
+      updateObjectOptions: function(controlId) {
+        // Clear existing options
+        this.objectSelect.innerHTML = '';
+        
+        // Always add General
+        const generalOption = document.createElement('option');
+        generalOption.value = "(General)";
+        generalOption.textContent = "(General)";
+        this.objectSelect.appendChild(generalOption);
+        
+        // Add control-specific option
+        if (controlId === 'Form1') {
+          const formOption = document.createElement('option');
+          formOption.value = "Form";
+          formOption.textContent = "Form";
+          this.objectSelect.appendChild(formOption);
+        } else {
+          const control = state.controls.find(c => c.id === controlId);
+          if (control) {
+            const controlOption = document.createElement('option');
+            controlOption.value = control.type;
+            controlOption.textContent = control.type;
+            this.objectSelect.appendChild(controlOption);
           }
         }
         
-        selectControl(control.id);
+        // Select the first option
+        this.objectSelect.selectedIndex = 0;
+        state.currentCodeModule.objectName = this.objectSelect.value;
+      },
+      
+      updateEventOptions: function() {
+        // Save current selection
+        const currentObject = this.objectSelect.value;
+        state.currentCodeModule.objectName = currentObject;
         
-        // Start drag operation
-        isDragging = true;
-        controlElement.style.zIndex = 10;
+        // Clear existing options
+        this.eventSelect.innerHTML = '';
         
-        const rect = controlElement.getBoundingClientRect();
-        dragStartX = e.clientX - rect.left;
-        dragStartY = e.clientY - rect.top;
-        
-        e.stopPropagation();
-      });
-      
-      controlElement.addEventListener('dblclick', () => {
-        openCodeWindowForControl(control.id);
-      });
-      
-      // Add input event to update property in real-time
-      if (control.type === 'TextBox') {
-        const input = controlElement.querySelector('input');
-        if (input) {
-          input.addEventListener('input', (e) => {
-            updateControlProperty(control.id, 'text', e.target.value);
-          });
-        }
-      }
-      
-      formCanvas.appendChild(controlElement);
-      
-      // If this is the selected control, add resize handles
-      if (control.id === selectedControlId) {
-        addResizeHandlesToControl(controlElement);
-      }
-    }
-    
-    function selectControl(controlId) {
-      // Deselect previous control
-      if (selectedControlId) {
-        const prevSelectedElement = document.getElementById(selectedControlId);
-        if (prevSelectedElement) {
-          prevSelectedElement.classList.remove('selected');
-          // Remove resize handles
-          const handles = prevSelectedElement.querySelectorAll('.control-resize');
-          handles.forEach(handle => handle.remove());
-        }
-      }
-      
-      selectedControlId = controlId;
-      
-      // Select new control
-      if (controlId) {
-        const selectedElement = document.getElementById(controlId);
-        if (selectedElement) {
-          selectedElement.classList.add('selected');
-          addResizeHandlesToControl(selectedElement);
-        }
-        
-        // Update property grid
-        const selectedControl = controls.find(c => c.id === controlId);
-        updatePropertyGrid(selectedControl);
-        updateStatusSelection(controlId);
-      } else {
-        // Clear property grid if nothing selected
-        clearPropertyGrid();
-        updateStatusSelection('Form');
-      }
-    }
-    
-    function addResizeHandlesToControl(controlElement) {
-      const resizePositions = [
-        { class: 'control-resize-nw', cursor: 'nw-resize' },
-        { class: 'control-resize-n', cursor: 'n-resize' },
-        { class: 'control-resize-ne', cursor: 'ne-resize' },
-        { class: 'control-resize-e', cursor: 'e-resize' },
-        { class: 'control-resize-se', cursor: 'se-resize' },
-        { class: 'control-resize-s', cursor: 's-resize' },
-        { class: 'control-resize-sw', cursor: 'sw-resize' },
-        { class: 'control-resize-w', cursor: 'w-resize' }
-      ];
-      
-      resizePositions.forEach(pos => {
-        const handle = document.createElement('div');
-        handle.className = `control-resize ${pos.class}`;
-        handle.style.cursor = pos.cursor;
-        
-        handle.addEventListener('mousedown', (e) => {
-          e.stopPropagation();
-          isResizing = true;
-          resizeDirection = pos.class.replace('control-resize-', '');
-          resizeStartX = e.clientX;
-          resizeStartY = e.clientY;
-          resizeStartW = controlElement.offsetWidth;
-          resizeStartH = controlElement.offsetHeight;
+        // Add appropriate events based on object type
+        if (currentObject === "(General)") {
+          const declarationsOption = document.createElement('option');
+          declarationsOption.value = "(Declarations)";
+          declarationsOption.textContent = "(Declarations)";
+          this.eventSelect.appendChild(declarationsOption);
+        } else if (currentObject === "Form") {
+          // Form-specific events
+          const events = ["Load", "Unload", "Activate", "Deactivate", "Click", "DblClick", "KeyPress", "KeyDown", "KeyUp", "MouseMove", "Resize"];
           
-          // Get control left and top for calculations
-          const rect = controlElement.getBoundingClientRect();
-          const canvasRect = formCanvas.getBoundingClientRect();
-          resizeStartLeft = rect.left - canvasRect.left;
-          resizeStartTop = rect.top - canvasRect.top;
-        });
-        
-        controlElement.appendChild(handle);
-      });
-    }
-    
-    // Handle resize operation
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging && selectedControlId && !isResizing) {
-        const controlElement = document.getElementById(selectedControlId);
-        if (!controlElement) return;
-        
-        const canvasRect = formCanvas.getBoundingClientRect();
-        const newLeft = e.clientX - canvasRect.left - dragStartX;
-        const newTop = e.clientY - canvasRect.top - dragStartY;
-        
-        // Snap to grid (every 5 pixels)
-        const snapGrid = 5;
-        const snappedLeft = Math.round(newLeft / snapGrid) * snapGrid;
-        const snappedTop = Math.round(newTop / snapGrid) * snapGrid;
-        
-        controlElement.style.left = `${snappedLeft}px`;
-        controlElement.style.top = `${snappedTop}px`;
-        
-        // Update control data
-        const controlIndex = controls.findIndex(c => c.id === selectedControlId);
-        if (controlIndex !== -1) {
-          controls[controlIndex].properties.left = snappedLeft;
-          controls[controlIndex].properties.top = snappedTop;
-          
-          // Update property grid
-          updatePropertyGrid(controls[controlIndex]);
-        }
-        
-        // Update status bar
-        document.getElementById('statusState').textContent = `X: ${snappedLeft}, Y: ${snappedTop}`;
-        
-        projectIsDirty = true;
-      }
-      
-      if (isResizing && selectedControlId) {
-        const controlElement = document.getElementById(selectedControlId);
-        if (!controlElement) return;
-        
-        const deltaX = e.clientX - resizeStartX;
-        const deltaY = e.clientY - resizeStartY;
-        
-        // Snap to grid (every 5 pixels)
-        const snapGrid = 5;
-        let newWidth = resizeStartW;
-        let newHeight = resizeStartH;
-        let newLeft = resizeStartLeft;
-        let newTop = resizeStartTop;
-        
-        // Handle different resize directions
-        switch (resizeDirection) {
-          case 'e':
-            newWidth = Math.round((resizeStartW + deltaX) / snapGrid) * snapGrid;
-            break;
-          case 'se':
-            newWidth = Math.round((resizeStartW + deltaX) / snapGrid) * snapGrid;
-            newHeight = Math.round((resizeStartH + deltaY) / snapGrid) * snapGrid;
-            break;
-          case 's':
-            newHeight = Math.round((resizeStartH + deltaY) / snapGrid) * snapGrid;
-            break;
-          case 'sw':
-            newWidth = Math.round((resizeStartW - deltaX) / snapGrid) * snapGrid;
-            newLeft = Math.round((resizeStartLeft + deltaX) / snapGrid) * snapGrid;
-            newHeight = Math.round((resizeStartH + deltaY) / snapGrid) * snapGrid;
-            break;
-          case 'w':
-            newWidth = Math.round((resizeStartW - deltaX) / snapGrid) * snapGrid;
-            newLeft = Math.round((resizeStartLeft + deltaX) / snapGrid) * snapGrid;
-            break;
-          case 'nw':
-            newWidth = Math.round((resizeStartW - deltaX) / snapGrid) * snapGrid;
-            newHeight = Math.round((resizeStartH - deltaY) / snapGrid) * snapGrid;
-            newLeft = Math.round((resizeStartLeft + deltaX) / snapGrid) * snapGrid;
-            newTop = Math.round((resizeStartTop + deltaY) / snapGrid) * snapGrid;
-            break;
-          case 'n':
-            newHeight = Math.round((resizeStartH - deltaY) / snapGrid) * snapGrid;
-            newTop = Math.round((resizeStartTop + deltaY) / snapGrid) * snapGrid;
-            break;
-          case 'ne':
-            newWidth = Math.round((resizeStartW + deltaX) / snapGrid) * snapGrid;
-            newHeight = Math.round((resizeStartH - deltaY) / snapGrid) * snapGrid;
-            newTop = Math.round((resizeStartTop + deltaY) / snapGrid) * snapGrid;
-            break;
-        }
-        
-        // Minimum size constraints
-        newWidth = Math.max(20, newWidth);
-        newHeight = Math.max(20, newHeight);
-        
-        // Update control element
-        controlElement.style.width = `${newWidth}px`;
-        controlElement.style.height = `${newHeight}px`;
-        controlElement.style.left = `${newLeft}px`;
-        controlElement.style.top = `${newTop}px`;
-        
-        // Update control data
-        const controlIndex = controls.findIndex(c => c.id === selectedControlId);
-        if (controlIndex !== -1) {
-          controls[controlIndex].properties.width = newWidth;
-          controls[controlIndex].properties.height = newHeight;
-          controls[controlIndex].properties.left = newLeft;
-          controls[controlIndex].properties.top = newTop;
-          
-          // Update property grid
-          updatePropertyGrid(controls[controlIndex]);
-        }
-        
-        // Update status bar
-        document.getElementById('statusState').textContent = `W: ${newWidth}, H: ${newHeight}`;
-        
-        projectIsDirty = true;
-      }
-    });
-    
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-      isResizing = false;
-      document.getElementById('statusState').textContent = 'Ready';
-    });
-    
-    // Property grid operations
-    function updatePropertyGrid(control) {
-      const propertyGrid = document.getElementById('propertyGrid');
-      propertyGrid.innerHTML = '';
-      
-      if (!control) {
-        propertyGrid.innerHTML = '<div class="property-name" style="grid-column: span 2; text-align: center;">No control selected</div>';
-        return;
-      }
-      
-      // Sort properties alphabetically
-      const properties = Object.entries(control.properties).sort((a, b) => a[0].localeCompare(b[0]));
-      
-      properties.forEach(([propertyName, propertyValue]) => {
-        const nameElement = document.createElement('div');
-        nameElement.className = 'property-name';
-        nameElement.textContent = propertyName;
-        
-        const valueElement = document.createElement('div');
-        valueElement.className = 'property-value';
-        
-        let inputElement;
-        
-        // Create appropriate input element based on property type
-        if (typeof propertyValue === 'boolean') {
-          inputElement = document.createElement('input');
-          inputElement.type = 'checkbox';
-          inputElement.checked = propertyValue;
-          inputElement.addEventListener('change', (e) => {
-            updateControlProperty(control.id, propertyName, e.target.checked);
-          });
-        } else if (propertyName === 'alignment') {
-          // Dropdown for alignment
-          inputElement = document.createElement('select');
-          const options = [
-            { value: 0, text: 'Left' },
-            { value: 1, text: 'Right' },
-            { value: 2, text: 'Center' }
-          ];
-          
-          options.forEach(opt => {
-            const option = document.createElement('option');
-            option.value = opt.value;
-            option.textContent = opt.text;
-            if (parseInt(propertyValue) === opt.value) {
-              option.selected = true;
-            }
-            inputElement.appendChild(option);
-          });
-          
-          inputElement.addEventListener('change', (e) => {
-            updateControlProperty(control.id, propertyName, parseInt(e.target.value));
-          });
-        } else if (propertyName === 'borderStyle') {
-          // Dropdown for border style
-          inputElement = document.createElement('select');
-          const options = [
-            { value: 0, text: 'None' },
-            { value: 1, text: 'Fixed Single' }
-          ];
-          
-          options.forEach(opt => {
-            const option = document.createElement('option');
-            option.value = opt.value;
-            option.textContent = opt.text;
-            if (parseInt(propertyValue) === opt.value) {
-              option.selected = true;
-            }
-            inputElement.appendChild(option);
-          });
-          
-          inputElement.addEventListener('change', (e) => {
-            updateControlProperty(control.id, propertyName, parseInt(e.target.value));
-          });
-        } else if (propertyName === 'backColor' || propertyName === 'foreColor') {
-          // Color picker
-          inputElement = document.createElement('input');
-          inputElement.type = 'color';
-          inputElement.value = propertyValue;
-          inputElement.addEventListener('change', (e) => {
-            updateControlProperty(control.id, propertyName, e.target.value);
-          });
-        } else if (typeof propertyValue === 'number') {
-          inputElement = document.createElement('input');
-          inputElement.type = 'number';
-          inputElement.value = propertyValue;
-          inputElement.addEventListener('change', (e) => {
-            updateControlProperty(control.id, propertyName, parseInt(e.target.value, 10));
+          events.forEach(event => {
+            const eventOption = document.createElement('option');
+            eventOption.value = event;
+            eventOption.textContent = event;
+            this.eventSelect.appendChild(eventOption);
           });
         } else {
-          inputElement = document.createElement('input');
-          inputElement.type = 'text';
-          inputElement.value = propertyValue;
-          inputElement.addEventListener('change', (e) => {
-            updateControlProperty(control.id, propertyName, e.target.value);
+          // Control-specific events
+          const commonEvents = ["Click", "DblClick", "GotFocus", "LostFocus", "Change", "KeyPress", "KeyDown", "KeyUp", "MouseDown", "MouseUp", "MouseMove"];
+          
+          commonEvents.forEach(event => {
+            const eventOption = document.createElement('option');
+            eventOption.value = event;
+            eventOption.textContent = event;
+            this.eventSelect.appendChild(eventOption);
           });
         }
         
-        valueElement.appendChild(inputElement);
+        // Select the first option
+        this.eventSelect.selectedIndex = 0;
+        state.currentCodeModule.eventName = this.eventSelect.value;
+      },
+      
+      getCodeKey: function() {
+        const controlId = state.currentCodeModule.controlId;
+        const objectName = state.currentCodeModule.objectName;
+        const eventName = state.currentCodeModule.eventName;
         
-        propertyGrid.appendChild(nameElement);
-        propertyGrid.appendChild(valueElement);
-      });
-    }
-    
-    function clearPropertyGrid() {
-      const propertyGrid = document.getElementById('propertyGrid');
-      propertyGrid.innerHTML = '<div class="property-name" style="grid-column: span 2; text-align: center;">No control selected</div>';
-    }
-    
-    function updateControlProperty(controlId, property, value) {
-      // Find the control
-      const controlIndex = controls.findIndex(c => c.id === controlId);
-      if (controlIndex === -1) return;
+        return `${controlId}|${objectName}|${eventName}`;
+      },
       
-      // Update property
-      controls[controlIndex].properties[property] = value;
-      
-      // Re-render the control
-      renderControl(controls[controlIndex]);
-      
-      // Re-select it to add resize handles
-      selectControl(controlId);
-      
-      projectIsDirty = true;
-    }
-    
-    // Code editor functions
-    function openCodeWindow() {
-      if (selectedControlId) {
-        openCodeWindowForControl(selectedControlId);
-      } else {
-        // Open form-level code
-        codeWindow.style.display = 'block';
-        codeWindow.style.zIndex = getHighestZIndex() + 1;
+      loadCodeForCurrentSelection: function() {
+        state.currentCodeModule.objectName = this.objectSelect.value;
+        state.currentCodeModule.eventName = this.eventSelect.value;
         
-        document.getElementById('codeWindowTitle').textContent = 'Form_Code';
-        document.getElementById('codeEditor').value = formCode;
-      }
-    }
-    
-    function openCodeWindowForControl(controlId) {
-      codeWindow.style.display = 'block';
-      codeWindow.style.zIndex = getHighestZIndex() + 1;
-      
-      const control = controls.find(c => c.id === controlId);
-      if (!control) return;
-      
-      document.getElementById('codeWindowTitle').textContent = `Code: ${controlId}`;
-      
-      // Check if we already have code for this control
-      const existingCode = controlCodeMap[controlId] || generateDefaultCode(control);
-      document.getElementById('codeEditor').value = existingCode;
-    }
-    
-    function generateDefaultCode(control) {
-      const eventType = control.type === 'CommandButton' ? 'Click' : 'Change';
-      
-      return `Private Sub ${control.id}_${eventType}()
-  ' Add your code here
-  MsgBox "Hello from ${control.id}!"
-End Sub
-`;
-    }
-    
-    // Save the code when code window is closed
-    function closeCodeWindow() {
-      const title = document.getElementById('codeWindowTitle').textContent;
-      const code = document.getElementById('codeEditor').value;
-      
-      if (title === 'Form_Code') {
-        formCode = code;
-      } else {
-        const controlId = title.replace('Code: ', '');
-        controlCodeMap[controlId] = code;
-      }
-      
-      codeWindow.style.display = 'none';
-      showNotification('Code saved', 'success');
-    }
-    
-    // Running project
-    function toggleRunProject() {
-      if (isRunning) {
-        stopProject();
-      } else {
-        startProject();
-      }
-    }
-    
-    function startProject() {
-      isRunning = true;
-      document.getElementById('runButton').innerHTML = '<span style="margin-right: 3px;">⏹️</span> Stop';
-      document.getElementById('statusMode').textContent = 'Running';
-      document.getElementById('statusState').textContent = 'Executing';
-      
-      // Show run window
-      runWindow.style.display = 'block';
-      runWindow.style.zIndex = getHighestZIndex() + 1;
-      
-      // Clone controls to run window
-      const runContent = document.getElementById('runContent');
-      runContent.innerHTML = '';
-      
-      controls.forEach(control => {
-        if (!control.properties.visible) return;
+        const codeKey = this.getCodeKey();
+        let code = state.currentCodeModule.code[codeKey] || '';
         
-        const runControlElement = document.createElement('div');
-        runControlElement.className = `control ${control.type}`;
-        runControlElement.style.left = `${control.properties.left}px`;
-        runControlElement.style.top = `${control.properties.top}px`;
-        runControlElement.style.width = `${control.properties.width}px`;
-        runControlElement.style.height = `${control.properties.height}px`;
-        runControlElement.style.backgroundColor = control.properties.backColor;
-        runControlElement.style.color = control.properties.foreColor;
-        runControlElement.style.fontFamily = control.properties.fontName;
-        runControlElement.style.fontSize = `${control.properties.fontSize}pt`;
-        
-        if (control.properties.alignment === 1) {
-          runControlElement.style.textAlign = 'right';
-        } else if (control.properties.alignment === 2) {
-          runControlElement.style.textAlign = 'center';
+        // If no code exists for this event and it's not declarations, generate a template
+        if (!code && state.currentCodeModule.eventName !== "(Declarations)") {
+          const controlId = state.currentCodeModule.controlId;
+          const objectName = state.currentCodeModule.objectName;
+          const eventName = state.currentCodeModule.eventName;
+          
+          // Generate appropriate procedure template
+          if (objectName === "Form") {
+            code = `Private Sub Form_${eventName}()\n  ' Add your code here\n  \nEnd Sub\n`;
+          } else {
+            // For controls
+            code = `Private Sub ${controlId}_${eventName}()\n  ' Add your code here\n  \nEnd Sub\n`;
+          }
+          
+          // Save this template code
+          state.currentCodeModule.code[codeKey] = code;
         }
         
-        if (control.properties.borderStyle === 0) {
-          runControlElement.style.border = 'none';
-        }
+        this.codeTextarea.value = code;
+      },
+      
+      saveCurrentCode: function() {
+        const codeKey = this.getCodeKey();
+        state.currentCodeModule.code[codeKey] = this.codeTextarea.value;
         
-        // Add interactive elements based on control type
-        switch(control.type) {
+        // Mark project as dirty
+        state.projectIsDirty = true;
+        document.getElementById('status-saved').textContent = 'Modified';
+      }
+    };
+    
+    // Controls Manager (for Designer Canvas)
+    const controlsManager = {
+      canvas: document.getElementById('designer-canvas'),
+      nextControlId: 1,
+      draggedControlType: null,
+      
+      init: function() {
+        // Set up canvas drag-and-drop
+        this.canvas.addEventListener('dragover', (e) => {
+          e.preventDefault();
+        });
+        
+        this.canvas.addEventListener('drop', (e) => {
+          e.preventDefault();
+          if (this.draggedControlType && this.draggedControlType !== 'Pointer') {
+            const canvasRect = this.canvas.getBoundingClientRect();
+            let x = e.clientX - canvasRect.left;
+            let y = e.clientY - canvasRect.top;
+            
+            // Apply snap to grid if enabled
+            if (state.snapToGrid) {
+              x = Math.round(x / state.gridSize) * state.gridSize;
+              y = Math.round(y / state.gridSize) * state.gridSize;
+            }
+            
+            this.addControlToCanvas(this.draggedControlType, x, y);
+          }
+        });
+        
+        // Initialize toolbox items
+        const toolboxItems = document.querySelectorAll('.toolbox-item');
+        toolboxItems.forEach(item => {
+          item.addEventListener('dragstart', (e) => {
+            this.draggedControlType = item.getAttribute('data-control-type');
+          });
+          
+          item.addEventListener('dragend', () => {
+            this.draggedControlType = null;
+          });
+        });
+        
+        // Set up click handler on canvas to deselect controls
+        this.canvas.addEventListener('click', (e) => {
+          if (e.target === this.canvas) {
+            this.selectControl(null);
+          }
+        });
+        
+        // Set up key handler for deleting controls
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Delete' && state.selectedControlId) {
+            document.getElementById('delete-control-dialog').style.display = 'flex';
+          }
+        });
+        
+        // Initialize canvas grid
+        this.initializeGrid();
+      },
+      
+      initializeGrid: function() {
+        const gridSize = state.gridSize;
+        const width = this.canvas.offsetWidth;
+        const height = this.canvas.offsetHeight;
+        
+        for (let y = 0; y < Math.floor(height / gridSize); y++) {
+          for (let x = 0; x < Math.floor(width / gridSize); x++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            cell.style.left = `${x * gridSize}px`;
+            cell.style.top = `${y * gridSize}px`;
+            cell.style.width = `${gridSize}px`;
+            cell.style.height = `${gridSize}px`;
+            this.canvas.appendChild(cell);
+          }
+        }
+      },
+      
+      addControlToCanvas: function(controlType, x, y) {
+        if (!state.isInDesignMode) return;
+        
+        const controlId = `${controlType}${this.nextControlId++}`;
+        const defaultProps = this.getDefaultProperties(controlType, x, y);
+        
+        const control = {
+          id: controlId,
+          type: controlType,
+          properties: defaultProps
+        };
+        
+        state.controls.push(control);
+        this.renderControl(control);
+        this.selectControl(controlId);
+        
+        state.projectIsDirty = true;
+        document.getElementById('status-saved').textContent = 'Modified';
+        
+        toast.success(`${controlType} control added to form`);
+      },
+      
+      getDefaultProperties: function(type, x, y) {
+        const baseProps = {
+          name: `${type}${this.nextControlId}`,
+          left: x,
+          top: y,
+          visible: true,
+          enabled: true,
+          tabIndex: this.nextControlId,
+          tag: ""
+        };
+        
+        switch (type) {
           case 'CommandButton':
-            runControlElement.textContent = control.properties.caption;
-            runControlElement.style.cursor = 'pointer';
-            if (!control.properties.enabled) {
-              runControlElement.style.opacity = '0.5';
-              runControlElement.style.cursor = 'default';
-            } else {
-              runControlElement.addEventListener('click', () => {
-                // Execute the code defined for this control
-                executeCode(control.id, 'Click');
+            return {
+              ...baseProps,
+              width: 96,
+              height: 24,
+              caption: `Command${this.nextControlId}`
+            };
+          case 'TextBox':
+            return {
+              ...baseProps,
+              width: 120,
+              height: 24,
+              text: "",
+              multiline: false,
+              passwordChar: ""
+            };
+          case 'Label':
+            return {
+              ...baseProps,
+              width: 72,
+              height: 24,
+              caption: `Label${this.nextControlId}`,
+              alignment: "Left",
+              backColor: "#D4D0C8",
+              foreColor: "#000000"
+            };
+          case 'CheckBox':
+            return {
+              ...baseProps,
+              width: 120,
+              height: 24,
+              caption: `Check${this.nextControlId}`,
+              value: false
+            };
+          case 'OptionButton':
+            return {
+              ...baseProps,
+              width: 120,
+              height: 24,
+              caption: `Option${this.nextControlId}`,
+              value: false
+            };
+          case 'ComboBox':
+            return {
+              ...baseProps,
+              width: 120,
+              height: 24,
+              style: "Dropdown Combo",
+              text: "",
+              items: ['Item1', 'Item2', 'Item3']
+            };
+          case 'ListBox':
+            return {
+              ...baseProps,
+              width: 120,
+              height: 80,
+              multiSelect: false,
+              items: ['Item1', 'Item2', 'Item3']
+            };
+          case 'Frame':
+            return {
+              ...baseProps,
+              width: 160,
+              height: 120,
+              caption: `Frame${this.nextControlId}`
+            };
+          case 'PictureBox':
+            return {
+              ...baseProps,
+              width: 100,
+              height: 100,
+              backColor: "#FFFFFF",
+              picture: ""
+            };
+          case 'Image':
+            return {
+              ...baseProps,
+              width: 100,
+              height: 100,
+              stretch: true,
+              picture: ""
+            };
+          case 'Timer':
+            return {
+              ...baseProps,
+              interval: 1000,
+              enabled: true
+            };
+          case 'HScrollBar':
+            return {
+              ...baseProps,
+              width: 120,
+              height: 16,
+              min: 0,
+              max: 100,
+              value: 0,
+              largeChange: 10,
+              smallChange: 1
+            };
+          case 'VScrollBar':
+            return {
+              ...baseProps,
+              width: 16,
+              height: 120,
+              min: 0,
+              max: 100,
+              value: 0,
+              largeChange: 10,
+              smallChange: 1
+            };
+          case 'DriveListBox':
+            return {
+              ...baseProps,
+              width: 145,
+              height: 24
+            };
+          case 'DirListBox':
+            return {
+              ...baseProps,
+              width: 145,
+              height: 80,
+              path: "C:\\"
+            };
+          case 'FileListBox':
+            return {
+              ...baseProps,
+              width: 145,
+              height: 80,
+              pattern: "*.*"
+            };
+          case 'Shape':
+            return {
+              ...baseProps,
+              width: 50,
+              height: 50,
+              shapeType: "Rectangle",
+              backColor: "#FFFFFF",
+              borderColor: "#000000",
+              borderStyle: "Solid",
+              borderWidth: 1
+            };
+          case 'Line':
+            return {
+              ...baseProps,
+              width: 50,
+              height: 0,
+              borderColor: "#000000",
+              borderStyle: "Solid",
+              borderWidth: 1
+            };
+          case 'OLE':
+            return {
+              ...baseProps,
+              width: 150,
+              height: 100,
+              className: ""
+            };
+          default:
+            return {
+              ...baseProps,
+              width: 100,
+              height: 30
+            };
+        }
+      },
+      
+      renderControl: function(control) {
+        // Remove existing control if it exists
+        const existingControl = document.getElementById(control.id);
+        if (existingControl) {
+          existingControl.remove();
+        }
+        
+        const controlEl = document.createElement('div');
+        controlEl.id = control.id;
+        controlEl.className = 'control';
+        if (control.id === state.selectedControlId) {
+          controlEl.classList.add('selected');
+        }
+        
+        // Set position and dimensions
+        controlEl.style.left = `${control.properties.left}px`;
+        controlEl.style.top = `${control.properties.top}px`;
+        controlEl.style.width = `${control.properties.width}px`;
+        controlEl.style.height = `${control.properties.height}px`;
+        
+        // Set visibility and enabled state
+        if (!control.properties.visible) {
+          controlEl.style.display = 'none';
+        }
+        if (!control.properties.enabled) {
+          controlEl.style.opacity = '0.6';
+        }
+        
+        // Set control-specific properties
+        switch (control.type) {
+          case 'CommandButton':
+            controlEl.textContent = control.properties.caption;
+            controlEl.style.display = 'flex';
+            controlEl.style.alignItems = 'center';
+            controlEl.style.justifyContent = 'center';
+            
+            // Add click handler for run mode
+            if (!state.isInDesignMode) {
+              controlEl.addEventListener('click', () => {
+                // Execute the click event code if available
+                const codeKey = `${control.id}|CommandButton|Click`;
+                const code = state.currentCodeModule.code[codeKey];
+                if (code) {
+                  toast.success(`${control.id}_Click executed`);
+                  console.log(`Executing code for ${control.id}_Click:`);
+                  console.log(code);
+                }
               });
             }
             break;
           case 'TextBox':
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.value = control.properties.text;
-            input.style.width = '100%';
-            input.style.height = '100%';
-            input.style.border = 'none';
-            input.style.background = 'transparent';
-            input.style.color = control.properties.foreColor;
-            input.style.fontFamily = control.properties.fontName;
-            input.style.fontSize = `${control.properties.fontSize}pt`;
-            
-            if (!control.properties.enabled) {
-              input.disabled = true;
-            } else {
-              input.addEventListener('change', () => {
-                executeCode(control.id, 'Change');
-              });
-            }
-            
-            runControlElement.appendChild(input);
+            const textInput = document.createElement('input');
+            textInput.type = control.properties.passwordChar ? 'password' : 'text';
+            textInput.value = control.properties.text || '';
+            textInput.style.width = '100%';
+            textInput.style.height = '100%';
+            textInput.style.border = 'none';
+            textInput.style.padding = '2px';
+            textInput.disabled = state.isInDesignMode || !control.properties.enabled;
+            textInput.addEventListener('input', (e) => {
+              if (!state.isInDesignMode) {
+                // Only allow editing in run mode
+                this.updateControlProperty(control.id, 'text', e.target.value);
+                
+                // Execute the change event code if available
+                const codeKey = `${control.id}|TextBox|Change`;
+                const code = state.currentCodeModule.code[codeKey];
+                if (code) {
+                  console.log(`Executing change event for ${control.id}`);
+                }
+              }
+            });
+            controlEl.appendChild(textInput);
             break;
           case 'Label':
-            runControlElement.textContent = control.properties.caption;
+            controlEl.textContent = control.properties.caption;
+            controlEl.style.display = 'flex';
+            controlEl.style.alignItems = 'center';
+            
+            // Set text alignment
+            if (control.properties.alignment === "Center") {
+              controlEl.style.justifyContent = 'center';
+              controlEl.style.textAlign = 'center';
+            } else if (control.properties.alignment === "Right") {
+              controlEl.style.justifyContent = 'flex-end';
+              controlEl.style.textAlign = 'right';
+            }
+            
+            // Set colors if specified
+            if (control.properties.backColor) {
+              controlEl.style.backgroundColor = control.properties.backColor;
+            }
+            if (control.properties.foreColor) {
+              controlEl.style.color = control.properties.foreColor;
+            }
             break;
           case 'CheckBox':
+            const checkboxContainer = document.createElement('div');
+            checkboxContainer.style.display = 'flex';
+            checkboxContainer.style.alignItems = 'center';
+            
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
-            if (!control.properties.enabled) {
-              checkbox.disabled = true;
-              runControlElement.style.opacity = '0.5';
-            } else {
-              checkbox.addEventListener('change', () => {
-                executeCode(control.id, 'Click');
-              });
-            }
+            checkbox.style.marginRight = '4px';
+            checkbox.checked = control.properties.value || false;
+            checkbox.disabled = state.isInDesignMode || !control.properties.enabled;
             
-            const checkLabel = document.createElement('span');
-            checkLabel.textContent = control.properties.caption;
+            const checkboxLabel = document.createElement('span');
+            checkboxLabel.textContent = control.properties.caption;
             
-            runControlElement.appendChild(checkbox);
-            runControlElement.appendChild(checkLabel);
+            checkboxContainer.appendChild(checkbox);
+            checkboxContainer.appendChild(checkboxLabel);
+            controlEl.appendChild(checkboxContainer);
+            
+            checkbox.addEventListener('change', (e) => {
+              if (!state.isInDesignMode) {
+                this.updateControlProperty(control.id, 'value', e.target.checked);
+                
+                // Execute the click event code if available
+                const codeKey = `${control.id}|CheckBox|Click`;
+                const code = state.currentCodeModule.code[codeKey];
+                if (code) {
+                  console.log(`Executing click event for ${control.id}`);
+                }
+              }
+            });
             break;
           case 'OptionButton':
+            const radioContainer = document.createElement('div');
+            radioContainer.style.display = 'flex';
+            radioContainer.style.alignItems = 'center';
+            
             const radio = document.createElement('input');
             radio.type = 'radio';
-            radio.name = 'optionGroup';
-            if (!control.properties.enabled) {
-              radio.disabled = true;
-              runControlElement.style.opacity = '0.5';
-            } else {
-              radio.addEventListener('change', () => {
-                executeCode(control.id, 'Click');
-              });
-            }
+            radio.style.marginRight = '4px';
+            radio.checked = control.properties.value || false;
+            radio.disabled = state.isInDesignMode || !control.properties.enabled;
             
             const radioLabel = document.createElement('span');
             radioLabel.textContent = control.properties.caption;
             
-            runControlElement.appendChild(radio);
-            runControlElement.appendChild(radioLabel);
+            radioContainer.appendChild(radio);
+            radioContainer.appendChild(radioLabel);
+            controlEl.appendChild(radioContainer);
+            
+            radio.addEventListener('change', (e) => {
+              if (!state.isInDesignMode) {
+                this.updateControlProperty(control.id, 'value', e.target.checked);
+                
+                // Execute the click event code if available
+                const codeKey = `${control.id}|OptionButton|Click`;
+                const code = state.currentCodeModule.code[codeKey];
+                if (code) {
+                  console.log(`Executing click event for ${control.id}`);
+                }
+              }
+            });
             break;
           case 'ComboBox':
-            const select = document.createElement('select');
-            select.style.width = '100%';
-            select.style.height = '100%';
+            const comboBox = document.createElement('select');
+            comboBox.style.width = '100%';
+            comboBox.style.height = '100%';
+            comboBox.disabled = state.isInDesignMode || !control.properties.enabled;
             
-            // Add sample items
-            ['Item 1', 'Item 2', 'Item 3'].forEach(item => {
+            (control.properties.items || ['Item1', 'Item2', 'Item3']).forEach(item => {
               const option = document.createElement('option');
               option.textContent = item;
-              select.appendChild(option);
+              comboBox.appendChild(option);
             });
             
-            if (!control.properties.enabled) {
-              select.disabled = true;
-            } else {
-              select.addEventListener('change', () => {
-                executeCode(control.id, 'Change');
-              });
-            }
+            controlEl.appendChild(comboBox);
             
-            runControlElement.appendChild(select);
+            comboBox.addEventListener('change', () => {
+              if (!state.isInDesignMode) {
+                this.updateControlProperty(control.id, 'selectedItem', comboBox.value);
+                
+                // Execute the change event code if available
+                const codeKey = `${control.id}|ComboBox|Change`;
+                const code = state.currentCodeModule.code[codeKey];
+                if (code) {
+                  console.log(`Executing change event for ${control.id}`);
+                }
+              }
+            });
             break;
           case 'ListBox':
-            const listbox = document.createElement('select');
-            listbox.multiple = true;
-            listbox.style.width = '100%';
-            listbox.style.height = '100%';
+            const listBox = document.createElement('select');
+            listBox.multiple = control.properties.multiSelect;
+            listBox.style.width = '100%';
+            listBox.style.height = '100%';
+            listBox.disabled = state.isInDesignMode || !control.properties.enabled;
             
-            // Add sample items
-            ['Item 1', 'Item 2', 'Item 3'].forEach(item => {
+            (control.properties.items || ['Item1', 'Item2', 'Item3']).forEach(item => {
               const option = document.createElement('option');
               option.textContent = item;
-              listbox.appendChild(option);
+              listBox.appendChild(option);
             });
             
-            if (!control.properties.enabled) {
-              listbox.disabled = true;
-            } else {
-              listbox.addEventListener('change', () => {
-                executeCode(control.id, 'Click');
-              });
-            }
+            controlEl.appendChild(listBox);
             
-            runControlElement.appendChild(listbox);
+            listBox.addEventListener('change', () => {
+              if (!state.isInDesignMode) {
+                const selectedItems = Array.from(listBox.selectedOptions).map(option => option.value);
+                this.updateControlProperty(control.id, 'selectedItems', selectedItems);
+                
+                // Execute the click event code if available
+                const codeKey = `${control.id}|ListBox|Click`;
+                const code = state.currentCodeModule.code[codeKey];
+                if (code) {
+                  console.log(`Executing click event for ${control.id}`);
+                }
+              }
+            });
             break;
           case 'Frame':
-            const headerDiv = document.createElement('div');
-            headerDiv.className = 'Frame-header';
-            headerDiv.textContent = control.properties.caption;
-            headerDiv.style.position = 'absolute';
-            headerDiv.style.top = '-8px';
-            headerDiv.style.left = '10px';
-            headerDiv.style.backgroundColor = '#D4D0C8';
-            headerDiv.style.padding = '0 5px';
+            controlEl.style.border = '2px groove #D4D0C8';
+            controlEl.style.backgroundColor = 'transparent';
             
-            runControlElement.appendChild(headerDiv);
+            const frameTitle = document.createElement('div');
+            frameTitle.textContent = control.properties.caption;
+            frameTitle.style.position = 'absolute';
+            frameTitle.style.top = '-10px';
+            frameTitle.style.left = '10px';
+            frameTitle.style.backgroundColor = '#F0F0F0';
+            frameTitle.style.padding = '0 4px';
+            
+            controlEl.appendChild(frameTitle);
+            break;
+          case 'PictureBox':
+            controlEl.style.backgroundColor = control.properties.backColor || '#FFFFFF';
+            controlEl.style.border = '1px solid #808080';
+            break;
+          case 'Timer':
+            controlEl.textContent = 'Timer';
+            controlEl.style.display = 'flex';
+            controlEl.style.alignItems = 'center';
+            controlEl.style.justifyContent = 'center';
+            controlEl.style.border = '1px dashed #808080';
+            
+            // Set up timer functionality in run mode
+            if (!state.isInDesignMode && control.properties.enabled) {
+              control._timerId = setInterval(() => {
+                const codeKey = `${control.id}|Timer|Timer`;
+                const code = state.currentCodeModule.code[codeKey];
+                if (code) {
+                  console.log(`Executing timer event for ${control.id}`);
+                }
+              }, control.properties.interval);
+            }
+            break;
+          case 'HScrollBar':
+            const hScrollBar = document.createElement('input');
+            hScrollBar.type = 'range';
+            hScrollBar.min = control.properties.min || 0;
+            hScrollBar.max = control.properties.max || 100;
+            hScrollBar.value = control.properties.value || 0;
+            hScrollBar.style.width = '100%';
+            hScrollBar.style.height = '100%';
+            hScrollBar.disabled = state.isInDesignMode || !control.properties.enabled;
+            
+            controlEl.appendChild(hScrollBar);
+            
+            hScrollBar.addEventListener('input', (e) => {
+              if (!state.isInDesignMode) {
+                this.updateControlProperty(control.id, 'value', parseInt(e.target.value));
+                
+                // Execute the change event code if available
+                const codeKey = `${control.id}|HScrollBar|Change`;
+                const code = state.currentCodeModule.code[codeKey];
+                if (code) {
+                  console.log(`Executing change event for ${control.id}`);
+                }
+              }
+            });
+            break;
+          case 'VScrollBar':
+            const vScrollBarContainer = document.createElement('div');
+            vScrollBarContainer.style.height = '100%';
+            vScrollBarContainer.style.display = 'flex';
+            vScrollBarContainer.style.alignItems = 'center';
+            vScrollBarContainer.style.justifyContent = 'center';
+            
+            const vScrollBar = document.createElement('input');
+            vScrollBar.type = 'range';
+            vScrollBar.min = control.properties.min || 0;
+            vScrollBar.max = control.properties.max || 100;
+            vScrollBar.value = control.properties.value || 0;
+            vScrollBar.style.width = '100%';
+            vScrollBar.style.height = '100%';
+            vScrollBar.style.transform = 'rotate(90deg)';
+            vScrollBar.disabled = state.isInDesignMode || !control.properties.enabled;
+            
+            vScrollBarContainer.appendChild(vScrollBar);
+            controlEl.appendChild(vScrollBarContainer);
+            
+            vScrollBar.addEventListener('input', (e) => {
+              if (!state.isInDesignMode) {
+                this.updateControlProperty(control.id, 'value', parseInt(e.target.value));
+                
+                // Execute the change event code if available
+                const codeKey = `${control.id}|VScrollBar|Change`;
+                const code = state.currentCodeModule.code[codeKey];
+                if (code) {
+                  console.log(`Executing change event for ${control.id}`);
+                }
+              }
+            });
+            break;
+          case 'Shape':
+            controlEl.style.backgroundColor = control.properties.backColor || '#FFFFFF';
+            controlEl.style.border = `${control.properties.borderWidth || 1}px ${control.properties.borderStyle || 'solid'} ${control.properties.borderColor || '#000000'}`;
+            
+            if (control.properties.shapeType === 'Circle' || control.properties.shapeType === 'Oval') {
+              controlEl.style.borderRadius = '50%';
+            } else if (control.properties.shapeType === 'Rounded Rectangle') {
+              controlEl.style.borderRadius = '10px';
+            }
+            break;
+          case 'Line':
+            controlEl.style.height = '0';
+            controlEl.style.border = 'none';
+            controlEl.style.borderTop = `${control.properties.borderWidth || 1}px ${control.properties.borderStyle || 'solid'} ${control.properties.borderColor || '#000000'}`;
             break;
         }
         
-        runContent.appendChild(runControlElement);
+        // Add resize handle if selected
+        if (control.id === state.selectedControlId) {
+          const resizeHandle = document.createElement('div');
+          resizeHandle.className = 'resize-handle';
+          controlEl.appendChild(resizeHandle);
+          
+          this.makeControlResizable(controlEl, resizeHandle, control.id);
+        }
+        
+        // Make control draggable
+        this.makeControlDraggable(controlEl, control.id);
+        
+        // Add select handler
+        controlEl.addEventListener('mousedown', (e) => {
+          if (e.target !== controlEl && e.target.parentNode !== controlEl) return;
+          this.selectControl(control.id);
+          e.stopPropagation();
+        });
+        
+        // Add double-click handler to open code window
+        controlEl.addEventListener('dblclick', () => {
+          this.openCodeEditor(control.id);
+        });
+        
+        this.canvas.appendChild(controlEl);
+      },
+      
+      makeControlDraggable: function(controlEl, controlId) {
+        let isDragging = false;
+        let startX, startY;
+        let startLeft, startTop;
+        
+        controlEl.addEventListener('mousedown', (e) => {
+          if (!state.isInDesignMode || (e.target !== controlEl && e.target.parentNode !== controlEl)) return;
+          
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          
+          const control = state.controls.find(c => c.id === controlId);
+          if (control) {
+            startLeft = control.properties.left;
+            startTop = control.properties.top;
+          }
+          
+          e.stopPropagation();
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          
+          const deltaX = e.clientX - startX;
+          const deltaY = e.clientY - startY;
+          
+          let newLeft = startLeft + deltaX;
+          let newTop = startTop + deltaY;
+          
+          // Apply snap to grid if enabled
+          if (state.snapToGrid) {
+            newLeft = Math.round(newLeft / state.gridSize) * state.gridSize;
+            newTop = Math.round(newTop / state.gridSize) * state.gridSize;
+          }
+          
+          this.updateControlProperty(controlId, 'left', newLeft);
+          this.updateControlProperty(controlId, 'top', newTop);
+        });
+        
+        document.addEventListener('mouseup', () => {
+          isDragging = false;
+        });
+      },
+      
+      makeControlResizable: function(controlEl, resizeHandle, controlId) {
+        let isResizing = false;
+        let startX, startY;
+        let startWidth, startHeight;
+        
+        resizeHandle.addEventListener('mousedown', (e) => {
+          if (!state.isInDesignMode) return;
+          
+          isResizing = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          
+          const control = state.controls.find(c => c.id === controlId);
+          if (control) {
+            startWidth = control.properties.width;
+            startHeight = control.properties.height;
+          }
+          
+          e.stopPropagation();
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+          if (!isResizing) return;
+          
+          const deltaX = e.clientX - startX;
+          const deltaY = e.clientY - startY;
+          
+          let newWidth = Math.max(20, startWidth + deltaX);
+          let newHeight = Math.max(20, startHeight + deltaY);
+          
+          // Apply snap to grid if enabled
+          if (state.snapToGrid) {
+            newWidth = Math.round(newWidth / state.gridSize) * state.gridSize;
+            newHeight = Math.round(newHeight / state.gridSize) * state.gridSize;
+          }
+          
+          this.updateControlProperty(controlId, 'width', newWidth);
+          this.updateControlProperty(controlId, 'height', newHeight);
+        });
+        
+        document.addEventListener('mouseup', () => {
+          isResizing = false;
+        });
+      },
+      
+      selectControl: function(controlId) {
+        const prevSelectedId = state.selectedControlId;
+        state.selectedControlId = controlId;
+        
+        // Update previous selected control
+        if (prevSelectedId) {
+          const prevControl = state.controls.find(c => c.id === prevSelectedId);
+          if (prevControl) {
+            this.renderControl(prevControl);
+          }
+        }
+        
+        // Update newly selected control
+        if (controlId) {
+          const control = state.controls.find(c => c.id === controlId);
+          if (control) {
+            this.renderControl(control);
+            propertiesWindow.showControlProperties(control);
+          }
+        } else {
+          propertiesWindow.hideControlProperties();
+        }
+        
+        // Update status bar
+        document.getElementById('status-selection').textContent = controlId || 'Form1';
+      },
+      
+      updateControlProperty: function(controlId, property, value) {
+        const controlIndex = state.controls.findIndex(c => c.id === controlId);
+        if (controlIndex === -1) return;
+        
+        state.controls[controlIndex].properties[property] = value;
+        this.renderControl(state.controls[controlIndex]);
+        
+        if (state.selectedControlId === controlId) {
+          propertiesWindow.showControlProperties(state.controls[controlIndex]);
+        }
+        
+        state.projectIsDirty = true;
+        document.getElementById('status-saved').textContent = 'Modified';
+      },
+      
+      deleteSelectedControl: function() {
+        if (!state.selectedControlId) return;
+        
+        const controlIndex = state.controls.findIndex(c => c.id === state.selectedControlId);
+        if (controlIndex === -1) return;
+        
+        const controlEl = document.getElementById(state.selectedControlId);
+        if (controlEl) {
+          controlEl.remove();
+        }
+        
+        state.controls.splice(controlIndex, 1);
+        state.selectedControlId = null;
+        propertiesWindow.hideControlProperties();
+        
+        document.getElementById('status-selection').textContent = 'Form1';
+        
+        state.projectIsDirty = true;
+        document.getElementById('status-saved').textContent = 'Modified';
+        
+        toast.success('Control deleted');
+      },
+      
+      openCodeEditor: function(controlId) {
+        codeEditorManager.openCodeWindow(controlId);
+      },
+      
+      runProject: function() {
+        if (state.isRunning) return;
+        
+        // Check if there's any Form_Load code
+        const formLoadCodeKey = 'Form1|Form|Load';
+        const formLoadCode = state.currentCodeModule.code[formLoadCodeKey];
+        
+        state.isInDesignMode = false;
+        state.isRunning = true;
+        
+        document.getElementById('status-mode').textContent = 'Running...';
+        document.getElementById('run-start').textContent = 'Break';
+        document.getElementById('start-btn').innerHTML = '<span style="margin-right: 4px;">⏹️</span> Stop';
+        
+        // Re-render all controls for run mode
+        state.controls.forEach(control => {
+          this.renderControl(control);
+        });
+        
+        // Execute Form_Load if it exists
+        if (formLoadCode) {
+          console.log('Executing Form_Load:');
+          console.log(formLoadCode);
+          toast.success('Form_Load executed');
+        }
+        
+        toast.success('Project running');
+      },
+      
+      stopProject: function() {
+        if (!state.isRunning) return;
+        
+        // Check if there's any Form_Unload code
+        const formUnloadCodeKey = 'Form1|Form|Unload';
+        const formUnloadCode = state.currentCodeModule.code[formUnloadCodeKey];
+        
+        // Stop all timers
+        state.controls.forEach(control => {
+          if (control.type === 'Timer' && control._timerId) {
+            clearInterval(control._timerId);
+            delete control._timerId;
+          }
+        });
+        
+        // Execute Form_Unload if it exists
+        if (formUnloadCode) {
+          console.log('Executing Form_Unload:');
+          console.log(formUnloadCode);
+          toast.success('Form_Unload executed');
+        }
+        
+        state.isInDesignMode = true;
+        state.isRunning = false;
+        
+        document.getElementById('status-mode').textContent = 'Design';
+        document.getElementById('run-start').textContent = 'Start';
+        document.getElementById('start-btn').innerHTML = '<span style="margin-right: 4px;">▶️</span> Start';
+        
+        // Re-render all controls for design mode
+        state.controls.forEach(control => {
+          this.renderControl(control);
+        });
+        
+        toast.success('Project stopped');
+      }
+    };
+    
+    // Properties Window
+    const propertiesWindow = {
+      propertiesGrid: document.getElementById('properties-grid'),
+      noSelectionMessage: document.getElementById('no-selection'),
+      propertyObjectName: document.getElementById('property-object-name'),
+      
+      showControlProperties: function(control) {
+        this.propertiesGrid.innerHTML = '';
+        this.propertiesGrid.style.display = 'grid';
+        this.noSelectionMessage.style.display = 'none';
+        this.propertyObjectName.textContent = control.properties.name || control.id;
+        
+        const properties = control.properties;
+        
+        // Create an array of properties to sort alphabetically
+        const propArray = [];
+        for (const [key, value] of Object.entries(properties)) {
+          propArray.push({ key, value });
+        }
+        
+        // Sort alphabetically
+        propArray.sort((a, b) => a.key.localeCompare(b.key));
+        
+        // Add each property to the grid
+        propArray.forEach(({ key, value }) => {
+          const propertyName = document.createElement('div');
+          propertyName.className = 'property-name';
+          propertyName.textContent = key;
+          
+          const propertyValue = document.createElement('div');
+          propertyValue.className = 'property-value';
+          
+          // Create appropriate input for property type
+          if (typeof value === 'boolean') {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = value;
+            checkbox.addEventListener('change', (e) => {
+              controlsManager.updateControlProperty(control.id, key, e.target.checked);
+            });
+            propertyValue.appendChild(checkbox);
+          } else if (typeof value === 'number') {
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.value = value;
+            input.style.width = '100%';
+            input.addEventListener('change', (e) => {
+              controlsManager.updateControlProperty(control.id, key, Number(e.target.value));
+            });
+            propertyValue.appendChild(input);
+          } else if (Array.isArray(value)) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = value.join(',');
+            input.style.width = '100%';
+            input.addEventListener('change', (e) => {
+              const items = e.target.value.split(',').map(item => item.trim());
+              controlsManager.updateControlProperty(control.id, key, items);
+            });
+            propertyValue.appendChild(input);
+          } else if (key === 'alignment' || key === 'shapeType' || key === 'borderStyle') {
+            const select = document.createElement('select');
+            select.style.width = '100%';
+            
+            let options = [];
+            if (key === 'alignment') {
+              options = ['Left', 'Center', 'Right'];
+            } else if (key === 'shapeType') {
+              options = ['Rectangle', 'Square', 'Oval', 'Circle', 'Rounded Rectangle'];
+            } else if (key === 'borderStyle') {
+              options = ['Solid', 'Dashed', 'Dotted'];
+            }
+            
+            options.forEach(option => {
+              const optionEl = document.createElement('option');
+              optionEl.value = option;
+              optionEl.textContent = option;
+              if (option === value) optionEl.selected = true;
+              select.appendChild(optionEl);
+            });
+            
+            select.addEventListener('change', (e) => {
+              controlsManager.updateControlProperty(control.id, key, e.target.value);
+            });
+            
+            propertyValue.appendChild(select);
+          } else {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = value !== undefined ? value : '';
+            input.style.width = '100%';
+            input.addEventListener('change', (e) => {
+              controlsManager.updateControlProperty(control.id, key, e.target.value);
+            });
+            propertyValue.appendChild(input);
+          }
+          
+          this.propertiesGrid.appendChild(propertyName);
+          this.propertiesGrid.appendChild(propertyValue);
+        });
+      },
+      
+      hideControlProperties: function() {
+        this.propertiesGrid.style.display = 'none';
+        this.noSelectionMessage.style.display = 'block';
+        this.propertyObjectName.textContent = 'Form1';
+      }
+    };
+    
+    // Toolbox Category Management
+    const toolboxManager = {
+      init: function() {
+        // Add click handlers to category headers
+        document.getElementById('common-controls-header').addEventListener('click', () => {
+          this.toggleCategory('Standard');
+        });
+        
+        document.getElementById('additional-controls-header').addEventListener('click', () => {
+          this.toggleCategory('Additional Controls');
+        });
+        
+        // Initialize container visibility based on state
+        document.getElementById('common-controls-container').style.display = 
+          state.expandedCategories['Standard'] ? 'block' : 'none';
+        
+        document.getElementById('additional-controls-container').style.display = 
+          state.expandedCategories['Additional Controls'] ? 'block' : 'none';
+      },
+      
+      toggleCategory: function(categoryName) {
+        state.expandedCategories[categoryName] = !state.expandedCategories[categoryName];
+        
+        if (categoryName === 'Standard') {
+          document.getElementById('common-controls-container').style.display = 
+            state.expandedCategories[categoryName] ? 'block' : 'none';
+        } else if (categoryName === 'Additional Controls') {
+          document.getElementById('additional-controls-container').style.display = 
+            state.expandedCategories[categoryName] ? 'block' : 'none';
+        }
+      }
+    };
+    
+    // Dialog Management
+    const dialogManager = {
+      init: function() {
+        // About dialog
+        document.getElementById('about-dialog-close').addEventListener('click', () => {
+          document.getElementById('about-dialog').style.display = 'none';
+        });
+        
+        document.getElementById('about-dialog-ok').addEventListener('click', () => {
+          document.getElementById('about-dialog').style.display = 'none';
+        });
+        
+        // New Project dialog
+        document.getElementById('new-project-dialog-close').addEventListener('click', () => {
+          document.getElementById('new-project-dialog').style.display = 'none';
+        });
+        
+        document.getElementById('new-project-dialog-cancel').addEventListener('click', () => {
+          document.getElementById('new-project-dialog').style.display = 'none';
+        });
+        
+        document.getElementById('new-project-dialog-ok').addEventListener('click', () => {
+          toast.success("New Standard EXE project created");
+          document.getElementById('new-project-dialog').style.display = 'none';
+        });
+        
+        // Open Project dialog
+        document.getElementById('open-project-dialog-close').addEventListener('click', () => {
+          document.getElementById('open-project-dialog').style.display = 'none';
+        });
+        
+        document.getElementById('open-project-dialog-cancel').addEventListener('click', () => {
+          document.getElementById('open-project-dialog').style.display = 'none';
+        });
+        
+        document.getElementById('open-project-dialog-open').addEventListener('click', () => {
+          const projectName = document.getElementById('open-project-select').value;
+          toast.success(`Project ${projectName} opened`);
+          document.getElementById('open-project-dialog').style.display = 'none';
+        });
+        
+        // Delete Control dialog
+        document.getElementById('delete-control-dialog-close').addEventListener('click', () => {
+          document.getElementById('delete-control-dialog').style.display = 'none';
+        });
+        
+        document.getElementById('delete-control-dialog-no').addEventListener('click', () => {
+          document.getElementById('delete-control-dialog').style.display = 'none';
+        });
+        
+        document.getElementById('delete-control-dialog-yes').addEventListener('click', () => {
+          controlsManager.deleteSelectedControl();
+          document.getElementById('delete-control-dialog').style.display = 'none';
+        });
+      }
+    };
+    
+    // Project Explorer
+    const projectExplorer = {
+      init: function() {
+        // Make folders expandable
+        const folders = document.querySelectorAll('.project-folder');
+        folders.forEach(folder => {
+          folder.addEventListener('click', (e) => {
+            if (e.target === folder || e.target === folder.querySelector('span')) {
+              const childContainer = folder.querySelector('div');
+              if (childContainer) {
+                childContainer.style.display = childContainer.style.display === 'none' ? 'block' : 'none';
+                
+                // Update folder icon
+                const folderSpan = folder.querySelector('span');
+                if (folderSpan) {
+                  folderSpan.textContent = childContainer.style.display === 'none' ? 
+                    '📁 ' + folderSpan.textContent.substring(2) : 
+                    '📂 ' + folderSpan.textContent.substring(2);
+                }
+              }
+            }
+          });
+        });
+        
+        // Add click handler for files
+        const files = document.querySelectorAll('.project-file');
+        files.forEach(file => {
+          file.addEventListener('click', () => {
+            const fileName = file.getAttribute('data-file');
+            
+            if (fileName.endsWith('.frm')) {
+              // Show form designer for .frm files
+              windows.toggleVisibility('mainWindow');
+              if (state.visibleWindows.mainWindow) {
+                document.getElementById('form-designer').style.zIndex = windows.getHighestZIndex() + 1;
+              }
+            } else if (fileName.endsWith('.bas') || fileName.endsWith('.cls')) {
+              // Open code window for .bas and .cls files
+              codeEditorManager.openCodeWindow(fileName.split('.')[0]);
+            }
+            
+            toast.success(`Opening ${fileName}`);
+          });
+        });
+      }
+    };
+    
+    // Window Control Handlers
+    function initWindowControls() {
+      // Form Designer Window
+      windows.makeWindowDraggable(
+        document.getElementById('form-designer'),
+        document.getElementById('form-designer-title-bar')
+      );
+      
+      document.getElementById('form-designer-minimize').addEventListener('click', () => {
+        windows.toggleMinimize('mainWindow');
       });
       
-      // Execute Form_Load
-      try {
-        const loadCode = formCode.match(/Private Sub Form_Load\(\)([\s\S]*?)End Sub/);
-        if (loadCode && loadCode[1]) {
-          // Extract the code between sub and end sub
-          const codeToExecute = loadCode[1].trim();
-          console.log('Executing Form_Load:', codeToExecute);
-          
-          // Look for debug.print statements
-          const debugPrints = codeToExecute.match(/Debug\.Print\s+"([^"]+)"/g);
-          if (debugPrints) {
-            debugPrints.forEach(statement => {
-              const message = statement.match(/Debug\.Print\s+"([^"]+)"/)[1];
-              console.log('Debug:', message);
-            });
-          }
-          
-          // Look for MsgBox statements
-          const msgBoxes = codeToExecute.match(/MsgBox\s+"([^"]+)"/g);
-          if (msgBoxes) {
-            msgBoxes.forEach(statement => {
-              const message = statement.match(/MsgBox\s+"([^"]+)"/)[1];
-              setTimeout(() => alert(message), 100);
-            });
-          }
+      document.getElementById('form-designer-close').addEventListener('click', () => {
+        windows.toggleVisibility('mainWindow');
+      });
+      
+      // Project Explorer Window
+      windows.makeWindowDraggable(
+        document.getElementById('project-explorer'),
+        document.getElementById('project-explorer-title-bar')
+      );
+      
+      document.getElementById('project-explorer-minimize').addEventListener('click', () => {
+        windows.toggleMinimize('projectWindow');
+      });
+      
+      document.getElementById('project-explorer-close').addEventListener('click', () => {
+        windows.toggleVisibility('projectWindow');
+      });
+      
+      // Properties Window
+      windows.makeWindowDraggable(
+        document.getElementById('properties-window'),
+        document.getElementById('properties-title-bar')
+      );
+      
+      document.getElementById('properties-minimize').addEventListener('click', () => {
+        windows.toggleMinimize('propertyWindow');
+      });
+      
+      document.getElementById('properties-close').addEventListener('click', () => {
+        windows.toggleVisibility('propertyWindow');
+      });
+      
+      // Code Window
+      windows.makeWindowDraggable(
+        document.getElementById('code-window'),
+        document.getElementById('code-window-title-bar')
+      );
+      
+      document.getElementById('code-window-minimize').addEventListener('click', () => {
+        windows.toggleMinimize('codeWindow');
+      });
+      
+      document.getElementById('code-window-close').addEventListener('click', () => {
+        // Save code before closing
+        codeEditorManager.saveCurrentCode();
+        windows.toggleVisibility('codeWindow');
+      });
+      
+      // Toolbox Window
+      windows.makeWindowDraggable(
+        document.getElementById('toolbox'),
+        document.getElementById('toolbox-title-bar')
+      );
+      
+      document.getElementById('toolbox-minimize').addEventListener('click', () => {
+        windows.toggleMinimize('toolbox');
+      });
+      
+      document.getElementById('toolbox-close').addEventListener('click', () => {
+        windows.toggleVisibility('toolbox');
+      });
+    }
+    
+    // Toolbar Button Handlers
+    function initToolbarButtons() {
+      document.getElementById('new-btn').addEventListener('click', () => {
+        document.getElementById('new-project-dialog').style.display = 'flex';
+      });
+      
+      document.getElementById('open-btn').addEventListener('click', () => {
+        document.getElementById('open-project-dialog').style.display = 'flex';
+      });
+      
+      document.getElementById('save-btn').addEventListener('click', () => {
+        toast.success('Project saved');
+        state.projectIsDirty = false;
+        document.getElementById('status-saved').textContent = 'Saved';
+      });
+      
+      document.getElementById('cut-btn').addEventListener('click', () => {
+        if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') {
+          document.execCommand('cut');
+        } else {
+          toast.error('No text selected');
         }
-      } catch (error) {
-        console.error('Error executing Form_Load:', error);
-      }
+      });
       
-      showNotification('Project is now running', 'success');
-    }
-    
-    function stopProject() {
-      isRunning = false;
-      document.getElementById('runButton').innerHTML = '<span style="margin-right: 3px;">▶️</span> Start';
-      document.getElementById('statusMode').textContent = 'Design';
-      document.getElementById('statusState').textContent = 'Ready';
-      
-      // Hide run window
-      runWindow.style.display = 'none';
-      
-      // Execute Form_Unload
-      try {
-        const unloadCode = formCode.match(/Private Sub Form_Unload\(.*\)([\s\S]*?)End Sub/);
-        if (unloadCode && unloadCode[1]) {
-          // Extract the code between sub and end sub
-          const codeToExecute = unloadCode[1].trim();
-          console.log('Executing Form_Unload:', codeToExecute);
-          
-          // Look for debug.print statements
-          const debugPrints = codeToExecute.match(/Debug\.Print\s+"([^"]+)"/g);
-          if (debugPrints) {
-            debugPrints.forEach(statement => {
-              const message = statement.match(/Debug\.Print\s+"([^"]+)"/)[1];
-              console.log('Debug:', message);
-            });
-          }
-          
-          // Look for MsgBox statements
-          const msgBoxes = codeToExecute.match(/MsgBox\s+"([^"]+)"/g);
-          if (msgBoxes) {
-            msgBoxes.forEach(statement => {
-              const message = statement.match(/MsgBox\s+"([^"]+)"/)[1];
-              setTimeout(() => alert(message), 100);
-            });
-          }
+      document.getElementById('copy-btn').addEventListener('click', () => {
+        if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') {
+          document.execCommand('copy');
+        } else {
+          toast.error('No text selected');
         }
-      } catch (error) {
-        console.error('Error executing Form_Unload:', error);
-      }
+      });
       
-      showNotification('Project stopped', 'success');
-    }
-    
-    function executeCode(controlId, eventType) {
-      const code = controlCodeMap[controlId] || '';
-      if (!code) return;
-      
-      try {
-        // Look for the specific event handler
-        const eventRegex = new RegExp(`Private Sub ${controlId}_${eventType}\\(.*\\)([\\s\\S]*?)End Sub`);
-        const eventCode = code.match(eventRegex);
-        
-        if (eventCode && eventCode[1]) {
-          // Extract the code between sub and end sub
-          const codeToExecute = eventCode[1].trim();
-          console.log(`Executing ${controlId}_${eventType}:`, codeToExecute);
-          
-          // Look for debug.print statements
-          const debugPrints = codeToExecute.match(/Debug\.Print\s+"([^"]+)"/g);
-          if (debugPrints) {
-            debugPrints.forEach(statement => {
-              const message = statement.match(/Debug\.Print\s+"([^"]+)"/)[1];
-              console.log('Debug:', message);
-            });
-          }
-          
-          // Look for MsgBox statements
-          const msgBoxes = codeToExecute.match(/MsgBox\s+"([^"]+)"/g);
-          if (msgBoxes) {
-            msgBoxes.forEach(statement => {
-              const message = statement.match(/MsgBox\s+"([^"]+)"/)[1];
-              alert(message);
-            });
-          }
+      document.getElementById('paste-btn').addEventListener('click', () => {
+        if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') {
+          document.execCommand('paste');
+        } else {
+          toast.error('Cannot paste here');
         }
-      } catch (error) {
-        console.error(`Error executing ${controlId}_${eventType}:`, error);
-      }
+      });
       
-      showNotification(`Executed ${controlId}_${eventType} code`, 'success');
-    }
-    
-    // Delete control
-    function deleteSelectedControl() {
-      if (selectedControlId) {
-        const controlElement = document.getElementById(selectedControlId);
-        if (controlElement) {
-          controlElement.remove();
+      document.getElementById('start-btn').addEventListener('click', () => {
+        if (state.isRunning) {
+          controlsManager.stopProject();
+        } else {
+          controlsManager.runProject();
         }
-        
-        // Remove from array
-        controls = controls.filter(c => c.id !== selectedControlId);
-        
-        // Remove code
-        delete controlCodeMap[selectedControlId];
-        
-        // Clear property grid
-        clearPropertyGrid();
-        
-        showNotification(`Deleted ${selectedControlId}`, 'success');
-        selectedControlId = null;
-        updateStatusSelection('');
-        projectIsDirty = true;
-      }
-    }
-    
-    // Context menu view code
-    function viewCode() {
-      if (selectedControlId) {
-        openCodeWindowForControl(selectedControlId);
-      } else {
-        openCodeWindow();
-      }
-    }
-    
-    // Dialog operations
-    function showAboutDialog() {
-      document.getElementById('aboutDialog').style.display = 'flex';
-    }
-    
-    function closeAboutDialog() {
-      document.getElementById('aboutDialog').style.display = 'none';
-    }
-    
-    function handleNewProject() {
-      document.getElementById('newProjectDialog').style.display = 'flex';
-    }
-    
-    function closeNewProjectDialog() {
-      document.getElementById('newProjectDialog').style.display = 'none';
-    }
-    
-    function createNewProject() {
-      // Clear existing controls
-      controls = [];
-      formCanvas.innerHTML = '<div class="grid-background" id="gridBackground"></div>';
-      initializeGrid();
+      });
       
-      // Reset code
-      controlCodeMap = {};
-      formCode = `Private Sub Form_Load()
-  ' Form initialization code here
-  Debug.Print "Form loaded"
-End Sub
-
-Private Sub Form_Unload(Cancel As Integer)
-  ' Form cleanup code here
-  Debug.Print "Form unloaded"
-End Sub
-`;
+      document.getElementById('view-code-btn').addEventListener('click', () => {
+        if (state.selectedControlId) {
+          codeEditorManager.openCodeWindow(state.selectedControlId);
+        } else {
+          codeEditorManager.openCodeWindow('Form1');
+        }
+      });
       
-      // Reset property grid
-      clearPropertyGrid();
+      document.getElementById('view-form-btn').addEventListener('click', () => {
+        windows.toggleVisibility('mainWindow');
+        if (state.visibleWindows.mainWindow) {
+          document.getElementById('form-designer').style.zIndex = windows.getHighestZIndex() + 1;
+        }
+      });
+    }
+    
+    // Initialize components
+    function initAll() {
+      windows.saveWindowSizes();
+      menuSystem.init();
+      codeEditorManager.init();
+      controlsManager.init();
+      toolboxManager.init();
+      dialogManager.init();
+      projectExplorer.init();
+      initWindowControls();
+      initToolbarButtons();
       
-      // Reset dirty flag
-      projectIsDirty = false;
-      
-      closeNewProjectDialog();
-      showNotification('New project created', 'success');
-    }
-    
-    function handleOpenProject() {
-      document.getElementById('openProjectDialog').style.display = 'flex';
-    }
-    
-    function closeOpenProjectDialog() {
-      document.getElementById('openProjectDialog').style.display = 'none';
-    }
-    
-    function loadProject() {
-      // Simulate loading a project
-      closeOpenProjectDialog();
-      showNotification('Project loaded', 'success');
-    }
-    
-    function handleSaveProject() {
-      projectIsDirty = false;
-      document.getElementById('statusState').textContent = 'Saved';
-      showNotification('Project saved', 'success');
-    }
-    
-    // Notification system
-    function showNotification(message, type = 'success') {
-      const notification = document.getElementById('notification');
-      notification.textContent = message;
-      notification.className = `notification ${type}`;
-      notification.style.display = 'block';
-      
+      // Welcome toast
       setTimeout(() => {
-        notification.style.display = 'none';
-      }, 3000);
+        toast.success('Visual Basic 6.0 Web IDE loaded');
+      }, 500);
     }
     
-    // Status bar updates
-    function updateStatusSelection(text) {
-      document.getElementById('statusSelection').textContent = text || 'Project1';
-    }
-    
-    // Initialize the application
-    function init() {
-      // Initialize windows
-      initializeWindowPositions();
-      initializeGrid();
-      
-      // Make windows draggable
-      makeWindowDraggable(mainWindow, document.getElementById('mainWindowTitlebar'));
-      makeWindowDraggable(propertyWindow, document.getElementById('propertyWindowTitlebar'));
-      makeWindowDraggable(projectWindow, document.getElementById('projectWindowTitlebar'));
-      makeWindowDraggable(codeWindow, document.getElementById('codeWindowTitlebar'));
-      makeWindowDraggable(runWindow, document.getElementById('runWindowTitlebar'));
-      
-      // Setup form canvas
-      setupFormCanvas();
-      
-      // Setup menus
-      setupMenus();
-      
-      // Expand the common controls category by default
-      document.getElementById('commonControls').classList.add('expanded');
-      
-      // Initialize the property grid
-      clearPropertyGrid();
-      
-      // Prevent context menu on right-click (we'll use our own)
-      document.addEventListener('contextmenu', (e) => {
-        if (e.target.closest('.form-canvas')) {
-          e.preventDefault();
-        }
-      });
-    }
-    
-    // Initialize on load
-    window.addEventListener('load', init);
+    // Start the application
+    document.addEventListener('DOMContentLoaded', initAll);
   </script>
 </body>
 </html>
