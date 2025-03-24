@@ -1,6 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
-import { toast } from "sonner";
+import React from 'react';
 
 const Index = () => {
   return (

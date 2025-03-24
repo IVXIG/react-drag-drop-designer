@@ -715,6 +715,9 @@
       <div class="menu-item">Delete</div>
       <div class="menu-separator"></div>
       <div class="menu-item">Select All</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Find...</div>
+      <div class="menu-item">Replace...</div>
     </div>
     
     <!-- View Menu Dropdown -->
@@ -723,8 +726,52 @@
       <div class="menu-item" onclick="togglePropertyWindow()">Properties Window</div>
       <div class="menu-item" onclick="toggleProjectWindow()">Project Explorer</div>
       <div class="menu-separator"></div>
-      <div class="menu-item">Code</div>
-      <div class="menu-item">Object</div>
+      <div class="menu-item" onclick="openCodeWindow()">Code</div>
+      <div class="menu-item" onclick="toggleMainWindow()">Object</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Form Layout Window</div>
+      <div class="menu-item">Immediate Window</div>
+      <div class="menu-item">Locals Window</div>
+      <div class="menu-item">Watch Window</div>
+    </div>
+    
+    <!-- Project Menu Dropdown -->
+    <div class="menu-dropdown" id="projectMenuDropdown">
+      <div class="menu-item">Add Form</div>
+      <div class="menu-item">Add Module</div>
+      <div class="menu-item">Add Class Module</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Remove Form</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Project Properties...</div>
+    </div>
+    
+    <!-- Format Menu Dropdown -->
+    <div class="menu-dropdown" id="formatMenuDropdown">
+      <div class="menu-item">Align</div>
+      <div class="menu-item">Make Same Size</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Horizontal Spacing</div>
+      <div class="menu-item">Vertical Spacing</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Center in Form</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Order</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Lock Controls</div>
+    </div>
+    
+    <!-- Debug Menu Dropdown -->
+    <div class="menu-dropdown" id="debugMenuDropdown">
+      <div class="menu-item">Start</div>
+      <div class="menu-item">Stop</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Step Into</div>
+      <div class="menu-item">Step Over</div>
+      <div class="menu-item">Step Out</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Toggle Breakpoint</div>
+      <div class="menu-item">Clear All Breakpoints</div>
     </div>
     
     <!-- Run Menu Dropdown -->
@@ -734,6 +781,29 @@
       <div class="menu-separator"></div>
       <div class="menu-item">Break</div>
       <div class="menu-item">Step Into</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Run to Cursor</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Add Watch...</div>
+      <div class="menu-item">Edit Watch...</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Compile Project</div>
+      <div class="menu-item">Make EXE File...</div>
+    </div>
+    
+    <!-- Tools Menu Dropdown -->
+    <div class="menu-dropdown" id="toolsMenuDropdown">
+      <div class="menu-item">Menu Editor...</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Options...</div>
+    </div>
+    
+    <!-- Add-Ins Menu Dropdown -->
+    <div class="menu-dropdown" id="addInsMenuDropdown">
+      <div class="menu-item">Add-In Manager...</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">VB 6 API Viewer</div>
+      <div class="menu-item">Visual Data Manager</div>
     </div>
     
     <!-- Window Menu Dropdown -->
@@ -741,10 +811,18 @@
       <div class="menu-item" onclick="toggleMainWindow()">Form Designer</div>
       <div class="menu-item" onclick="togglePropertyWindow()">Properties Window</div>
       <div class="menu-item" onclick="toggleProjectWindow()">Project Explorer</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Tile Horizontally</div>
+      <div class="menu-item">Tile Vertically</div>
+      <div class="menu-item">Cascade</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Arrange Icons</div>
     </div>
     
     <!-- Help Menu Dropdown -->
     <div class="menu-dropdown" id="helpMenuDropdown">
+      <div class="menu-item">Microsoft Visual Basic Help</div>
+      <div class="menu-separator"></div>
       <div class="menu-item" onclick="showAboutDialog()">About Visual Basic...</div>
     </div>
   </div>
@@ -847,6 +925,20 @@
           </div>
         </div>
       </div>
+      <div class="toolbox-category">
+        <div class="toolbox-category-header" onclick="toggleCategory('userControls')">
+          Custom Controls
+        </div>
+        <div class="toolbox-category-content" id="userControls">
+          <div id="customControlsContainer">
+            <!-- Custom controls will be added here -->
+          </div>
+          <div style="margin-top: 10px;">
+            <input type="text" id="newControlName" placeholder="New Control Name" style="width: 70%; font-size: 12px; padding: 2px;">
+            <button onclick="addCustomControl()" style="width: 25%; font-size: 12px; margin-left: 5px;">Add</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   
@@ -911,7 +1003,7 @@
       <div class="window-titlebar-buttons">
         <div class="window-button" onclick="minimizeWindow('codeWindow')">_</div>
         <div class="window-button" onclick="maximizeWindow('codeWindow')">□</div>
-        <div class="window-button" onclick="closeWindow('codeWindow')">✕</div>
+        <div class="window-button" onclick="closeCodeWindow()">✕</div>
       </div>
     </div>
     <div class="code-content">
@@ -1002,7 +1094,7 @@
     <div class="context-menu-item" onclick="viewCode()">View Code</div>
     <div class="context-menu-item" onclick="deleteSelectedControl()">Delete</div>
     <div class="context-menu-separator"></div>
-    <div class="context-menu-item">Properties</div>
+    <div class="context-menu-item" onclick="togglePropertyWindow()">Properties</div>
   </div>
   
   <!-- Notification -->
@@ -1031,6 +1123,17 @@
     let resizeDirection = '';
     let windowPositions = {};
     let controlCodeMap = {}; // Maps control IDs to their code
+    let draggedControl = null;
+    let formCode = `Private Sub Form_Load()
+  ' Form initialization code here
+  Debug.Print "Form loaded"
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+  ' Form cleanup code here
+  Debug.Print "Form unloaded"
+End Sub
+`;
     
     // Window references
     const mainWindow = document.getElementById('mainWindow');
@@ -1233,15 +1336,49 @@
     
     function deleteToolControl(event, controlType) {
       event.stopPropagation();
-      // For a real implementation, you might remove the control from the toolbox
-      // but here we just show a notification
-      showNotification(`${controlType} removed from toolbox`, 'success');
+      const toolboxControl = event.target.closest('.toolbox-control');
+      if (toolboxControl) {
+        toolboxControl.remove();
+        showNotification(`${controlType} removed from toolbox`, 'success');
+      }
+    }
+    
+    function addCustomControl() {
+      const controlName = document.getElementById('newControlName').value.trim();
+      if (!controlName) {
+        showNotification('Please enter a control name', 'error');
+        return;
+      }
+      
+      const container = document.getElementById('customControlsContainer');
+      const controlDiv = document.createElement('div');
+      controlDiv.className = 'toolbox-control';
+      controlDiv.draggable = true;
+      controlDiv.dataset.controlType = controlName;
+      controlDiv.addEventListener('dragstart', handleDragStart);
+      
+      controlDiv.innerHTML = `
+        ${controlName}
+        <span class="delete-control" onclick="deleteToolControl(event, '${controlName}')">✕</span>
+      `;
+      
+      container.appendChild(controlDiv);
+      document.getElementById('newControlName').value = '';
+      
+      // Expand the custom controls category if it's not already expanded
+      document.getElementById('userControls').classList.add('expanded');
+      
+      showNotification(`Added ${controlName} to toolbox`, 'success');
     }
     
     // Drag and Drop Operations
     function handleDragStart(event) {
       const controlType = event.target.getAttribute('data-control-type');
       event.dataTransfer.setData('text/plain', controlType);
+      draggedControl = {
+        type: controlType,
+        element: event.target
+      };
     }
     
     function setupFormCanvas() {
@@ -1249,6 +1386,13 @@
       
       canvas.addEventListener('dragover', (e) => {
         e.preventDefault();
+        // Show a drop indicator
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Update status bar to show coordinates
+        document.getElementById('statusState').textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
       });
       
       canvas.addEventListener('drop', (e) => {
@@ -1260,6 +1404,7 @@
         const y = e.clientY - rect.top;
         
         createNewControl(controlType, x, y);
+        document.getElementById('statusState').textContent = 'Ready';
       });
       
       canvas.addEventListener('click', (e) => {
@@ -1300,9 +1445,15 @@
         width: getDefaultWidth(controlType),
         height: getDefaultHeight(controlType),
         caption: controlType === 'Label' ? 'Label1' : controlId,
-        text: controlType === 'Label' ? 'Label1' : '',
+        text: controlType === 'TextBox' ? '' : '',
         visible: true,
-        enabled: true
+        enabled: true,
+        fontName: 'MS Sans Serif',
+        fontSize: 8,
+        foreColor: '#000000',
+        backColor: controlType === 'Label' ? 'transparent' : '#D4D0C8',
+        alignment: 0, // 0 = Left, 1 = Right, 2 = Center
+        borderStyle: controlType === 'Label' ? 0 : 1 // 0 = None, 1 = Fixed Single
       };
       
       // Create the control and add it to our array
@@ -1371,6 +1522,28 @@
       controlElement.style.width = `${control.properties.width}px`;
       controlElement.style.height = `${control.properties.height}px`;
       
+      // Apply visual properties
+      if (control.properties.backColor !== 'transparent') {
+        controlElement.style.backgroundColor = control.properties.backColor;
+      }
+      controlElement.style.color = control.properties.foreColor;
+      controlElement.style.fontFamily = control.properties.fontName;
+      controlElement.style.fontSize = `${control.properties.fontSize}pt`;
+      
+      if (control.properties.alignment === 1) {
+        controlElement.style.textAlign = 'right';
+      } else if (control.properties.alignment === 2) {
+        controlElement.style.textAlign = 'center';
+      }
+      
+      if (control.properties.borderStyle === 0) {
+        controlElement.style.border = 'none';
+      }
+      
+      if (!control.properties.visible) {
+        controlElement.style.display = 'none';
+      }
+      
       // Add control-specific content
       let content = '';
       switch (control.type) {
@@ -1426,15 +1599,38 @@
       controlElement.addEventListener('mousedown', (e) => {
         // Prevent default behavior for inputs, selects, etc.
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
-          e.stopPropagation();
-          return;
+          if (control.type === 'TextBox') {
+            // For TextBox, we want to allow text editing but also make the control movable
+            // We'll handle this by checking if the user is clicking on the border rather than the input
+            const inputRect = e.target.getBoundingClientRect();
+            const controlRect = controlElement.getBoundingClientRect();
+            
+            // Check if the click is on the control border (within 5px of the edge)
+            const isOnBorder = 
+              e.clientX < inputRect.left + 5 || 
+              e.clientX > inputRect.right - 5 || 
+              e.clientY < inputRect.top + 5 || 
+              e.clientY > inputRect.bottom - 5;
+            
+            if (!isOnBorder) {
+              selectControl(control.id);
+              e.stopPropagation();
+              return; // Allow text input
+            }
+          } else {
+            // For other controls with inputs, just select them
+            e.stopPropagation();
+            selectControl(control.id);
+            return;
+          }
         }
         
         selectControl(control.id);
-        controlElement.style.zIndex = 10;
         
         // Start drag operation
         isDragging = true;
+        controlElement.style.zIndex = 10;
+        
         const rect = controlElement.getBoundingClientRect();
         dragStartX = e.clientX - rect.left;
         dragStartY = e.clientY - rect.top;
@@ -1445,6 +1641,16 @@
       controlElement.addEventListener('dblclick', () => {
         openCodeWindowForControl(control.id);
       });
+      
+      // Add input event to update property in real-time
+      if (control.type === 'TextBox') {
+        const input = controlElement.querySelector('input');
+        if (input) {
+          input.addEventListener('input', (e) => {
+            updateControlProperty(control.id, 'text', e.target.value);
+          });
+        }
+      }
       
       formCanvas.appendChild(controlElement);
       
@@ -1483,7 +1689,7 @@
       } else {
         // Clear property grid if nothing selected
         clearPropertyGrid();
-        updateStatusSelection('');
+        updateStatusSelection('Form');
       }
     }
     
@@ -1519,17 +1725,45 @@
           resizeStartLeft = rect.left - canvasRect.left;
           resizeStartTop = rect.top - canvasRect.top;
         });
+        
+        controlElement.appendChild(handle);
       });
-      
-      controlElement.append(...resizePositions.map(p => {
-        const handle = document.createElement('div');
-        handle.className = `control-resize ${p.class}`;
-        return handle;
-      }));
     }
     
     // Handle resize operation
     document.addEventListener('mousemove', (e) => {
+      if (isDragging && selectedControlId && !isResizing) {
+        const controlElement = document.getElementById(selectedControlId);
+        if (!controlElement) return;
+        
+        const canvasRect = formCanvas.getBoundingClientRect();
+        const newLeft = e.clientX - canvasRect.left - dragStartX;
+        const newTop = e.clientY - canvasRect.top - dragStartY;
+        
+        // Snap to grid (every 5 pixels)
+        const snapGrid = 5;
+        const snappedLeft = Math.round(newLeft / snapGrid) * snapGrid;
+        const snappedTop = Math.round(newTop / snapGrid) * snapGrid;
+        
+        controlElement.style.left = `${snappedLeft}px`;
+        controlElement.style.top = `${snappedTop}px`;
+        
+        // Update control data
+        const controlIndex = controls.findIndex(c => c.id === selectedControlId);
+        if (controlIndex !== -1) {
+          controls[controlIndex].properties.left = snappedLeft;
+          controls[controlIndex].properties.top = snappedTop;
+          
+          // Update property grid
+          updatePropertyGrid(controls[controlIndex]);
+        }
+        
+        // Update status bar
+        document.getElementById('statusState').textContent = `X: ${snappedLeft}, Y: ${snappedTop}`;
+        
+        projectIsDirty = true;
+      }
+      
       if (isResizing && selectedControlId) {
         const controlElement = document.getElementById(selectedControlId);
         if (!controlElement) return;
@@ -1537,6 +1771,8 @@
         const deltaX = e.clientX - resizeStartX;
         const deltaY = e.clientY - resizeStartY;
         
+        // Snap to grid (every 5 pixels)
+        const snapGrid = 5;
         let newWidth = resizeStartW;
         let newHeight = resizeStartH;
         let newLeft = resizeStartLeft;
@@ -1545,40 +1781,44 @@
         // Handle different resize directions
         switch (resizeDirection) {
           case 'e':
-            newWidth = Math.max(20, resizeStartW + deltaX);
+            newWidth = Math.round((resizeStartW + deltaX) / snapGrid) * snapGrid;
             break;
           case 'se':
-            newWidth = Math.max(20, resizeStartW + deltaX);
-            newHeight = Math.max(20, resizeStartH + deltaY);
+            newWidth = Math.round((resizeStartW + deltaX) / snapGrid) * snapGrid;
+            newHeight = Math.round((resizeStartH + deltaY) / snapGrid) * snapGrid;
             break;
           case 's':
-            newHeight = Math.max(20, resizeStartH + deltaY);
+            newHeight = Math.round((resizeStartH + deltaY) / snapGrid) * snapGrid;
             break;
           case 'sw':
-            newWidth = Math.max(20, resizeStartW - deltaX);
-            newLeft = resizeStartLeft + deltaX;
-            newHeight = Math.max(20, resizeStartH + deltaY);
+            newWidth = Math.round((resizeStartW - deltaX) / snapGrid) * snapGrid;
+            newLeft = Math.round((resizeStartLeft + deltaX) / snapGrid) * snapGrid;
+            newHeight = Math.round((resizeStartH + deltaY) / snapGrid) * snapGrid;
             break;
           case 'w':
-            newWidth = Math.max(20, resizeStartW - deltaX);
-            newLeft = resizeStartLeft + deltaX;
+            newWidth = Math.round((resizeStartW - deltaX) / snapGrid) * snapGrid;
+            newLeft = Math.round((resizeStartLeft + deltaX) / snapGrid) * snapGrid;
             break;
           case 'nw':
-            newWidth = Math.max(20, resizeStartW - deltaX);
-            newHeight = Math.max(20, resizeStartH - deltaY);
-            newLeft = resizeStartLeft + deltaX;
-            newTop = resizeStartTop + deltaY;
+            newWidth = Math.round((resizeStartW - deltaX) / snapGrid) * snapGrid;
+            newHeight = Math.round((resizeStartH - deltaY) / snapGrid) * snapGrid;
+            newLeft = Math.round((resizeStartLeft + deltaX) / snapGrid) * snapGrid;
+            newTop = Math.round((resizeStartTop + deltaY) / snapGrid) * snapGrid;
             break;
           case 'n':
-            newHeight = Math.max(20, resizeStartH - deltaY);
-            newTop = resizeStartTop + deltaY;
+            newHeight = Math.round((resizeStartH - deltaY) / snapGrid) * snapGrid;
+            newTop = Math.round((resizeStartTop + deltaY) / snapGrid) * snapGrid;
             break;
           case 'ne':
-            newWidth = Math.max(20, resizeStartW + deltaX);
-            newHeight = Math.max(20, resizeStartH - deltaY);
-            newTop = resizeStartTop + deltaY;
+            newWidth = Math.round((resizeStartW + deltaX) / snapGrid) * snapGrid;
+            newHeight = Math.round((resizeStartH - deltaY) / snapGrid) * snapGrid;
+            newTop = Math.round((resizeStartTop + deltaY) / snapGrid) * snapGrid;
             break;
         }
+        
+        // Minimum size constraints
+        newWidth = Math.max(20, newWidth);
+        newHeight = Math.max(20, newHeight);
         
         // Update control element
         controlElement.style.width = `${newWidth}px`;
@@ -1598,12 +1838,17 @@
           updatePropertyGrid(controls[controlIndex]);
         }
         
+        // Update status bar
+        document.getElementById('statusState').textContent = `W: ${newWidth}, H: ${newHeight}`;
+        
         projectIsDirty = true;
       }
     });
     
     document.addEventListener('mouseup', () => {
+      isDragging = false;
       isResizing = false;
+      document.getElementById('statusState').textContent = 'Ready';
     });
     
     // Property grid operations
@@ -1616,7 +1861,8 @@
         return;
       }
       
-      const properties = Object.entries(control.properties);
+      // Sort properties alphabetically
+      const properties = Object.entries(control.properties).sort((a, b) => a[0].localeCompare(b[0]));
       
       properties.forEach(([propertyName, propertyValue]) => {
         const nameElement = document.createElement('div');
@@ -1628,12 +1874,64 @@
         
         let inputElement;
         
+        // Create appropriate input element based on property type
         if (typeof propertyValue === 'boolean') {
           inputElement = document.createElement('input');
           inputElement.type = 'checkbox';
           inputElement.checked = propertyValue;
           inputElement.addEventListener('change', (e) => {
             updateControlProperty(control.id, propertyName, e.target.checked);
+          });
+        } else if (propertyName === 'alignment') {
+          // Dropdown for alignment
+          inputElement = document.createElement('select');
+          const options = [
+            { value: 0, text: 'Left' },
+            { value: 1, text: 'Right' },
+            { value: 2, text: 'Center' }
+          ];
+          
+          options.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.text;
+            if (parseInt(propertyValue) === opt.value) {
+              option.selected = true;
+            }
+            inputElement.appendChild(option);
+          });
+          
+          inputElement.addEventListener('change', (e) => {
+            updateControlProperty(control.id, propertyName, parseInt(e.target.value));
+          });
+        } else if (propertyName === 'borderStyle') {
+          // Dropdown for border style
+          inputElement = document.createElement('select');
+          const options = [
+            { value: 0, text: 'None' },
+            { value: 1, text: 'Fixed Single' }
+          ];
+          
+          options.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.text;
+            if (parseInt(propertyValue) === opt.value) {
+              option.selected = true;
+            }
+            inputElement.appendChild(option);
+          });
+          
+          inputElement.addEventListener('change', (e) => {
+            updateControlProperty(control.id, propertyName, parseInt(e.target.value));
+          });
+        } else if (propertyName === 'backColor' || propertyName === 'foreColor') {
+          // Color picker
+          inputElement = document.createElement('input');
+          inputElement.type = 'color';
+          inputElement.value = propertyValue;
+          inputElement.addEventListener('change', (e) => {
+            updateControlProperty(control.id, propertyName, e.target.value);
           });
         } else if (typeof propertyValue === 'number') {
           inputElement = document.createElement('input');
@@ -1678,8 +1976,6 @@
       selectControl(controlId);
       
       projectIsDirty = true;
-      
-      showNotification(`Updated ${property} to ${value}`, 'success');
     }
     
     // Code editor functions
@@ -1692,16 +1988,7 @@
         codeWindow.style.zIndex = getHighestZIndex() + 1;
         
         document.getElementById('codeWindowTitle').textContent = 'Form_Code';
-        document.getElementById('codeEditor').value = `Private Sub Form_Load()
-  ' Form initialization code here
-  Debug.Print "Form loaded"
-End Sub
-
-Private Sub Form_Unload(Cancel As Integer)
-  ' Form cleanup code here
-  Debug.Print "Form unloaded"
-End Sub
-`;
+        document.getElementById('codeEditor').value = formCode;
       }
     }
     
@@ -1731,13 +2018,18 @@ End Sub
     
     // Save the code when code window is closed
     function closeCodeWindow() {
-      const controlId = document.getElementById('codeWindowTitle').textContent.replace('Code: ', '');
+      const title = document.getElementById('codeWindowTitle').textContent;
       const code = document.getElementById('codeEditor').value;
       
-      // Save the code to our map
-      controlCodeMap[controlId] = code;
+      if (title === 'Form_Code') {
+        formCode = code;
+      } else {
+        const controlId = title.replace('Code: ', '');
+        controlCodeMap[controlId] = code;
+      }
       
       codeWindow.style.display = 'none';
+      showNotification('Code saved', 'success');
     }
     
     // Running project
@@ -1764,22 +2056,43 @@ End Sub
       runContent.innerHTML = '';
       
       controls.forEach(control => {
+        if (!control.properties.visible) return;
+        
         const runControlElement = document.createElement('div');
         runControlElement.className = `control ${control.type}`;
         runControlElement.style.left = `${control.properties.left}px`;
         runControlElement.style.top = `${control.properties.top}px`;
         runControlElement.style.width = `${control.properties.width}px`;
         runControlElement.style.height = `${control.properties.height}px`;
+        runControlElement.style.backgroundColor = control.properties.backColor;
+        runControlElement.style.color = control.properties.foreColor;
+        runControlElement.style.fontFamily = control.properties.fontName;
+        runControlElement.style.fontSize = `${control.properties.fontSize}pt`;
+        
+        if (control.properties.alignment === 1) {
+          runControlElement.style.textAlign = 'right';
+        } else if (control.properties.alignment === 2) {
+          runControlElement.style.textAlign = 'center';
+        }
+        
+        if (control.properties.borderStyle === 0) {
+          runControlElement.style.border = 'none';
+        }
         
         // Add interactive elements based on control type
         switch(control.type) {
           case 'CommandButton':
             runControlElement.textContent = control.properties.caption;
             runControlElement.style.cursor = 'pointer';
-            runControlElement.addEventListener('click', () => {
-              // Execute the code defined for this control
-              executeCode(control.id, 'Click');
-            });
+            if (!control.properties.enabled) {
+              runControlElement.style.opacity = '0.5';
+              runControlElement.style.cursor = 'default';
+            } else {
+              runControlElement.addEventListener('click', () => {
+                // Execute the code defined for this control
+                executeCode(control.id, 'Click');
+              });
+            }
             break;
           case 'TextBox':
             const input = document.createElement('input');
@@ -1789,11 +2102,17 @@ End Sub
             input.style.height = '100%';
             input.style.border = 'none';
             input.style.background = 'transparent';
-            if (!control.properties.enabled) input.disabled = true;
+            input.style.color = control.properties.foreColor;
+            input.style.fontFamily = control.properties.fontName;
+            input.style.fontSize = `${control.properties.fontSize}pt`;
             
-            input.addEventListener('change', () => {
-              executeCode(control.id, 'Change');
-            });
+            if (!control.properties.enabled) {
+              input.disabled = true;
+            } else {
+              input.addEventListener('change', () => {
+                executeCode(control.id, 'Change');
+              });
+            }
             
             runControlElement.appendChild(input);
             break;
@@ -1803,23 +2122,131 @@ End Sub
           case 'CheckBox':
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
-            if (!control.properties.enabled) checkbox.disabled = true;
+            if (!control.properties.enabled) {
+              checkbox.disabled = true;
+              runControlElement.style.opacity = '0.5';
+            } else {
+              checkbox.addEventListener('change', () => {
+                executeCode(control.id, 'Click');
+              });
+            }
             
-            const label = document.createElement('span');
-            label.textContent = control.properties.caption;
-            
-            checkbox.addEventListener('change', () => {
-              executeCode(control.id, 'Click');
-            });
+            const checkLabel = document.createElement('span');
+            checkLabel.textContent = control.properties.caption;
             
             runControlElement.appendChild(checkbox);
-            runControlElement.appendChild(label);
+            runControlElement.appendChild(checkLabel);
             break;
-          // Add other control types as needed
+          case 'OptionButton':
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'optionGroup';
+            if (!control.properties.enabled) {
+              radio.disabled = true;
+              runControlElement.style.opacity = '0.5';
+            } else {
+              radio.addEventListener('change', () => {
+                executeCode(control.id, 'Click');
+              });
+            }
+            
+            const radioLabel = document.createElement('span');
+            radioLabel.textContent = control.properties.caption;
+            
+            runControlElement.appendChild(radio);
+            runControlElement.appendChild(radioLabel);
+            break;
+          case 'ComboBox':
+            const select = document.createElement('select');
+            select.style.width = '100%';
+            select.style.height = '100%';
+            
+            // Add sample items
+            ['Item 1', 'Item 2', 'Item 3'].forEach(item => {
+              const option = document.createElement('option');
+              option.textContent = item;
+              select.appendChild(option);
+            });
+            
+            if (!control.properties.enabled) {
+              select.disabled = true;
+            } else {
+              select.addEventListener('change', () => {
+                executeCode(control.id, 'Change');
+              });
+            }
+            
+            runControlElement.appendChild(select);
+            break;
+          case 'ListBox':
+            const listbox = document.createElement('select');
+            listbox.multiple = true;
+            listbox.style.width = '100%';
+            listbox.style.height = '100%';
+            
+            // Add sample items
+            ['Item 1', 'Item 2', 'Item 3'].forEach(item => {
+              const option = document.createElement('option');
+              option.textContent = item;
+              listbox.appendChild(option);
+            });
+            
+            if (!control.properties.enabled) {
+              listbox.disabled = true;
+            } else {
+              listbox.addEventListener('change', () => {
+                executeCode(control.id, 'Click');
+              });
+            }
+            
+            runControlElement.appendChild(listbox);
+            break;
+          case 'Frame':
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'Frame-header';
+            headerDiv.textContent = control.properties.caption;
+            headerDiv.style.position = 'absolute';
+            headerDiv.style.top = '-8px';
+            headerDiv.style.left = '10px';
+            headerDiv.style.backgroundColor = '#D4D0C8';
+            headerDiv.style.padding = '0 5px';
+            
+            runControlElement.appendChild(headerDiv);
+            break;
         }
         
         runContent.appendChild(runControlElement);
       });
+      
+      // Execute Form_Load
+      try {
+        const loadCode = formCode.match(/Private Sub Form_Load\(\)([\s\S]*?)End Sub/);
+        if (loadCode && loadCode[1]) {
+          // Extract the code between sub and end sub
+          const codeToExecute = loadCode[1].trim();
+          console.log('Executing Form_Load:', codeToExecute);
+          
+          // Look for debug.print statements
+          const debugPrints = codeToExecute.match(/Debug\.Print\s+"([^"]+)"/g);
+          if (debugPrints) {
+            debugPrints.forEach(statement => {
+              const message = statement.match(/Debug\.Print\s+"([^"]+)"/)[1];
+              console.log('Debug:', message);
+            });
+          }
+          
+          // Look for MsgBox statements
+          const msgBoxes = codeToExecute.match(/MsgBox\s+"([^"]+)"/g);
+          if (msgBoxes) {
+            msgBoxes.forEach(statement => {
+              const message = statement.match(/MsgBox\s+"([^"]+)"/)[1];
+              setTimeout(() => alert(message), 100);
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error executing Form_Load:', error);
+      }
       
       showNotification('Project is now running', 'success');
     }
@@ -1833,6 +2260,36 @@ End Sub
       // Hide run window
       runWindow.style.display = 'none';
       
+      // Execute Form_Unload
+      try {
+        const unloadCode = formCode.match(/Private Sub Form_Unload\(.*\)([\s\S]*?)End Sub/);
+        if (unloadCode && unloadCode[1]) {
+          // Extract the code between sub and end sub
+          const codeToExecute = unloadCode[1].trim();
+          console.log('Executing Form_Unload:', codeToExecute);
+          
+          // Look for debug.print statements
+          const debugPrints = codeToExecute.match(/Debug\.Print\s+"([^"]+)"/g);
+          if (debugPrints) {
+            debugPrints.forEach(statement => {
+              const message = statement.match(/Debug\.Print\s+"([^"]+)"/)[1];
+              console.log('Debug:', message);
+            });
+          }
+          
+          // Look for MsgBox statements
+          const msgBoxes = codeToExecute.match(/MsgBox\s+"([^"]+)"/g);
+          if (msgBoxes) {
+            msgBoxes.forEach(statement => {
+              const message = statement.match(/MsgBox\s+"([^"]+)"/)[1];
+              setTimeout(() => alert(message), 100);
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error executing Form_Unload:', error);
+      }
+      
       showNotification('Project stopped', 'success');
     }
     
@@ -1840,13 +2297,36 @@ End Sub
       const code = controlCodeMap[controlId] || '';
       if (!code) return;
       
-      // In a real implementation, we would execute the VB code
-      // Here we just simulate it by showing what would happen
-      
-      // Check if there's a MsgBox command
-      const msgBoxMatch = code.match(/MsgBox\s+"([^"]+)"/);
-      if (msgBoxMatch) {
-        alert(msgBoxMatch[1]);
+      try {
+        // Look for the specific event handler
+        const eventRegex = new RegExp(`Private Sub ${controlId}_${eventType}\\(.*\\)([\\s\\S]*?)End Sub`);
+        const eventCode = code.match(eventRegex);
+        
+        if (eventCode && eventCode[1]) {
+          // Extract the code between sub and end sub
+          const codeToExecute = eventCode[1].trim();
+          console.log(`Executing ${controlId}_${eventType}:`, codeToExecute);
+          
+          // Look for debug.print statements
+          const debugPrints = codeToExecute.match(/Debug\.Print\s+"([^"]+)"/g);
+          if (debugPrints) {
+            debugPrints.forEach(statement => {
+              const message = statement.match(/Debug\.Print\s+"([^"]+)"/)[1];
+              console.log('Debug:', message);
+            });
+          }
+          
+          // Look for MsgBox statements
+          const msgBoxes = codeToExecute.match(/MsgBox\s+"([^"]+)"/g);
+          if (msgBoxes) {
+            msgBoxes.forEach(statement => {
+              const message = statement.match(/MsgBox\s+"([^"]+)"/)[1];
+              alert(message);
+            });
+          }
+        }
+      } catch (error) {
+        console.error(`Error executing ${controlId}_${eventType}:`, error);
       }
       
       showNotification(`Executed ${controlId}_${eventType} code`, 'success');
@@ -1863,6 +2343,9 @@ End Sub
         // Remove from array
         controls = controls.filter(c => c.id !== selectedControlId);
         
+        // Remove code
+        delete controlCodeMap[selectedControlId];
+        
         // Clear property grid
         clearPropertyGrid();
         
@@ -1877,6 +2360,8 @@ End Sub
     function viewCode() {
       if (selectedControlId) {
         openCodeWindowForControl(selectedControlId);
+      } else {
+        openCodeWindow();
       }
     }
     
@@ -1902,6 +2387,19 @@ End Sub
       controls = [];
       formCanvas.innerHTML = '<div class="grid-background" id="gridBackground"></div>';
       initializeGrid();
+      
+      // Reset code
+      controlCodeMap = {};
+      formCode = `Private Sub Form_Load()
+  ' Form initialization code here
+  Debug.Print "Form loaded"
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+  ' Form cleanup code here
+  Debug.Print "Form unloaded"
+End Sub
+`;
       
       // Reset property grid
       clearPropertyGrid();
