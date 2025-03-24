@@ -1,0 +1,1143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft Visual Basic 6.0</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <style>
+    /* Classic Windows 98/VB6 Colors */
+    :root {
+      --win98-bg: #D4D0C8;
+      --win98-3d-light: #FFFFFF;
+      --win98-3d-dark: #808080;
+      --win98-title-active: #000080;
+      --win98-title-inactive: #808080;
+      --win98-text: #000000;
+      --win98-btn-face: #D4D0C8;
+      --win98-btn-highlight: #FFFFFF;
+      --win98-btn-shadow: #808080;
+      --win98-canvas: #FFFFFF;
+      --win98-menu-highlight: #000080;
+      --win98-menu-text-highlight: #FFFFFF;
+      --win98-menu-disabled: #808080;
+      --win98-selection: #000080;
+      --win98-selection-text: #FFFFFF;
+    }
+    
+    /* Global Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
+      overflow: hidden;
+      background-color: var(--win98-bg);
+      color: var(--win98-text);
+      font-size: 11px;
+    }
+    
+    /* Reset */
+    * {
+      box-sizing: border-box;
+    }
+    
+    /* Windows 98/VB6 Style UI Components */
+    .win98-btn {
+      background-color: var(--win98-btn-face);
+      border: 1px solid var(--win98-btn-shadow);
+      border-top: 1px solid var(--win98-btn-highlight);
+      border-left: 1px solid var(--win98-btn-highlight);
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      position: relative;
+      font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
+      margin: 0 1px;
+      color: var(--win98-text);
+    }
+    
+    .win98-btn:active {
+      border: 1px solid var(--win98-btn-highlight);
+      border-top: 1px solid var(--win98-btn-shadow);
+      border-left: 1px solid var(--win98-btn-shadow);
+    }
+    
+    .win98-btn.menu-btn {
+      background-color: var(--win98-btn-face);
+      color: var(--win98-text);
+      border: 0;
+      font-weight: normal;
+      margin-right: 0;
+      padding: 2px 8px;
+    }
+    
+    .win98-btn.menu-btn:hover {
+      background-color: var(--win98-menu-highlight);
+      color: var(--win98-menu-text-highlight);
+    }
+    
+    .win98-window {
+      background-color: var(--win98-bg);
+      border: 2px solid var(--win98-btn-face);
+      border-top: 2px solid var(--win98-3d-light);
+      border-left: 2px solid var(--win98-3d-light);
+      border-bottom: 2px solid var(--win98-3d-dark);
+      border-right: 2px solid var(--win98-3d-dark);
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+      position: absolute;
+      overflow: hidden;
+    }
+    
+    .win98-title-bar {
+      background-color: var(--win98-title-active);
+      color: white;
+      padding: 2px 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+      font-weight: bold;
+      height: 18px;
+    }
+    
+    .win98-title-bar.inactive {
+      background-color: var(--win98-title-inactive);
+    }
+    
+    .win98-title {
+      font-weight: bold;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .win98-controls {
+      display: flex;
+      gap: 2px;
+    }
+    
+    .win98-control {
+      background-color: var(--win98-btn-face);
+      border: 1px solid var(--win98-3d-dark);
+      border-top: 1px solid var(--win98-3d-light);
+      border-left: 1px solid var(--win98-3d-light);
+      color: black;
+      width: 14px;
+      height: 14px;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    
+    .win98-control:active {
+      border: 1px solid var(--win98-3d-light);
+      border-top: 1px solid var(--win98-3d-dark);
+      border-left: 1px solid var(--win98-3d-dark);
+    }
+    
+    /* Toolbox Styling */
+    .toolbox {
+      width: 200px;
+      height: calc(100vh - 76px);
+      background-color: var(--win98-bg);
+      border-right: 1px solid var(--win98-3d-dark);
+      position: absolute;
+      left: 0;
+      top: 76px;
+    }
+    
+    .toolbox-title {
+      background-color: var(--win98-title-active);
+      color: white;
+      text-align: center;
+      padding: 2px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .toolbox-category {
+      margin-bottom: 4px;
+    }
+    
+    .toolbox-category-header {
+      background-color: var(--win98-bg);
+      color: var(--win98-text);
+      font-weight: bold;
+      padding: 2px 4px;
+      border: 1px solid var(--win98-3d-dark);
+      border-top: 1px solid var(--win98-3d-light);
+      border-left: 1px solid var(--win98-3d-light);
+      cursor: pointer;
+    }
+    
+    .toolbox-category-header:active {
+      border: 1px solid var(--win98-3d-light);
+      border-top: 1px solid var(--win98-3d-dark);
+      border-left: 1px solid var(--win98-3d-dark);
+    }
+    
+    .toolbox-item {
+      background-color: var(--win98-bg);
+      border: 1px solid var(--win98-3d-dark);
+      border-top: 1px solid var(--win98-3d-light);
+      border-left: 1px solid var(--win98-3d-light);
+      margin: 2px 4px;
+      padding: 2px 4px;
+      cursor: move;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .toolbox-item:active {
+      border: 1px solid var(--win98-3d-light);
+      border-top: 1px solid var(--win98-3d-dark);
+      border-left: 1px solid var(--win98-3d-dark);
+    }
+    
+    .toolbox-item-icon {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      background-color: var(--win98-bg);
+      border: 1px solid var(--win98-3d-dark);
+    }
+    
+    /* Designer Canvas */
+    .designer-canvas {
+      background-color: var(--win98-canvas);
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    
+    .grid-cell {
+      border: 1px dotted #F0F0F0;
+      position: absolute;
+    }
+    
+    /* Controls on canvas */
+    .control {
+      position: absolute;
+      background-color: var(--win98-btn-face);
+      border: 1px solid var(--win98-3d-dark);
+      border-top: 1px solid var(--win98-3d-light);
+      border-left: 1px solid var(--win98-3d-light);
+    }
+    
+    .control.selected {
+      border: 1px dashed black;
+      outline: 1px solid white;
+    }
+    
+    .resize-handle {
+      width: 6px;
+      height: 6px;
+      background-color: black;
+      position: absolute;
+      border: 1px solid white;
+    }
+    
+    .resize-handle.tl { top: -3px; left: -3px; cursor: nw-resize; }
+    .resize-handle.tm { top: -3px; left: 50%; margin-left: -3px; cursor: n-resize; }
+    .resize-handle.tr { top: -3px; right: -3px; cursor: ne-resize; }
+    .resize-handle.ml { top: 50%; margin-top: -3px; left: -3px; cursor: w-resize; }
+    .resize-handle.mr { top: 50%; margin-top: -3px; right: -3px; cursor: e-resize; }
+    .resize-handle.bl { bottom: -3px; left: -3px; cursor: sw-resize; }
+    .resize-handle.bm { bottom: -3px; left: 50%; margin-left: -3px; cursor: s-resize; }
+    .resize-handle.br { bottom: -3px; right: -3px; cursor: se-resize; }
+    
+    /* Properties Window */
+    .properties-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      overflow-y: auto;
+      background-color: white;
+      border: 1px solid var(--win98-3d-dark);
+    }
+    
+    .property-name {
+      background-color: var(--win98-bg);
+      color: var(--win98-text);
+      padding: 2px 4px;
+      border-bottom: 1px solid var(--win98-3d-dark);
+      border-right: 1px solid var(--win98-3d-dark);
+      font-size: 11px;
+    }
+    
+    .property-value {
+      background-color: white;
+      padding: 2px 4px;
+      border-bottom: 1px solid var(--win98-3d-dark);
+      font-size: 11px;
+    }
+    
+    /* Project Explorer */
+    .project-explorer-item {
+      margin: 2px 0;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    
+    .project-folder {
+      color: black;
+      font-weight: normal;
+    }
+    
+    .project-file {
+      color: black;
+      margin-left: 16px;
+    }
+    
+    /* Menu Dropdown */
+    .menu-dropdown {
+      position: absolute;
+      background-color: var(--win98-bg);
+      border: 1px solid var(--win98-3d-dark);
+      border-top: 1px solid var(--win98-3d-light);
+      border-left: 1px solid var(--win98-3d-light);
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      display: none;
+      padding: 2px;
+      min-width: 150px;
+    }
+    
+    .menu-dropdown.show {
+      display: block;
+    }
+    
+    .menu-item {
+      padding: 3px 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 11px;
+    }
+    
+    .menu-item:hover {
+      background-color: var(--win98-menu-highlight);
+      color: var(--win98-menu-text-highlight);
+    }
+    
+    .menu-separator {
+      height: 1px;
+      margin: 2px 2px;
+      background-color: var(--win98-3d-dark);
+      border-bottom: 1px solid var(--win98-3d-light);
+    }
+    
+    /* Dialog Styles */
+    .dialog-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    
+    .dialog {
+      background-color: var(--win98-bg);
+      border: 2px solid var(--win98-btn-face);
+      border-top: 2px solid var(--win98-3d-light);
+      border-left: 2px solid var(--win98-3d-light);
+      border-bottom: 2px solid var(--win98-3d-dark);
+      border-right: 2px solid var(--win98-3d-dark);
+      box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+      width: 400px;
+    }
+    
+    .dialog-title {
+      background-color: var(--win98-title-active);
+      color: white;
+      font-weight: bold;
+      padding: 2px 4px;
+      display: flex;
+      justify-content: space-between;
+      height: 18px;
+      font-size: 11px;
+    }
+    
+    .dialog-content {
+      padding: 10px;
+      font-size: 11px;
+    }
+    
+    .dialog-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 10px;
+    }
+    
+    /* Status Bar */
+    .status-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background-color: var(--win98-bg);
+      border-top: 1px solid var(--win98-3d-light);
+      display: flex;
+      padding: 1px 2px;
+      font-size: 11px;
+    }
+    
+    .status-item {
+      padding: 0 8px;
+      border-right: 1px solid var(--win98-3d-dark);
+      display: flex;
+      align-items: center;
+    }
+    
+    /* Toasts */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10000;
+    }
+    
+    .toast {
+      background-color: white;
+      border: 1px solid var(--win98-3d-dark);
+      border-top: 1px solid var(--win98-3d-light);
+      border-left: 1px solid var(--win98-3d-light);
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      margin-top: 8px;
+      padding: 8px 12px;
+      max-width: 300px;
+      animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+      animation-fill-mode: forwards;
+      font-size: 11px;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-20px); }
+    }
+    
+    /* Code Editor */
+    .code-editor {
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      padding: 4px;
+    }
+    
+    .code-textarea {
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      border: 1px solid var(--win98-3d-dark);
+      padding: 4px;
+      resize: none;
+    }
+
+    /* Menu/Toolbar Styling */
+    .menu-bar {
+      background-color: var(--win98-bg);
+      height: 19px;
+      display: flex;
+      align-items: center;
+      padding: 0;
+      border-bottom: 1px solid var(--win98-3d-dark);
+    }
+
+    /* Main toolbar */
+    .main-toolbar {
+      background-color: var(--win98-bg);
+      height: 28px;
+      display: flex;
+      align-items: center;
+      padding: 1px 4px;
+      border-bottom: 1px solid var(--win98-3d-dark);
+    }
+
+    /* Standard toolbar button style */
+    .toolbar-button {
+      width: 24px;
+      height: 24px;
+      background-color: var(--win98-btn-face);
+      border: 1px solid transparent;
+      margin: 0 1px;
+      padding: 3px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .toolbar-button:hover {
+      border: 1px solid var(--win98-3d-dark);
+      border-top: 1px solid var(--win98-3d-light);
+      border-left: 1px solid var(--win98-3d-light);
+    }
+    
+    .toolbar-button:active {
+      border: 1px solid var(--win98-3d-light);
+      border-top: 1px solid var(--win98-3d-dark);
+      border-left: 1px solid var(--win98-3d-dark);
+    }
+
+    .toolbar-separator {
+      width: 1px;
+      height: 22px;
+      background-color: var(--win98-3d-dark);
+      border-right: 1px solid var(--win98-3d-light);
+      margin: 0 3px;
+    }
+
+    /* Form Designer Icons */
+    .toolbar-icon {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
+    /* Debug toolbar */
+    .debug-toolbar {
+      background-color: var(--win98-bg);
+      height: 28px;
+      display: flex;
+      align-items: center;
+      padding: 1px 4px;
+      border-bottom: 1px solid var(--win98-3d-dark);
+    }
+
+    /* Overall app container */
+    .vb6-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .main-content {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="vb6-container">
+    <!-- Menu Bar -->
+    <div class="menu-bar">
+      <button class="win98-btn menu-btn" data-menu="file-menu">File</button>
+      <button class="win98-btn menu-btn" data-menu="edit-menu">Edit</button>
+      <button class="win98-btn menu-btn" data-menu="view-menu">View</button>
+      <button class="win98-btn menu-btn" data-menu="project-menu">Project</button>
+      <button class="win98-btn menu-btn" data-menu="format-menu">Format</button>
+      <button class="win98-btn menu-btn" data-menu="debug-menu">Debug</button>
+      <button class="win98-btn menu-btn" data-menu="run-menu">Run</button>
+      <button class="win98-btn menu-btn" data-menu="query-menu">Query</button>
+      <button class="win98-btn menu-btn" data-menu="diagram-menu">Diagram</button>
+      <button class="win98-btn menu-btn" data-menu="tools-menu">Tools</button>
+      <button class="win98-btn menu-btn" data-menu="addins-menu">Add-Ins</button>
+      <button class="win98-btn menu-btn" data-menu="window-menu">Window</button>
+      <button class="win98-btn menu-btn" data-menu="help-menu">Help</button>
+    </div>
+    
+    <!-- Standard Toolbar -->
+    <div class="main-toolbar">
+      <button class="toolbar-button" title="New Project">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIgjI+py+0Po5wUgYuz3rz7D4biSJbmiabqyrbuC8fyTNcFADs=" alt="New"/>
+      </button>
+      <button class="toolbar-button" title="Open Project">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIhjI+py+0Po5wgAoCz3rz7D4biSJbmiabqyrbuC0fyTCcFADs=" alt="Open"/>
+      </button>
+      <button class="toolbar-button" title="Save Project">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIijI+py+0Po5wggouz3rz7D4biSJbmiabqyrbuC0fyTAUAOw==" alt="Save"/>
+      </button>
+      <div class="toolbar-separator"></div>
+      <button class="toolbar-button" title="Cut">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIhjI+py+0Po5wAhYuz3rz7D4biSJbmiabqyrbuCx8ETDUFAOA=" alt="Cut"/>
+      </button>
+      <button class="toolbar-button" title="Copy">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIhjI+py+0Po5wJgoCz3rz7D4biSJbmiabqyrbuC8fyTAUAOw==" alt="Copy"/>
+      </button>
+      <button class="toolbar-button" title="Paste">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIijI+py+0Po5xUgYuz3rz7D4biSJbmiabqyrbuCx8TTAUFAOA=" alt="Paste"/>
+      </button>
+      <div class="toolbar-separator"></div>
+      <button class="toolbar-button" title="Find">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIijI+py+0Po5wBhYuz3rz7D4biSJbmiabqyrbuC8fyTBcFADs=" alt="Find"/>
+      </button>
+      <div class="toolbar-separator"></div>
+      <button class="toolbar-button" title="Project Explorer">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIijI+py+0Po5wVhYuz3rz7D4biSJbmiabqyrbuC8fyTBcFADs=" alt="Project"/>
+      </button>
+      <button class="toolbar-button" title="Properties Window">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIijI+py+0Po5wHhoCz3rz7D4biSJbmiabqyrbuC8fyTNcFADs=" alt="Properties"/>
+      </button>
+      <div class="toolbar-separator"></div>
+      <button class="toolbar-button" title="Start">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIgjI+py+0Po5wPhIuz3rz7D4biSJbmiabqyrbuC8fyTAUAOw==" alt="Start"/>
+      </button>
+      <button class="toolbar-button" title="Break">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIijI+py+0Po5wIhYuz3rz7D4biSJbmiabqyrbuC8fyTNcFADs=" alt="Break"/>
+      </button>
+      <button class="toolbar-button" title="End">
+        <img class="toolbar-icon" src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIijI+py+0Po5wGhYuz3rz7D4biSJbmiabqyrbuC8fyTNcFADs=" alt="End"/>
+      </button>
+    </div>
+    
+    <!-- Debug Toolbar -->
+    <div class="debug-toolbar">
+      <select class="win98-btn" style="height: 21px; font-size: 11px; margin-right: 4px;">
+        <option>(General)</option>
+        <option>Form_Load</option>
+        <option>Command1_Click</option>
+      </select>
+      <select class="win98-btn" style="height: 21px; font-size: 11px;">
+        <option>(Declarations)</option>
+        <option>Private Sub Form_Load()</option>
+        <option>Private Sub Command1_Click()</option>
+      </select>
+    </div>
+    
+    <div class="main-content">
+      <!-- Toolbox Window -->
+      <div class="win98-window toolbox">
+        <div class="win98-title-bar">
+          <div class="win98-title">Toolbox</div>
+          <div class="win98-controls">
+            <div class="win98-control">_</div>
+            <div class="win98-control">✕</div>
+          </div>
+        </div>
+        <div style="padding: 2px; height: calc(100% - 18px); overflow-y: auto;">
+          <!-- Common Controls -->
+          <div class="toolbox-category">
+            <div class="toolbox-category-header">Standard</div>
+            <div>
+              <div class="toolbox-item" draggable="true" data-control-type="Pointer">
+                <span class="toolbox-item-icon">A</span> Pointer
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="Label">
+                <span class="toolbox-item-icon">A</span> Label
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="TextBox">
+                <span class="toolbox-item-icon">A</span> TextBox
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="CommandButton">
+                <span class="toolbox-item-icon">A</span> CommandButton
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="CheckBox">
+                <span class="toolbox-item-icon">A</span> CheckBox
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="OptionButton">
+                <span class="toolbox-item-icon">A</span> OptionButton
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="ComboBox">
+                <span class="toolbox-item-icon">A</span> ComboBox
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="ListBox">
+                <span class="toolbox-item-icon">A</span> ListBox
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="Frame">
+                <span class="toolbox-item-icon">A</span> Frame
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="Image">
+                <span class="toolbox-item-icon">A</span> Image
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="PictureBox">
+                <span class="toolbox-item-icon">A</span> PictureBox
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="Timer">
+                <span class="toolbox-item-icon">A</span> Timer
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="HScrollBar">
+                <span class="toolbox-item-icon">A</span> HScrollBar
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="VScrollBar">
+                <span class="toolbox-item-icon">A</span> VScrollBar
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="DriveListBox">
+                <span class="toolbox-item-icon">A</span> DriveListBox
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="DirListBox">
+                <span class="toolbox-item-icon">A</span> DirListBox
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="FileListBox">
+                <span class="toolbox-item-icon">A</span> FileListBox
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="Shape">
+                <span class="toolbox-item-icon">A</span> Shape
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="Line">
+                <span class="toolbox-item-icon">A</span> Line
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="Data">
+                <span class="toolbox-item-icon">A</span> Data
+              </div>
+              <div class="toolbox-item" draggable="true" data-control-type="OLE">
+                <span class="toolbox-item-icon">A</span> OLE
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Main Form Designer Window -->
+      <div class="win98-window" style="left: 205px; top: 0; width: calc(100% - 455px); height: calc(100% - 20px); z-index: 10;">
+        <div class="win98-title-bar">
+          <div class="win98-title">Form1 (Form)</div>
+          <div class="win98-controls">
+            <div class="win98-control">_</div>
+            <div class="win98-control">□</div>
+            <div class="win98-control">✕</div>
+          </div>
+        </div>
+        <div class="designer-canvas"></div>
+      </div>
+      
+      <!-- Project Explorer Window -->
+      <div class="win98-window" style="right: 0; top: 0; width: 250px; height: 40%; z-index: 20;">
+        <div class="win98-title-bar">
+          <div class="win98-title">Project - Project1</div>
+          <div class="win98-controls">
+            <div class="win98-control">_</div>
+            <div class="win98-control">✕</div>
+          </div>
+        </div>
+        <div style="padding: 4px; height: calc(100% - 18px); overflow-y: auto;">
+          <div style="margin-bottom: 4px; font-size: 11px;">
+            <div class="project-explorer-item project-folder">
+              <img src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIdjI+py+0Po5wHhYuz3rz7D4biSJbmiabqyrbuCwA7" style="vertical-align: middle; width: 16px; height: 16px;"> Project1
+              <div style="margin-left: 16px;">
+                <div class="project-explorer-item project-file">
+                  <img src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIdjI+py+0Po5wFhYuz3rz7D4biSJbmiabqyrbuCwA7" style="vertical-align: middle; width: 16px; height: 16px;"> Form1 (Form1.frm)
+                </div>
+                <div class="project-explorer-item project-file">
+                  <img src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIejI+py+0Po5wJhYuz3rz7D4biSJbmiabqyrbuC0cFADs=" style="vertical-align: middle; width: 16px; height: 16px;"> Module1 (Module1.bas)
+                </div>
+                <div class="project-explorer-item project-file">
+                  <img src="data:image/gif;base64,R0lGODlhEAAQAIAAAP///wAAACH5BAEAAAEALAAAAAAQABAAAAIfjI+py+0Po5wGhYuz3rz7D4biSJbmiabqyrbuC5cFADs=" style="vertical-align: middle; width: 16px; height: 16px;"> Class1 (Class1.cls)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Properties Window -->
+      <div class="win98-window" style="right: 0; top: 40%; width: 250px; height: 60%; z-index: 20;">
+        <div class="win98-title-bar">
+          <div class="win98-title">Properties - Form1</div>
+          <div class="win98-controls">
+            <div class="win98-control">_</div>
+            <div class="win98-control">✕</div>
+          </div>
+        </div>
+        <div style="height: calc(100% - 18px); overflow: hidden;">
+          <div style="display: flex; background-color: var(--win98-bg); border-bottom: 1px solid var(--win98-3d-dark);">
+            <div style="width: 50%; text-align: center; padding: 2px; border-right: 1px solid var(--win98-3d-dark); font-size: 11px;">Alphabetic</div>
+            <div style="width: 50%; text-align: center; padding: 2px; font-size: 11px;">Categorized</div>
+          </div>
+          <div class="properties-grid" style="height: calc(100% - 21px);">
+            <div class="property-name">AutoRedraw</div>
+            <div class="property-value">False</div>
+            <div class="property-name">BackColor</div>
+            <div class="property-value">&H8000000F&</div>
+            <div class="property-name">BorderStyle</div>
+            <div class="property-value">2 - Sizable</div>
+            <div class="property-name">Caption</div>
+            <div class="property-value">Form1</div>
+            <div class="property-name">ClientHeight</div>
+            <div class="property-value">3600</div>
+            <div class="property-name">ClientLeft</div>
+            <div class="property-value">60</div>
+            <div class="property-name">ClientTop</div>
+            <div class="property-value">345</div>
+            <div class="property-name">ClientWidth</div>
+            <div class="property-value">4680</div>
+            <div class="property-name">ClipControls</div>
+            <div class="property-value">True</div>
+            <div class="property-name">ControlBox</div>
+            <div class="property-value">True</div>
+            <div class="property-name">DrawMode</div>
+            <div class="property-value">13 - Copy Pen</div>
+            <div class="property-name">DrawStyle</div>
+            <div class="property-value">0 - Solid</div>
+            <div class="property-name">DrawWidth</div>
+            <div class="property-value">1</div>
+            <div class="property-name">Enabled</div>
+            <div class="property-value">True</div>
+            <div class="property-name">FillColor</div>
+            <div class="property-value">&H00000000&</div>
+            <div class="property-name">FillStyle</div>
+            <div class="property-value">1 - Transparent</div>
+            <div class="property-name">FontBold</div>
+            <div class="property-value">False</div>
+            <div class="property-name">FontItalic</div>
+            <div class="property-value">False</div>
+            <div class="property-name">FontName</div>
+            <div class="property-value">MS Sans Serif</div>
+            <div class="property-name">FontSize</div>
+            <div class="property-value">8.25</div>
+            <div class="property-name">Height</div>
+            <div class="property-value">3600</div>
+            <div class="property-name">Icon</div>
+            <div class="property-value">(Icon)</div>
+            <div class="property-name">KeyPreview</div>
+            <div class="property-value">False</div>
+            <div class="property-name">Left</div>
+            <div class="property-value">0</div>
+            <div class="property-name">LinkMode</div>
+            <div class="property-value">0 - None</div>
+            <div class="property-name">MaxButton</div>
+            <div class="property-value">True</div>
+            <div class="property-name">MinButton</div>
+            <div class="property-value">True</div>
+            <div class="property-name">Name</div>
+            <div class="property-value">Form1</div>
+            <div class="property-name">ScaleHeight</div>
+            <div class="property-value">3600</div>
+            <div class="property-name">ScaleWidth</div>
+            <div class="property-value">4680</div>
+            <div class="property-name">Tag</div>
+            <div class="property-value"></div>
+            <div class="property-name">Top</div>
+            <div class="property-value">0</div>
+            <div class="property-name">Visible</div>
+            <div class="property-value">True</div>
+            <div class="property-name">Width</div>
+            <div class="property-value">4680</div>
+            <div class="property-name">WindowState</div>
+            <div class="property-value">0 - Normal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <div class="status-item">Ready</div>
+      <div class="status-item">Form1</div>
+      <div class="status-item">100%</div>
+    </div>
+    
+    <!-- Menu Dropdowns -->
+    <div id="file-menu" class="menu-dropdown">
+      <div class="menu-item">New Project...</div>
+      <div class="menu-item">Open Project...</div>
+      <div class="menu-item">Add Project...</div>
+      <div class="menu-item">Remove Project</div>
+      <div class="menu-item">Save Project</div>
+      <div class="menu-item">Save Project As...</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Print...</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Make Project1.exe...</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Recent File</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Exit</div>
+    </div>
+    
+    <div id="edit-menu" class="menu-dropdown">
+      <div class="menu-item">Undo</div>
+      <div class="menu-item">Redo</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Cut</div>
+      <div class="menu-item">Copy</div>
+      <div class="menu-item">Paste</div>
+      <div class="menu-item">Delete</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Select All</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Find...</div>
+      <div class="menu-item">Replace...</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Properties</div>
+      <div class="menu-item">Object Browser...</div>
+    </div>
+    
+    <div id="view-menu" class="menu-dropdown">
+      <div class="menu-item">Code</div>
+      <div class="menu-item">Object</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Definition</div>
+      <div class="menu-item">Last Position</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Object Browser</div>
+      <div class="menu-item">Immediate Window</div>
+      <div class="menu-item">Locals Window</div>
+      <div class="menu-item">Watch Window</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Project Explorer</div>
+      <div class="menu-item">Properties Window</div>
+      <div class="menu-item">Form Layout Window</div>
+      <div class="menu-item">Toolbox</div>
+      <div class="menu-item">Color Palette</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Toolbars</div>
+      <div class="menu-item">Tab Order</div>
+    </div>
+    
+    <div id="project-menu" class="menu-dropdown">
+      <div class="menu-item">Add Form</div>
+      <div class="menu-item">Add MDI Form</div>
+      <div class="menu-item">Add Module</div>
+      <div class="menu-item">Add Class Module</div>
+      <div class="menu-item">Add User Control</div>
+      <div class="menu-item">Add Property Page</div>
+      <div class="menu-item">Add User Document</div>
+      <div class="menu-item">Add ActiveX Designer</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Add File...</div>
+      <div class="menu-item">Remove File</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">References...</div>
+      <div class="menu-item">Components...</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Project1 Properties...</div>
+    </div>
+    
+    <div id="format-menu" class="menu-dropdown">
+      <div class="menu-item">Align</div>
+      <div class="menu-item">Make Same Size</div>
+      <div class="menu-item">Size to Grid</div>
+      <div class="menu-item">Horizontal Spacing</div>
+      <div class="menu-item">Vertical Spacing</div>
+      <div class="menu-item">Center in Form</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Order</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Lock Controls</div>
+    </div>
+    
+    <div id="debug-menu" class="menu-dropdown">
+      <div class="menu-item">Start</div>
+      <div class="menu-item">Start With Full Compile</div>
+      <div class="menu-item">Break</div>
+      <div class="menu-item">End</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Step Into</div>
+      <div class="menu-item">Step Over</div>
+      <div class="menu-item">Step Out</div>
+      <div class="menu-item">Run To Cursor</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Toggle Breakpoint</div>
+      <div class="menu-item">Clear All Breakpoints</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Add Watch...</div>
+      <div class="menu-item">Edit Watch...</div>
+      <div class="menu-item">Quick Watch...</div>
+      <div class="menu-item">Instant Watch</div>
+    </div>
+    
+    <div id="run-menu" class="menu-dropdown">
+      <div class="menu-item">Start</div>
+      <div class="menu-item">Start With Full Compile</div>
+      <div class="menu-item">Break</div>
+      <div class="menu-item">End</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">Restart</div>
+    </div>
+    
+    <div id="query-menu" class="menu-dropdown">
+      <div class="menu-item">Database Window</div>
+      <div class="menu-item">Query Designer</div>
+      <div class="menu-item">SQL Syntax...</div>
+      <div class="menu-item">OpenDB...</div>
+    </div>
+    
+    <div id="diagram-menu" class="menu-dropdown">
+      <div class="menu-item">Show</div>
+      <div class="menu-item">Options...</div>
+      <div class="menu-item">Add Class Module</div>
+      <div class="menu-item">Add Related Class</div>
+      <div class="menu-item">Remove From Diagram</div>
+      <div class="menu-item">Generate...</div>
+    </div>
+    
+    <div id="tools-menu" class="menu-dropdown">
+      <div class="menu-item">Menu Editor...</div>
+      <div class="menu-item">Options...</div>
+    </div>
+    
+    <div id="addins-menu" class="menu-dropdown">
+      <div class="menu-item">Add-In Manager...</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">VB 5.0 Controls</div>
+      <div class="menu-item">Visual Data Manager</div>
+    </div>
+    
+    <div id="window-menu" class="menu-dropdown">
+      <div class="menu-item">Tile Horizontally</div>
+      <div class="menu-item">Tile Vertically</div>
+      <div class="menu-item">Cascade</div>
+      <div class="menu-item">Arrange Icons</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">1 Form1.frm</div>
+    </div>
+    
+    <div id="help-menu" class="menu-dropdown">
+      <div class="menu-item">Microsoft Visual Basic Help</div>
+      <div class="menu-item">MSDN on the Web</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item">About Microsoft Visual Basic...</div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+  </div>
+  
+  <script>
+    // Basic menu functionality
+    const menuButtons = document.querySelectorAll('[data-menu]');
+    let activeMenu = null;
+    
+    menuButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const menuId = button.getAttribute('data-menu');
+        const menu = document.getElementById(menuId);
+        
+        // Close any open menu
+        if (activeMenu) {
+          activeMenu.classList.remove('show');
+        }
+        
+        // If clicking the same menu that's open, just close it
+        if (activeMenu === menu) {
+          activeMenu = null;
+          return;
+        }
+        
+        // Open the selected menu
+        if (menu) {
+          // Position the menu below the button
+          const buttonRect = e.target.getBoundingClientRect();
+          menu.style.top = `${buttonRect.bottom}px`;
+          menu.style.left = `${buttonRect.left}px`;
+          
+          menu.classList.add('show');
+          activeMenu = menu;
+        }
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-menu]') && !e.target.closest('.menu-dropdown')) {
+        if (activeMenu) {
+          activeMenu.classList.remove('show');
+          activeMenu = null;
+        }
+      }
+    });
+    
+    // Initialize a basic grid for the designer canvas
+    const designerCanvas = document.querySelector('.designer-canvas');
+    const gridSize = 8;
+    
+    if (designerCanvas) {
+      for (let y = 0; y < Math.floor(designerCanvas.offsetHeight / gridSize); y++) {
+        for (let x = 0; x < Math.floor(designerCanvas.offsetWidth / gridSize); x++) {
+          if ((x + y) % 2 === 0) {
+            const dot = document.createElement('div');
+            dot.className = 'grid-cell';
+            dot.style.left = `${x * gridSize}px`;
+            dot.style.top = `${y * gridSize}px`;
+            dot.style.width = `${1}px`;
+            dot.style.height = `${1}px`;
+            designerCanvas.appendChild(dot);
+          }
+        }
+      }
+    }
+    
+    // Make windows draggable
+    const windows = document.querySelectorAll('.win98-window');
+    
+    windows.forEach(window => {
+      const titleBar = window.querySelector('.win98-title-bar');
+      let isDragging = false;
+      let offsetX, offsetY;
+      
+      titleBar.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - window.getBoundingClientRect().left;
+        offsetY = e.clientY - window.getBoundingClientRect().top;
+        
+        // Bring window to front
+        window.style.zIndex = getHighestZIndex() + 1;
+        
+        // Make titlebar visually active
+        document.querySelectorAll('.win98-title-bar').forEach(bar => {
+          bar.classList.add('inactive');
+        });
+        titleBar.classList.remove('inactive');
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        
+        const left = e.clientX - offsetX;
+        const top = e.clientY - offsetY;
+        
+        window.style.left = `${Math.max(0, left)}px`;
+        window.style.top = `${Math.max(0, top)}px`;
+      });
+      
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    });
+    
+    function getHighestZIndex() {
+      let highest = 0;
+      document.querySelectorAll('.win98-window').forEach(window => {
+        const zIndex = parseInt(window.style.zIndex || 0);
+        if (zIndex > highest) highest = zIndex;
+      });
+      return highest;
+    }
+    
+    // Make sure first window is active
+    if (windows.length > 0) {
+      const firstTitleBar = windows[0].querySelector('.win98-title-bar');
+      if (firstTitleBar) {
+        firstTitleBar.classList.remove('inactive');
+      }
+    }
+    
+    // Show a fake toast message when page loads
+    setTimeout(() => {
+      const toastContainer = document.querySelector('.toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = 'Microsoft Visual Basic 6.0 loaded';
+      toastContainer.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.3s forwards';
+        toast.addEventListener('animationend', () => {
+          toastContainer.removeChild(toast);
+        });
+      }, 3000);
+    }, 500);
+  </script>
+</body>
+</html>
