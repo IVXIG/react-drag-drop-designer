@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Menubar,
@@ -20,7 +19,6 @@ import {
   Printer, 
   LogOut 
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const VB6Menubar = () => {
   // تنفيذ وظائف قائمة File
@@ -45,8 +43,18 @@ const VB6Menubar = () => {
   };
 
   const handleSave = () => {
-    console.log("حفظ المشروع الحالي");
-    alert("تم حفظ المشروع بنجاح");
+    console.log("حفظ المشروع الحالي في جهاز الكمبيوتر");
+    
+    // Simulate downloading a file
+    const element = document.createElement("a");
+    const file = new Blob(["// Visual Basic 6.0 Project"], { type: 'text/plain' });
+    element.href = URL.createObjectURL(file);
+    element.download = "myproject.vbp";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    
+    alert("تم حفظ المشروع في جهازك");
   };
 
   const handleSaveAs = () => {
