@@ -1,7 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { 
   Square, 
   Type, 
@@ -13,8 +12,7 @@ import {
   Image, 
   TextCursor, 
   MousePointer,
-  Frame,
-  ToggleLeft
+  Frame
 } from 'lucide-react';
 
 interface ToolboxItemProps {
@@ -33,18 +31,33 @@ const ToolboxItem: React.FC<ToolboxItemProps> = ({ icon, name, isSelected, onCli
       }`}
       onClick={onClick}
       title={name}
+      data-tool-name={name}
     >
       {icon}
     </Button>
   );
 };
 
-const VB6Toolbox: React.FC = () => {
-  const [selectedTool, setSelectedTool] = useState<string>('Pointer');
+interface VB6ToolboxProps {
+  onToolSelect?: (toolName: string) => void;
+  selectedTool?: string;
+}
+
+const VB6Toolbox: React.FC<VB6ToolboxProps> = ({ onToolSelect, selectedTool: externalSelectedTool }) => {
+  const [selectedTool, setSelectedTool] = useState<string>(externalSelectedTool || 'Pointer');
   
+  useEffect(() => {
+    if (externalSelectedTool && externalSelectedTool !== selectedTool) {
+      setSelectedTool(externalSelectedTool);
+    }
+  }, [externalSelectedTool]);
+
   const handleSelectTool = (toolName: string) => {
     setSelectedTool(toolName);
-    console.log(`Selected tool: ${toolName}`);
+    
+    if (onToolSelect) {
+      onToolSelect(toolName);
+    }
     
     // Set the active tool on the design area
     const designArea = document.querySelector('.vb6-design-area');

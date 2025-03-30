@@ -1,9 +1,9 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from 'sonner';
 
 interface ControlProps {
   id: string;
@@ -19,58 +19,58 @@ interface ControlProps {
 interface VB6DesignAreaProps {
   onControlsChange?: (controls: ControlProps[]) => void;
   onControlSelect?: (controlId: string | null) => void;
+  selectedControlId?: string | null;
+  activeTool?: string;
 }
 
 const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({ 
   onControlsChange,
-  onControlSelect 
+  onControlSelect,
+  selectedControlId: externalSelectedId,
+  activeTool: externalActiveTool 
 }) => {
   const [controls, setControls] = useState<ControlProps[]>([]);
-  const [activeTool, setActiveTool] = useState<string | null>(null);
+  const [activeTool, setActiveTool] = useState<string>(externalActiveTool || 'Pointer');
   const [isDraggingNew, setIsDraggingNew] = useState(false);
   const [newControlPosition, setNewControlPosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
-  const [selectedControlId, setSelectedControlId] = useState<string | null>(null);
+  const [selectedControlId, setSelectedControlId] = useState<string | null>(externalSelectedId || null);
+  const [isMovingControl, setIsMovingControl] = useState(false);
+  const [moveOffset, setMoveOffset] = useState({ x: 0, y: 0 });
   const designAreaRef = useRef<HTMLDivElement>(null);
   
-  // Listen for the active tool changes
   useEffect(() => {
-    const checkActiveTool = () => {
-      if (designAreaRef.current) {
-        const tool = designAreaRef.current.getAttribute('data-active-tool');
-        setActiveTool(tool);
-      }
-    };
-    
-    // Check initially
-    checkActiveTool();
-    
-    // Set up a MutationObserver to watch for attribute changes
-    const observer = new MutationObserver(checkActiveTool);
-    
-    if (designAreaRef.current) {
-      observer.observe(designAreaRef.current, { attributes: true });
+    if (externalActiveTool) {
+      setActiveTool(externalActiveTool);
     }
-    
-    return () => observer.disconnect();
-  }, []);
+  }, [externalActiveTool]);
+  
+  useEffect(() => {
+    if (externalSelectedId !== undefined && externalSelectedId !== selectedControlId) {
+      setSelectedControlId(externalSelectedId);
+      
+      setControls(prevControls => 
+        prevControls.map(control => ({
+          ...control,
+          isSelected: control.id === externalSelectedId
+        }))
+      );
+    }
+  }, [externalSelectedId, selectedControlId]);
 
-  // Notify parent of control changes
   useEffect(() => {
     if (onControlsChange) {
       onControlsChange(controls);
     }
   }, [controls, onControlsChange]);
 
-  // Notify parent of control selection
   useEffect(() => {
-    if (onControlSelect) {
+    if (onControlSelect && selectedControlId !== externalSelectedId) {
       onControlSelect(selectedControlId);
     }
-  }, [selectedControlId, onControlSelect]);
+  }, [selectedControlId, onControlSelect, externalSelectedId]);
   
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!activeTool || activeTool === 'Pointer') {
-      // Handle selection mode
+    if (activeTool === 'Pointer') {
       const controlElements = document.querySelectorAll('.vb6-control');
       let found = false;
       
@@ -78,6 +78,15 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
         if (element.contains(e.target as Node)) {
           const id = element.getAttribute('data-id');
           setSelectedControlId(id);
+          
+          setIsMovingControl(true);
+          
+          const rect = element.getBoundingClientRect();
+          setMoveOffset({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+          });
+          
           setControls(prevControls => 
             prevControls.map(control => ({
               ...control,
@@ -101,7 +110,6 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
       return;
     }
     
-    // Handle adding new controls
     if (designAreaRef.current) {
       const rect = designAreaRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -113,67 +121,85 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
   };
   
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDraggingNew || !activeTool || activeTool === 'Pointer') return;
-    
-    if (designAreaRef.current) {
-      const rect = designAreaRef.current.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      setNewControlPosition(prev => ({
-        ...prev,
-        width: Math.max(10, x - prev.left),
-        height: Math.max(10, y - prev.top)
-      }));
+    if (isDraggingNew && activeTool !== 'Pointer') {
+      if (designAreaRef.current) {
+        const rect = designAreaRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        setNewControlPosition(prev => ({
+          ...prev,
+          width: Math.max(10, x - prev.left),
+          height: Math.max(10, y - prev.top)
+        }));
+      }
+    } else if (isMovingControl && selectedControlId) {
+      if (designAreaRef.current) {
+        const rect = designAreaRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left - moveOffset.x;
+        const y = e.clientY - rect.top - moveOffset.y;
+        
+        setControls(prevControls =>
+          prevControls.map(control =>
+            control.id === selectedControlId
+              ? { ...control, left: Math.max(0, x), top: Math.max(0, y) }
+              : control
+          )
+        );
+      }
     }
   };
   
   const handleMouseUp = () => {
-    if (!isDraggingNew || !activeTool || activeTool === 'Pointer') return;
-    
-    const { top, left, width, height } = newControlPosition;
-    
-    // Only add control if it has some size
-    if (width > 5 && height > 5) {
-      const newControl: ControlProps = {
-        id: `control-${Date.now()}`,
-        type: activeTool,
-        top,
-        left,
-        width,
-        height,
-        text: getDefaultText(activeTool),
-        isSelected: true
-      };
+    if (isDraggingNew && activeTool !== 'Pointer') {
+      const { top, left, width, height } = newControlPosition;
       
-      // Deselect other controls
-      setControls(prev => [...prev.map(c => ({ ...c, isSelected: false })), newControl]);
-      setSelectedControlId(newControl.id);
+      if (width > 5 && height > 5) {
+        const newControlId = `${activeTool}-${Date.now()}`;
+        const newControl: ControlProps = {
+          id: newControlId,
+          type: activeTool,
+          top,
+          left,
+          width,
+          height,
+          text: getDefaultText(activeTool, controls.length + 1),
+          isSelected: true
+        };
+        
+        setControls(prev => [...prev.map(c => ({ ...c, isSelected: false })), newControl]);
+        setSelectedControlId(newControl.id);
+        
+        toast(`Added ${activeTool} control`);
+      }
+      
+      setIsDraggingNew(false);
     }
     
-    setIsDraggingNew(false);
+    setIsMovingControl(false);
   };
   
-  const getDefaultText = (type: string): string => {
+  const getDefaultText = (type: string, index: number): string => {
+    const nameBase = type.charAt(0).toUpperCase() + type.slice(1);
     switch(type) {
       case 'Label':
-        return 'Label1';
+        return `Label${index}`;
       case 'CommandButton':
-        return 'Command1';
+        return `Command${index}`;
       case 'TextBox':
         return '';
       case 'CheckBox':
-        return 'Check1';
+        return `Check${index}`;
       case 'OptionButton':
-        return 'Option1';
+        return `Option${index}`;
       case 'ComboBox':
         return '';
       case 'ListBox':
         return '';
       case 'Frame':
-        return 'Frame1';
+        return `Frame${index}`;
       default:
-        return type;
+        return `${nameBase}${index}`;
     }
   };
   
@@ -390,7 +416,6 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
     }
   };
   
-  // Add keyboard event listeners for keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Delete' && selectedControlId) {
@@ -413,18 +438,16 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      data-active-tool={activeTool}
     >
-      {/* Grid background */}
       <div className="absolute inset-0" style={{
         backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px)',
         backgroundSize: '20px 20px'
       }} />
       
-      {/* Render all controls */}
       {controls.map(renderControl)}
       
-      {/* Preview of new control being drawn */}
-      {isDraggingNew && activeTool && activeTool !== 'Pointer' && (
+      {isDraggingNew && activeTool !== 'Pointer' && (
         <div
           style={{
             position: 'absolute',
@@ -438,10 +461,11 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
         />
       )}
       
-      {/* Empty form state */}
       {controls.length === 0 && !isDraggingNew && (
         <div className="flex items-center justify-center h-full text-gray-400">
-          Select a tool and draw on the form to add controls
+          {activeTool === 'Pointer' 
+            ? 'Select a tool from the toolbox to add controls'
+            : `Click and drag to add a ${activeTool} control`}
         </div>
       )}
     </div>

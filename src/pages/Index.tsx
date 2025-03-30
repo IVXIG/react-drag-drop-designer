@@ -5,13 +5,15 @@ import VB6Toolbox from '../components/VB6Toolbox';
 import VB6DesignArea from '../components/VB6DesignArea';
 import VB6CodeWindow from '../components/VB6CodeWindow';
 import { Button } from "@/components/ui/button";
-import { LayoutTemplate, Code } from 'lucide-react';
+import { LayoutTemplate, Code, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [formName, setFormName] = useState('Form1');
   const [viewMode, setViewMode] = useState<'design' | 'code'>('design');
   const [controls, setControls] = useState<any[]>([]);
   const [selectedControlId, setSelectedControlId] = useState<string | null>(null);
+  const [selectedTool, setSelectedTool] = useState<string>('Pointer');
 
   const handleControlsChange = (updatedControls: any[]) => {
     setControls(updatedControls);
@@ -19,6 +21,23 @@ const Index = () => {
 
   const handleControlSelect = (controlId: string | null) => {
     setSelectedControlId(controlId);
+  };
+  
+  const handleToolSelect = (toolName: string) => {
+    setSelectedTool(toolName);
+    // Reset selection when choosing a new tool
+    if (toolName !== 'Pointer') {
+      setSelectedControlId(null);
+    }
+    toast(`Selected tool: ${toolName}`);
+  };
+  
+  const handleDeleteControl = () => {
+    if (selectedControlId) {
+      setControls(prevControls => prevControls.filter(control => control.id !== selectedControlId));
+      setSelectedControlId(null);
+      toast(`Control deleted`);
+    }
   };
 
   return (
@@ -45,9 +64,24 @@ const Index = () => {
           <Code size={12} />
           Code
         </Button>
+        {selectedControlId && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex items-center gap-1 text-xs h-6 ml-auto"
+            onClick={handleDeleteControl}
+            title="Delete Control"
+          >
+            <Trash2 size={12} />
+            Delete
+          </Button>
+        )}
       </div>
       <div className="flex-1 flex overflow-hidden">
-        <VB6Toolbox />
+        <VB6Toolbox 
+          onToolSelect={handleToolSelect}
+          selectedTool={selectedTool}
+        />
         <div className="flex-1 p-2 overflow-hidden">
           <div className="bg-[#D4D0C8] border border-gray-400 h-full flex flex-col">
             <div className="p-1 bg-gray-300 border-b border-gray-400 text-xs font-bold">
@@ -57,6 +91,8 @@ const Index = () => {
               <VB6DesignArea 
                 onControlsChange={handleControlsChange}
                 onControlSelect={handleControlSelect}
+                selectedControlId={selectedControlId}
+                activeTool={selectedTool}
               />
             ) : (
               <VB6CodeWindow 
