@@ -12,7 +12,9 @@ import {
   List, 
   Image, 
   TextCursor, 
-  MousePointer
+  MousePointer,
+  Frame,
+  ToggleLeft
 } from 'lucide-react';
 
 interface ToolboxItemProps {
@@ -44,7 +46,7 @@ const VB6Toolbox: React.FC = () => {
     setSelectedTool(toolName);
     console.log(`Selected tool: ${toolName}`);
     
-    // Simulate tool activation
+    // Set the active tool on the design area
     const designArea = document.querySelector('.vb6-design-area');
     if (designArea) {
       designArea.setAttribute('data-active-tool', toolName);
@@ -59,10 +61,10 @@ const VB6Toolbox: React.FC = () => {
     { name: 'CheckBox', icon: <CheckSquare size={16} /> },
     { name: 'OptionButton', icon: <Radio size={16} /> },
     { name: 'ComboBox', icon: <List size={16} /> },
-    { name: 'ListBox', icon: <List size={16} /> },
+    { name: 'ListBox', icon: <List size={16} strokeWidth={1} /> },
     { name: 'Frame', icon: <Square size={16} strokeWidth={1} /> },
     { name: 'Image', icon: <Image size={16} /> },
-    { name: 'PictureBox', icon: <Image size={16} /> },
+    { name: 'PictureBox', icon: <Image size={16} strokeWidth={1} /> },
     { name: 'DateTimePicker', icon: <Calendar size={16} /> },
     { name: 'Shape', icon: <Circle size={16} /> },
   ];
