@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Menubar,
@@ -7,6 +8,9 @@ import {
   MenubarItem,
   MenubarSeparator,
   MenubarShortcut,
+  MenubarSub,
+  MenubarSubTrigger,
+  MenubarSubContent,
 } from "@/components/ui/menubar";
 import { 
   FilePlus, 
@@ -19,6 +23,8 @@ import {
   Printer, 
   LogOut 
 } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const VB6Menubar = () => {
   // تنفيذ وظائف قائمة File
@@ -42,19 +48,68 @@ const VB6Menubar = () => {
     alert("تم إغلاق المشروع الحالي");
   };
 
+  const [showSaveDialog, setShowSaveDialog] = React.useState(false);
+  const [saveSuccess, setSaveSuccess] = React.useState(false);
+
   const handleSave = () => {
     console.log("حفظ المشروع الحالي في جهاز الكمبيوتر");
+    setShowSaveDialog(true);
     
-    // Simulate downloading a file
-    const element = document.createElement("a");
-    const file = new Blob(["// Visual Basic 6.0 Project"], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = "myproject.vbp";
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-    
-    alert("تم حفظ المشروع في جهازك");
+    // Simulate the saving process with a delay
+    setTimeout(() => {
+      // Create actual file content for VB6 project
+      const vbpContent = 
+`Type=Exe
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\Windows\SysWOW64\stdole2.tlb#OLE Automation
+Reference=*\G{00000205-0000-0010-8000-00AA006D2EA4}#2.5#0#..\..\..\..\Program Files (x86)\Common Files\System\ado\msado25.tlb#Microsoft ActiveX Data Objects 2.5 Library
+Form=Form1.frm
+Module=Module1; Module1.bas
+Class=Class1; Class1.cls
+IconForm="Form1"
+Startup="Form1"
+Command32=""
+Name="Project1"
+HelpContextID="0"
+CompatibleMode="0"
+MajorVer=1
+MinorVer=0
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="My Company"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1`;
+
+      // Create the file and trigger download
+      const element = document.createElement("a");
+      const file = new Blob([vbpContent], { type: 'text/plain' });
+      element.href = URL.createObjectURL(file);
+      element.download = "MyProject.vbp";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      
+      setSaveSuccess(true);
+      
+      // Hide the success message after 3 seconds
+      setTimeout(() => {
+        setSaveSuccess(false);
+        setShowSaveDialog(false);
+      }, 3000);
+    }, 1500);
   };
 
   const handleSaveAs = () => {
@@ -190,6 +245,29 @@ const VB6Menubar = () => {
           </MenubarContent>
         </MenubarMenu>
       </Menubar>
+
+      {/* Save dialog */}
+      <AlertDialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <AlertDialogContent className="bg-[#D4D0C8] border border-gray-400">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {saveSuccess ? "Save Complete" : "Saving Project"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {saveSuccess 
+                ? "Your project has been saved successfully to your device." 
+                : "Please wait while your project is being saved..."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            {saveSuccess && (
+              <AlertDialogAction className="bg-blue-700 text-white hover:bg-blue-800">
+                OK
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
