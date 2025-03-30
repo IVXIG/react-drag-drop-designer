@@ -16,7 +16,15 @@ interface ControlProps {
   isSelected: boolean;
 }
 
-const VB6DesignArea: React.FC = () => {
+interface VB6DesignAreaProps {
+  onControlsChange?: (controls: ControlProps[]) => void;
+  onControlSelect?: (controlId: string | null) => void;
+}
+
+const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({ 
+  onControlsChange,
+  onControlSelect 
+}) => {
   const [controls, setControls] = useState<ControlProps[]>([]);
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [isDraggingNew, setIsDraggingNew] = useState(false);
@@ -45,6 +53,20 @@ const VB6DesignArea: React.FC = () => {
     
     return () => observer.disconnect();
   }, []);
+
+  // Notify parent of control changes
+  useEffect(() => {
+    if (onControlsChange) {
+      onControlsChange(controls);
+    }
+  }, [controls, onControlsChange]);
+
+  // Notify parent of control selection
+  useEffect(() => {
+    if (onControlSelect) {
+      onControlSelect(selectedControlId);
+    }
+  }, [selectedControlId, onControlSelect]);
   
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!activeTool || activeTool === 'Pointer') {
