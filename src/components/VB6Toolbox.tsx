@@ -11,8 +11,7 @@ import {
   List, 
   Image, 
   TextCursor, 
-  MousePointer,
-  Frame
+  MousePointer
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -56,16 +55,18 @@ const VB6Toolbox: React.FC<VB6ToolboxProps> = ({ onToolSelect, selectedTool: ext
   }, [externalSelectedTool]);
 
   const handleSelectTool = (toolName: string) => {
-    setSelectedTool(toolName);
+    // Toggle between the tool and pointer
+    const newTool = selectedTool === toolName ? 'Pointer' : toolName;
+    setSelectedTool(newTool);
     
     if (onToolSelect) {
-      onToolSelect(toolName);
+      onToolSelect(newTool);
     }
     
     // Set the active tool on the design area
     const designArea = document.querySelector('.vb6-design-area');
     if (designArea) {
-      designArea.setAttribute('data-active-tool', toolName);
+      designArea.setAttribute('data-active-tool', newTool);
     }
   };
 

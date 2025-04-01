@@ -2,7 +2,6 @@
 import React from 'react';
 import { ControlProps } from '../types/designTypes';
 import ControlRenderer from './VB6Controls/ControlRenderer';
-import PlaceholderControl from './VB6Controls/PlaceholderControl';
 import EmptyDesignArea from './VB6Controls/EmptyDesignArea';
 import { useDesignAreaInteractions } from '../hooks/useDesignAreaInteractions';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -25,8 +24,7 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
   const {
     controls,
     activeTool,
-    isDraggingNew,
-    newControlPosition,
+    isPlacingControl,
     designAreaRef,
     handleMouseDown,
     handleMouseMove,
@@ -46,6 +44,7 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
   
   // Adjust the grid size for mobile devices
   const gridSize = isMobile ? '10px 10px' : '20px 20px';
+  const cursorStyle = isPlacingControl ? 'crosshair' : 'default';
   
   return (
     <div 
@@ -59,7 +58,10 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       data-active-tool={activeTool}
-      style={{ touchAction: isDraggingNew ? 'none' : 'auto' }}
+      style={{ 
+        touchAction: isPlacingControl ? 'none' : 'auto',
+        cursor: cursorStyle
+      }}
     >
       <div className="absolute inset-0" style={{
         backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px)',
@@ -70,11 +72,7 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
         <ControlRenderer key={control.id} control={control} />
       ))}
       
-      {isDraggingNew && activeTool !== 'Pointer' && (
-        <PlaceholderControl position={newControlPosition} />
-      )}
-      
-      {controls.length === 0 && !isDraggingNew && (
+      {controls.length === 0 && (
         <EmptyDesignArea activeTool={activeTool} />
       )}
     </div>

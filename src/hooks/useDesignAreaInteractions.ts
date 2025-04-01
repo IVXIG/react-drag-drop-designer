@@ -15,8 +15,7 @@ export const useDesignAreaInteractions = (
 ) => {
   const [controls, setControls] = useState<ControlProps[]>(initialControls);
   const [activeTool, setActiveTool] = useState<string>(externalActiveTool || initialActiveTool);
-  const [isDraggingNew, setIsDraggingNew] = useState(false);
-  const [newControlPosition, setNewControlPosition] = useState({ top: 0, left: 0, width: 0, height: 0 });
+  const [isPlacingControl, setIsPlacingControl] = useState(false);
   const [selectedControlId, setSelectedControlId] = useState<string | null>(externalSelectedId || initialSelectedId);
   const [isMovingControl, setIsMovingControl] = useState(false);
   const [moveOffset, setMoveOffset] = useState({ x: 0, y: 0 });
@@ -25,6 +24,11 @@ export const useDesignAreaInteractions = (
   useEffect(() => {
     if (externalActiveTool) {
       setActiveTool(externalActiveTool);
+      if (externalActiveTool !== 'Pointer') {
+        setIsPlacingControl(true);
+      } else {
+        setIsPlacingControl(false);
+      }
     }
   }, [externalActiveTool]);
   
@@ -112,26 +116,35 @@ export const useDesignAreaInteractions = (
       return;
     }
     
-    if (designAreaRef.current) {
+    // For tools other than Pointer - place a new control at the clicked position
+    if (isPlacingControl && designAreaRef.current) {
       const { x, y } = getRelativeCoordinates(clientX, clientY);
       
-      setIsDraggingNew(true);
-      setNewControlPosition({ top: y, left: x, width: 0, height: 0 });
+      // Create control with default size at clicked position
+      const defaultWidth = activeTool === 'Label' ? 80 : 100;
+      const defaultHeight = activeTool === 'Label' ? 20 : 30;
+      
+      const newControlId = `${activeTool}-${Date.now()}`;
+      const newControl: ControlProps = {
+        id: newControlId,
+        type: activeTool,
+        top: Math.max(0, y - defaultHeight / 2),
+        left: Math.max(0, x - defaultWidth / 2),
+        width: defaultWidth,
+        height: defaultHeight,
+        text: getDefaultText(activeTool, controls.length + 1),
+        isSelected: true
+      };
+      
+      setControls(prev => [...prev.map(c => ({ ...c, isSelected: false })), newControl]);
+      setSelectedControlId(newControl.id);
+      
+      toast(`Added ${activeTool} control`);
     }
   };
   
   const handlePointerMove = (clientX: number, clientY: number) => {
-    if (isDraggingNew && activeTool !== 'Pointer') {
-      if (designAreaRef.current) {
-        const { x, y } = getRelativeCoordinates(clientX, clientY);
-        
-        setNewControlPosition(prev => ({
-          ...prev,
-          width: Math.max(10, x - prev.left),
-          height: Math.max(10, y - prev.top)
-        }));
-      }
-    } else if (isMovingControl && selectedControlId) {
+    if (isMovingControl && selectedControlId) {
       if (designAreaRef.current) {
         const { x, y } = getRelativeCoordinates(clientX, clientY);
         
@@ -151,31 +164,6 @@ export const useDesignAreaInteractions = (
   };
   
   const handlePointerUp = () => {
-    if (isDraggingNew && activeTool !== 'Pointer') {
-      const { top, left, width, height } = newControlPosition;
-      
-      if (width > 5 && height > 5) {
-        const newControlId = `${activeTool}-${Date.now()}`;
-        const newControl: ControlProps = {
-          id: newControlId,
-          type: activeTool,
-          top,
-          left,
-          width,
-          height,
-          text: getDefaultText(activeTool, controls.length + 1),
-          isSelected: true
-        };
-        
-        setControls(prev => [...prev.map(c => ({ ...c, isSelected: false })), newControl]);
-        setSelectedControlId(newControl.id);
-        
-        toast(`Added ${activeTool} control`);
-      }
-      
-      setIsDraggingNew(false);
-    }
-    
     setIsMovingControl(false);
   };
   
@@ -200,8 +188,8 @@ export const useDesignAreaInteractions = (
   
   const handleTouchMove = (e: React.TouchEvent) => {
     if (e.touches.length > 0) {
-      if (isDraggingNew || isMovingControl) {
-        e.preventDefault(); // Prevent scrolling when dragging
+      if (isMovingControl) {
+        e.preventDefault(); // Prevent scrolling when moving a control
       }
       const touch = e.touches[0];
       handlePointerMove(touch.clientX, touch.clientY);
@@ -236,8 +224,7 @@ export const useDesignAreaInteractions = (
   return {
     controls,
     activeTool,
-    isDraggingNew,
-    newControlPosition,
+    isPlacingControl,
     selectedControlId,
     designAreaRef,
     handleMouseDown,
