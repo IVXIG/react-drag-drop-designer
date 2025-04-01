@@ -53,22 +53,40 @@ export const useDesignAreaInteractions = (
     }
   }, [selectedControlId, onControlSelect, externalSelectedId]);
   
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const getRelativeCoordinates = (clientX: number, clientY: number) => {
+    if (!designAreaRef.current) return { x: 0, y: 0 };
+    
+    const rect = designAreaRef.current.getBoundingClientRect();
+    const scrollX = designAreaRef.current.scrollLeft;
+    const scrollY = designAreaRef.current.scrollTop;
+    
+    return {
+      x: clientX - rect.left + scrollX,
+      y: clientY - rect.top + scrollY
+    };
+  };
+  
+  const handlePointerDown = (clientX: number, clientY: number, isTouch: boolean = false) => {
     if (activeTool === 'Pointer') {
       const controlElements = document.querySelectorAll('.vb6-control');
       let found = false;
       
       controlElements.forEach((element) => {
-        if (element.contains(e.target as Node)) {
+        const rect = element.getBoundingClientRect();
+        if (
+          clientX >= rect.left &&
+          clientX <= rect.right &&
+          clientY >= rect.top &&
+          clientY <= rect.bottom
+        ) {
           const id = element.getAttribute('data-id');
           setSelectedControlId(id);
           
           setIsMovingControl(true);
           
-          const rect = element.getBoundingClientRect();
           setMoveOffset({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
+            x: clientX - rect.left,
+            y: clientY - rect.top
           });
           
           setControls(prevControls => 
@@ -81,7 +99,7 @@ export const useDesignAreaInteractions = (
         }
       });
       
-      if (!found) {
+      if (!found && !isTouch) {
         setSelectedControlId(null);
         setControls(prevControls => 
           prevControls.map(control => ({
@@ -95,21 +113,17 @@ export const useDesignAreaInteractions = (
     }
     
     if (designAreaRef.current) {
-      const rect = designAreaRef.current.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const { x, y } = getRelativeCoordinates(clientX, clientY);
       
       setIsDraggingNew(true);
       setNewControlPosition({ top: y, left: x, width: 0, height: 0 });
     }
   };
   
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handlePointerMove = (clientX: number, clientY: number) => {
     if (isDraggingNew && activeTool !== 'Pointer') {
       if (designAreaRef.current) {
-        const rect = designAreaRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const { x, y } = getRelativeCoordinates(clientX, clientY);
         
         setNewControlPosition(prev => ({
           ...prev,
@@ -119,14 +133,16 @@ export const useDesignAreaInteractions = (
       }
     } else if (isMovingControl && selectedControlId) {
       if (designAreaRef.current) {
-        const rect = designAreaRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left - moveOffset.x;
-        const y = e.clientY - rect.top - moveOffset.y;
+        const { x, y } = getRelativeCoordinates(clientX, clientY);
         
         setControls(prevControls =>
           prevControls.map(control =>
             control.id === selectedControlId
-              ? { ...control, left: Math.max(0, x), top: Math.max(0, y) }
+              ? { 
+                  ...control, 
+                  left: Math.max(0, x - moveOffset.x),
+                  top: Math.max(0, y - moveOffset.y)
+                }
               : control
           )
         );
@@ -134,7 +150,7 @@ export const useDesignAreaInteractions = (
     }
   };
   
-  const handleMouseUp = () => {
+  const handlePointerUp = () => {
     if (isDraggingNew && activeTool !== 'Pointer') {
       const { top, left, width, height } = newControlPosition;
       
@@ -161,6 +177,39 @@ export const useDesignAreaInteractions = (
     }
     
     setIsMovingControl(false);
+  };
+  
+  const handleMouseDown = (e: React.MouseEvent) => {
+    handlePointerDown(e.clientX, e.clientY);
+  };
+  
+  const handleMouseMove = (e: React.MouseEvent) => {
+    handlePointerMove(e.clientX, e.clientY);
+  };
+  
+  const handleMouseUp = () => {
+    handlePointerUp();
+  };
+  
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      handlePointerDown(touch.clientX, touch.clientY, true);
+    }
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length > 0) {
+      if (isDraggingNew || isMovingControl) {
+        e.preventDefault(); // Prevent scrolling when dragging
+      }
+      const touch = e.touches[0];
+      handlePointerMove(touch.clientX, touch.clientY);
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    handlePointerUp();
   };
   
   const handleDeleteControl = () => {
@@ -194,6 +243,9 @@ export const useDesignAreaInteractions = (
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
     handleDeleteControl
   };
 };

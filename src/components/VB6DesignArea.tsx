@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ControlProps } from '../types/designTypes';
 import ControlRenderer from './VB6Controls/ControlRenderer';
 import PlaceholderControl from './VB6Controls/PlaceholderControl';
@@ -30,7 +30,10 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
     designAreaRef,
     handleMouseDown,
     handleMouseMove,
-    handleMouseUp
+    handleMouseUp,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd
   } = useDesignAreaInteractions(
     'Pointer', 
     [], 
@@ -44,50 +47,6 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
   // Adjust the grid size for mobile devices
   const gridSize = isMobile ? '10px 10px' : '20px 20px';
   
-  // Setup touch event handlers for mobile
-  useEffect(() => {
-    const designArea = designAreaRef.current;
-    if (!designArea) return;
-    
-    const handleTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      const mouseEvent = new MouseEvent('mousedown', {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-        bubbles: true,
-      });
-      designArea.dispatchEvent(mouseEvent);
-    };
-    
-    const handleTouchMove = (e: TouchEvent) => {
-      if (isDraggingNew) e.preventDefault(); // Prevent scrolling when dragging
-      const touch = e.touches[0];
-      const mouseEvent = new MouseEvent('mousemove', {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-        bubbles: true,
-      });
-      designArea.dispatchEvent(mouseEvent);
-    };
-    
-    const handleTouchEnd = () => {
-      const mouseEvent = new MouseEvent('mouseup', {
-        bubbles: true,
-      });
-      designArea.dispatchEvent(mouseEvent);
-    };
-    
-    designArea.addEventListener('touchstart', handleTouchStart);
-    designArea.addEventListener('touchmove', handleTouchMove, { passive: false });
-    designArea.addEventListener('touchend', handleTouchEnd);
-    
-    return () => {
-      designArea.removeEventListener('touchstart', handleTouchStart);
-      designArea.removeEventListener('touchmove', handleTouchMove);
-      designArea.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [designAreaRef, isDraggingNew]);
-  
   return (
     <div 
       ref={designAreaRef}
@@ -96,7 +55,11 @@ const VB6DesignArea: React.FC<VB6DesignAreaProps> = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       data-active-tool={activeTool}
+      style={{ touchAction: isDraggingNew ? 'none' : 'auto' }}
     >
       <div className="absolute inset-0" style={{
         backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px)',
