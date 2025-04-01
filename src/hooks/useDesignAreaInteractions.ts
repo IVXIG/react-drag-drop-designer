@@ -1,8 +1,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { ControlProps } from '../types/designTypes';
-import { getDefaultText } from '../utils/controlUtils';
-import { toast } from 'sonner';
+import { useControlPlacement } from './design/useControlPlacement';
+import { useControlSelection } from './design/useControlSelection';
+import { useControlMovement } from './design/useControlMovement';
+import { useControlDeletion } from './design/useControlDeletion';
 
 export const useDesignAreaInteractions = (
   initialActiveTool: string = 'Pointer',
@@ -14,157 +16,75 @@ export const useDesignAreaInteractions = (
   externalActiveTool?: string
 ) => {
   const [controls, setControls] = useState<ControlProps[]>(initialControls);
-  const [activeTool, setActiveTool] = useState<string>(externalActiveTool || initialActiveTool);
-  const [isPlacingControl, setIsPlacingControl] = useState(false);
-  const [selectedControlId, setSelectedControlId] = useState<string | null>(externalSelectedId || initialSelectedId);
-  const [isMovingControl, setIsMovingControl] = useState(false);
-  const [moveOffset, setMoveOffset] = useState({ x: 0, y: 0 });
   const designAreaRef = useRef<HTMLDivElement>(null);
   
-  useEffect(() => {
-    if (externalActiveTool) {
-      setActiveTool(externalActiveTool);
-      if (externalActiveTool !== 'Pointer') {
-        setIsPlacingControl(true);
-      } else {
-        setIsPlacingControl(false);
+  const {
+    activeTool,
+    isPlacingControl,
+    placeNewControl
+  } = useControlPlacement(initialActiveTool, designAreaRef, externalActiveTool);
+  
+  const {
+    selectedControlId,
+    handleControlClick
+  } = useControlSelection(initialSelectedId, onControlSelect, externalSelectedId);
+  
+  const {
+    isMovingControl,
+    startMovingControl,
+    moveControl,
+    stopMovingControl
+  } = useControlMovement(designAreaRef);
+  
+  const { handleDeleteControl } = useControlDeletion(
+    selectedControlId, 
+    setControls, 
+    setSelectedControlId => {
+      if (onControlSelect) {
+        onControlSelect(null);
       }
     }
-  }, [externalActiveTool]);
-  
-  useEffect(() => {
-    if (externalSelectedId !== undefined && externalSelectedId !== selectedControlId) {
-      setSelectedControlId(externalSelectedId);
-      
-      setControls(prevControls => 
-        prevControls.map(control => ({
-          ...control,
-          isSelected: control.id === externalSelectedId
-        }))
-      );
-    }
-  }, [externalSelectedId, selectedControlId]);
+  );
 
   useEffect(() => {
     if (onControlsChange) {
       onControlsChange(controls);
     }
   }, [controls, onControlsChange]);
-
-  useEffect(() => {
-    if (onControlSelect && selectedControlId !== externalSelectedId) {
-      onControlSelect(selectedControlId);
-    }
-  }, [selectedControlId, onControlSelect, externalSelectedId]);
-  
-  const getRelativeCoordinates = (clientX: number, clientY: number) => {
-    if (!designAreaRef.current) return { x: 0, y: 0 };
-    
-    const rect = designAreaRef.current.getBoundingClientRect();
-    const scrollX = designAreaRef.current.scrollLeft;
-    const scrollY = designAreaRef.current.scrollTop;
-    
-    return {
-      x: clientX - rect.left + scrollX,
-      y: clientY - rect.top + scrollY
-    };
-  };
   
   const handlePointerDown = (clientX: number, clientY: number, isTouch: boolean = false) => {
     if (activeTool === 'Pointer') {
-      const controlElements = document.querySelectorAll('.vb6-control');
-      let found = false;
+      const result = handleControlClick(clientX, clientY, controls);
       
-      controlElements.forEach((element) => {
-        const rect = element.getBoundingClientRect();
-        if (
-          clientX >= rect.left &&
-          clientX <= rect.right &&
-          clientY >= rect.top &&
-          clientY <= rect.bottom
-        ) {
-          const id = element.getAttribute('data-id');
-          setSelectedControlId(id);
-          
-          setIsMovingControl(true);
-          
-          setMoveOffset({
-            x: clientX - rect.left,
-            y: clientY - rect.top
-          });
-          
-          setControls(prevControls => 
-            prevControls.map(control => ({
-              ...control,
-              isSelected: control.id === id
-            }))
-          );
-          found = true;
+      if (result.controlId) {
+        setControls(result.updatedControls);
+        
+        // Find the clicked control element to get its rect for movement
+        const controlElement = document.querySelector(`[data-id="${result.controlId}"]`);
+        if (controlElement) {
+          startMovingControl(clientX, clientY, controlElement.getBoundingClientRect());
         }
-      });
-      
-      if (!found && !isTouch) {
-        setSelectedControlId(null);
-        setControls(prevControls => 
-          prevControls.map(control => ({
-            ...control,
-            isSelected: false
-          }))
-        );
+      } else if (!isTouch) {
+        // Only deselect on non-touch devices (to prevent deselection on mobile when scrolling)
+        setControls(result.updatedControls);
       }
-      
-      return;
-    }
-    
-    // For tools other than Pointer - place a new control at the clicked position
-    if (isPlacingControl && designAreaRef.current) {
-      const { x, y } = getRelativeCoordinates(clientX, clientY);
-      
-      // Create control with default size at clicked position
-      const defaultWidth = activeTool === 'Label' ? 80 : 100;
-      const defaultHeight = activeTool === 'Label' ? 20 : 30;
-      
-      const newControlId = `${activeTool}-${Date.now()}`;
-      const newControl: ControlProps = {
-        id: newControlId,
-        type: activeTool,
-        top: Math.max(0, y - defaultHeight / 2),
-        left: Math.max(0, x - defaultWidth / 2),
-        width: defaultWidth,
-        height: defaultHeight,
-        text: getDefaultText(activeTool, controls.length + 1),
-        isSelected: true
-      };
-      
-      setControls(prev => [...prev.map(c => ({ ...c, isSelected: false })), newControl]);
-      setSelectedControlId(newControl.id);
-      
-      toast(`Added ${activeTool} control`);
+    } else {
+      // Handle placing a new control
+      const newControl = placeNewControl(clientX, clientY, controls);
+      if (newControl) {
+        setControls(prev => [...prev.map(c => ({ ...c, isSelected: false })), newControl]);
+      }
     }
   };
   
   const handlePointerMove = (clientX: number, clientY: number) => {
     if (isMovingControl && selectedControlId) {
-      if (designAreaRef.current) {
-        const { x, y } = getRelativeCoordinates(clientX, clientY);
-        
-        setControls(prevControls =>
-          prevControls.map(control =>
-            control.id === selectedControlId
-              ? { 
-                  ...control, 
-                  left: Math.max(0, x - moveOffset.x),
-                  top: Math.max(0, y - moveOffset.y)
-                }
-              : control
-          )
-        );
-      }
+      setControls(prevControls => moveControl(clientX, clientY, selectedControlId, prevControls));
     }
   };
   
   const handlePointerUp = () => {
-    setIsMovingControl(false);
+    stopMovingControl();
   };
   
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -199,27 +119,6 @@ export const useDesignAreaInteractions = (
   const handleTouchEnd = () => {
     handlePointerUp();
   };
-  
-  const handleDeleteControl = () => {
-    if (selectedControlId) {
-      setControls(prevControls => prevControls.filter(control => control.id !== selectedControlId));
-      setSelectedControlId(null);
-    }
-  };
-  
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Delete' && selectedControlId) {
-        handleDeleteControl();
-      }
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [selectedControlId]);
 
   return {
     controls,
